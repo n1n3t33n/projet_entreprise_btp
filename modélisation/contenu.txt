@@ -1,0 +1,2 @@
+* diagrammes UML
+* méthode merise (peut-être)

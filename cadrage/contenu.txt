@@ -1,0 +1,4 @@
+* cahier de charges en .docs
+* documents annexes et pièces jointes
+* pièces jointes
+* etc
