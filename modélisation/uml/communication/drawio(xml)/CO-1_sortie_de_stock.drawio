@@ -1,0 +1,58 @@
+<mxGraphModel dx="2307" dy="1165" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1250" background="#FFFFFF" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="t0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=20;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;align=center;verticalAlign=middle;" value="Diagramme de communication 1 — Sortie de stock enregistrée sans réseau (parcours J1)" vertex="1">
+      <mxGeometry height="46" width="2572" x="24" y="24" as="geometry" />
+    </mxCell>
+    <mxCell id="o1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=1.5;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="&lt;u&gt;Magasinier&lt;/u&gt;" vertex="1">
+      <mxGeometry height="90" width="260" x="120" y="330" as="geometry" />
+    </mxCell>
+    <mxCell id="o2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="&lt;u&gt;Application mobile&lt;/u&gt;" vertex="1">
+      <mxGeometry height="90" width="260" x="780" y="330" as="geometry" />
+    </mxCell>
+    <mxCell id="o3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="&lt;u&gt;Service stock local&lt;/u&gt;" vertex="1">
+      <mxGeometry height="90" width="260" x="1480" y="330" as="geometry" />
+    </mxCell>
+    <mxCell id="o4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1.5;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="&lt;u&gt;File d&#39;envoi&lt;/u&gt;" vertex="1">
+      <mxGeometry height="90" width="260" x="2200" y="330" as="geometry" />
+    </mxCell>
+    <mxCell id="o5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;fontSize=13;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="&lt;u&gt;SQLite chiffré&lt;/u&gt;" vertex="1">
+      <mxGeometry height="90" width="260" x="1480" y="660" as="geometry" />
+    </mxCell>
+    <mxCell id="f6" edge="1" parent="1" source="o1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.35;entryDx=0;entryDy=0;" target="o2" value="1 : saisir le code PIN&lt;br&gt;4 : choisir « Sortie », article, quantité&lt;br&gt;5 : choisir le logement, le corps d&#39;état&lt;br&gt;        et le bénéficiaire">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="f7" edge="1" parent="1" source="o2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=8 4;strokeColor=#666666;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0;exitY=0.72;exitDx=0;exitDy=0;entryX=1;entryY=0.72;entryDx=0;entryDy=0;" target="o1" value="13 : « Enregistré — en attente d&#39;envoi »">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="f8" edge="1" parent="1" source="o2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.35;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="o5" value="2 : vérifier le PIN et le verrou&lt;br&gt;        de 14 jours">
+      <mxGeometry relative="1" x="-0.6181" as="geometry">
+        <mxPoint x="871" y="740" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="f9" edge="1" parent="1" source="o5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=8 4;strokeColor=#666666;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.68;entryY=1;entryDx=0;entryDy=0;" target="o2" value="3 : session locale ouverte">
+      <mxGeometry relative="1" x="-0.0518" as="geometry" />
+    </mxCell>
+    <mxCell id="f10" edge="1" parent="1" source="o2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.35;exitDx=0;exitDy=0;entryX=0;entryY=0.35;entryDx=0;entryDy=0;" target="o3" value="6 : enregistrerSortie(saisie)">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="f11" edge="1" parent="1" source="o3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=open;endFill=0;endSize=9;dashed=1;dashPattern=8 4;strokeColor=#666666;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0;exitY=0.72;exitDx=0;exitDy=0;entryX=1;entryY=0.72;entryDx=0;entryDy=0;" target="o2" value="12 : enregistré localement">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="f12" edge="1" parent="1" source="o3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" target="o3" value="7 : contrôler les champs obligatoires (RG-S4)&lt;br&gt;8 : convertir vers l&#39;unité de base (RG-S1)">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="1545" y="180" />
+          <mxPoint x="1675" y="180" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="f13" edge="1" parent="1" source="o3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="o5" value="9 : créer l&#39;événement : UUID + horodatage appareil&lt;br&gt;10 : mettre à jour le stock local affiché">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="f14" edge="1" parent="1" source="o3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="o4" value="11 : empiler l&#39;événement&lt;br&gt;        (statut « en attente »)">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

@@ -1,0 +1,94 @@
+<mxGraphModel dx="1626" dy="821" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2560" pageHeight="1040" background="#FFFFFF" math="0" shadow="0">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+        <mxCell id="t0" value="Diagramme de déploiement 2 — Environnement de pilote et de production (données réelles, accord écrit d&#x27;Italia requis)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=20;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="24" y="24" width="2512" height="46" as="geometry"/>
+        </mxCell>
+        <mxCell id="nd1" value="«device»&lt;br&gt;&lt;b&gt;Smartphones de chantier&lt;/b&gt;&lt;br&gt;parc Android et iOS · base locale chiffrée" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=22;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=6;fontSize=14;fontColor=#000000;fontFamily=Helvetica;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="380" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar2" value="«execution environment»&lt;br&gt;&lt;b&gt;Application Flutter&lt;/b&gt;&lt;br&gt;distribution APK et TestFlight" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd1">
+          <mxGeometry x="30" y="100" width="320" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar3" value="«artifact»&lt;br&gt;&lt;b&gt;Base SQLite chiffrée&lt;/b&gt;&lt;br&gt;effacée à la révocation (RG-D5)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd1">
+          <mxGeometry x="30" y="177" width="320" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="nd4" value="«device»&lt;br&gt;&lt;b&gt;Postes du bureau&lt;/b&gt;&lt;br&gt;direction · technique · gestion" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=22;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=6;fontSize=14;fontColor=#000000;fontFamily=Helvetica;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="100" y="560" width="380" height="210" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar5" value="«execution environment»&lt;br&gt;&lt;b&gt;Navigateur web&lt;/b&gt;&lt;br&gt;second facteur pour ADM et DIR" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd4">
+          <mxGeometry x="30" y="105" width="320" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="nd6" value="«node»&lt;br&gt;&lt;b&gt;Pare-feu et reverse proxy&lt;/b&gt;&lt;br&gt;Nginx · Linux" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=22;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=6;fontSize=14;fontColor=#000000;fontFamily=Helvetica;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="720" y="280" width="420" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar7" value="«artifact»&lt;br&gt;&lt;b&gt;Certificat TLS 1.2+&lt;/b&gt;&lt;br&gt;HTTPS obligatoire (ENF-07)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd6">
+          <mxGeometry x="30" y="105" width="360" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="nd8" value="«node»&lt;br&gt;&lt;b&gt;Serveur d&#x27;application&lt;/b&gt;&lt;br&gt;Linux · Gunicorn" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=22;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=6;fontSize=14;fontColor=#000000;fontFamily=Helvetica;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="260" width="440" height="270" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar9" value="«artifact»&lt;br&gt;&lt;b&gt;API REST ChantierSync&lt;/b&gt;&lt;br&gt;réception idempotente des lots" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd8">
+          <mxGeometry x="30" y="100" width="380" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar10" value="«artifact»&lt;br&gt;&lt;b&gt;Back-office web&lt;/b&gt;&lt;br&gt;tableaux de bord et exports" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd8">
+          <mxGeometry x="30" y="182" width="380" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="nd11" value="«node»&lt;br&gt;&lt;b&gt;Serveur de données&lt;/b&gt;&lt;br&gt;Linux · volumes chiffrés" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=22;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=6;fontSize=14;fontColor=#000000;fontFamily=Helvetica;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="2020" y="260" width="440" height="270" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar12" value="«artifact»&lt;br&gt;&lt;b&gt;PostgreSQL 16&lt;/b&gt;&lt;br&gt;journal immuable · journal d&#x27;audit" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd11">
+          <mxGeometry x="30" y="100" width="380" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar13" value="«artifact»&lt;br&gt;&lt;b&gt;Agrégats pré-calculés&lt;/b&gt;&lt;br&gt;stock courant · avancement" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd11">
+          <mxGeometry x="30" y="182" width="380" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="nd14" value="«node»&lt;br&gt;&lt;b&gt;Ordonnanceur&lt;/b&gt;&lt;br&gt;cron · Linux" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=22;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=6;fontSize=14;fontColor=#000000;fontFamily=Helvetica;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="700" width="440" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar15" value="«artifact»&lt;br&gt;&lt;b&gt;Commandes de gestion Django&lt;/b&gt;&lt;br&gt;alertes · relances · sauvegardes&lt;br&gt;Celery en évolution seulement" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd14">
+          <mxGeometry x="30" y="100" width="380" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="nd16" value="«node»&lt;br&gt;&lt;b&gt;Sauvegarde hors site&lt;/b&gt;&lt;br&gt;copie chiffrée" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=22;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=6;fontSize=14;fontColor=#000000;fontFamily=Helvetica;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="2020" y="700" width="440" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="ar17" value="«artifact»&lt;br&gt;&lt;b&gt;Jeux de sauvegarde&lt;/b&gt;&lt;br&gt;perte max 1 h · reprise 4 h (ENF-06)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;strokeWidth=1.2;fontSize=12;fontColor=#000000;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="nd16">
+          <mxGeometry x="30" y="100" width="380" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="nd18" value="«node»&lt;br&gt;&lt;b&gt;Serveurs internes Italia&lt;/b&gt;&lt;br&gt;deux serveurs existants&lt;br&gt;option sur site, accord écrit [H4]" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=22;fillColor=#f5f5f5;strokeColor=#999999;strokeWidth=1.5;verticalAlign=top;align=center;spacingTop=6;fontSize=14;fontColor=#000000;fontFamily=Helvetica;container=1;collapsible=0;dashed=1;dashPattern=8 4;" vertex="1" parent="1">
+          <mxGeometry x="720" y="700" width="420" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="lk19" value="«HTTPS»&lt;br&gt;API de synchronisation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;strokeColor=#333333;strokeWidth=1.8;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.4;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="nd1" target="nd6">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lk20" value="«HTTPS»&lt;br&gt;back-office" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;strokeColor=#333333;strokeWidth=1.8;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.4;exitDx=0;exitDy=0;entryX=0;entryY=0.78;entryDx=0;entryDy=0;" edge="1" parent="1" source="nd4" target="nd6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="644"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lk21" value="«HTTP interne»" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;strokeColor=#333333;strokeWidth=1.8;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="nd6" target="nd8">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lk22" value="«TCP 5432»&lt;br&gt;connexions chiffrées" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;strokeColor=#333333;strokeWidth=1.8;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="nd8" target="nd11">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lk23" value="«commandes de gestion»&lt;br&gt;déclenchées par cron" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;strokeColor=#333333;strokeWidth=1.8;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="nd14" target="nd8">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lk24" value="«copie chiffrée»&lt;br&gt;horaire, hors site" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;strokeColor=#333333;strokeWidth=1.8;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="nd11" target="nd16">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lk25" value="déploiement alternatif&lt;br&gt;sur site" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;startArrow=none;endArrow=none;strokeColor=#333333;strokeWidth=1.8;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;dashed=1;dashPattern=8 4;endArrow=open;endFill=0;endSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="nd6" target="nd18">
+          <mxGeometry relative="1" as="geometry">
+          </mxGeometry>
+        </mxCell>
+  </root>
+</mxGraphModel>

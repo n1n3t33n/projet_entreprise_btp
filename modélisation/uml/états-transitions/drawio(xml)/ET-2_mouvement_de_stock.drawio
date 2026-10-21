@@ -1,0 +1,95 @@
+<mxGraphModel dx="1225" dy="619" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1860" pageHeight="1020" background="#FFFFFF" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="t0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=20;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;align=center;verticalAlign=middle;" value="Diagramme d&#39;états-transitions 2 — Statut de validation d&#39;un mouvement de stock" vertex="1">
+      <mxGeometry height="44" width="2982" x="24" y="24" as="geometry" />
+    </mxCell>
+    <mxCell id="p1" parent="1" style="ellipse;html=1;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+      <mxGeometry height="36" width="36" x="197" y="428" as="geometry" />
+    </mxCell>
+    <mxCell id="s2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="Enregistré&lt;br&gt;(effectif)" vertex="1">
+      <mxGeometry height="84" width="250" x="610" y="404" as="geometry" />
+    </mxCell>
+    <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="À valider" vertex="1">
+      <mxGeometry height="84" width="250" x="1130" y="404" as="geometry" />
+    </mxCell>
+    <mxCell id="s4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="En alerte" vertex="1">
+      <mxGeometry height="84" width="250" x="1650" y="150" as="geometry" />
+    </mxCell>
+    <mxCell id="nJ66C77N717xb9Env4em-7" edge="1" parent="1" source="s5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=gap;" target="p9">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="s5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="Validé" vertex="1">
+      <mxGeometry height="84" width="250" x="1650" y="404" as="geometry" />
+    </mxCell>
+    <mxCell id="s6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="Rejeté" vertex="1">
+      <mxGeometry height="84" width="250" x="1650" y="658" as="geometry" />
+    </mxCell>
+    <mxCell id="s7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="Annulé par&lt;br&gt;contre-mouvement" vertex="1">
+      <mxGeometry height="84" width="250" x="2420" y="404" as="geometry" />
+    </mxCell>
+    <mxCell id="p8" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+      <mxGeometry height="40" width="40" x="715" y="680" as="geometry" />
+    </mxCell>
+    <mxCell id="p9" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+      <mxGeometry height="40" width="40" x="2250" y="426" as="geometry" />
+    </mxCell>
+    <mxCell id="p10" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+      <mxGeometry height="40" width="40" x="2795" y="426" as="geometry" />
+    </mxCell>
+    <mxCell id="t11" edge="1" parent="1" source="p1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="s2" value="reçu au&lt;br&gt;journal immuable">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="t12" edge="1" parent="1" source="s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="s3" value="règle de validation&lt;br&gt;déclenchée">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="t13" edge="1" parent="1" source="s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="p8" value="aucune règle&lt;br&gt;applicable">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="t14" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="s5" value="accepté par&lt;br&gt;un valideur">
+      <mxGeometry relative="1" x="0.1064" as="geometry">
+        <Array as="points">
+          <mxPoint x="1515" y="446" />
+          <mxPoint x="1515" y="440" />
+          <mxPoint x="1650" y="440" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="t15" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="s6" value="rejeté&lt;br&gt;(motif)">
+      <mxGeometry relative="1" x="-0.0417" as="geometry">
+        <Array as="points">
+          <mxPoint x="1500" y="467" />
+          <mxPoint x="1500" y="700" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="t16" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="s4" value="24 h sans&lt;br&gt;décision">
+      <mxGeometry relative="1" x="-0.0815" as="geometry">
+        <Array as="points">
+          <mxPoint x="1530" y="425" />
+          <mxPoint x="1530" y="192" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="t17" edge="1" parent="1" source="s4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.5;exitY=1.0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.0;entryDx=0;entryDy=0;" target="s5" value="accepté&lt;br&gt;tardivement">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="t18" edge="1" parent="1" source="s4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=1.0;entryY=0.3333333333333333;entryDx=0;entryDy=0;" target="s6" value="rejeté&lt;br&gt;tardivement">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2360" y="192" />
+          <mxPoint x="2360" y="686" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="t20" edge="1" parent="1" source="s6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.6666666666666666;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="s7" value="contre-mouvement&lt;br&gt;justifié">
+      <mxGeometry relative="1" x="-0.2101" as="geometry">
+        <mxPoint x="2500" y="714" as="targetPoint" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="t21" edge="1" parent="1" source="s7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p10" value="">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

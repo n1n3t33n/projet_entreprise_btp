@@ -1,0 +1,84 @@
+<mxGraphModel dx="1681" dy="849" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1560" pageHeight="940" background="#FFFFFF" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="t0" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=20;fontStyle=1;fontColor=#000000;fontFamily=Helvetica;align=center;verticalAlign=middle;" value="Diagramme d&#39;états-transitions 3 — Événement dans la file d&#39;envoi" vertex="1">
+      <mxGeometry height="44" width="2462" x="24" y="24" as="geometry" />
+    </mxCell>
+    <mxCell id="p1" parent="1" style="ellipse;html=1;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+      <mxGeometry height="36" width="36" x="197" y="428" as="geometry" />
+    </mxCell>
+    <mxCell id="s2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="En attente&lt;br&gt;d&#39;envoi" vertex="1">
+      <mxGeometry height="84" width="250" x="610" y="404" as="geometry" />
+    </mxCell>
+    <mxCell id="7DbVBfHR1cGnv9rTjbZU-4" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=gap;" target="s4">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="7DbVBfHR1cGnv9rTjbZU-5" connectable="0" parent="7DbVBfHR1cGnv9rTjbZU-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];defaultLabelBackgroundColor=gap;" value="&lt;span style=&quot;color: rgb(193, 193, 193); font-size: 12px; background-color: rgb(18, 18, 18);&quot;&gt;identifiant&lt;/span&gt;&lt;br style=&quot;color: rgb(193, 193, 193); font-size: 12px;&quot;&gt;&lt;span style=&quot;color: rgb(193, 193, 193); font-size: 12px; background-color: rgb(18, 18, 18);&quot;&gt;déjà connu&lt;/span&gt;" vertex="1">
+      <mxGeometry relative="1" x="0.163" y="-2" as="geometry">
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="En cours&lt;br&gt;d&#39;envoi" vertex="1">
+      <mxGeometry height="84" width="250" x="1130" y="404" as="geometry" />
+    </mxCell>
+    <mxCell id="s4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="Déjà reçu&lt;br&gt;(idempotence)" vertex="1">
+      <mxGeometry height="84" width="250" x="1900" y="404" as="geometry" />
+    </mxCell>
+    <mxCell id="s5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="Accepté" vertex="1">
+      <mxGeometry height="84" width="250" x="1900" y="170" as="geometry" />
+    </mxCell>
+    <mxCell id="s6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="Rejeté&lt;br&gt;(motif)" vertex="1">
+      <mxGeometry height="84" width="250" x="1900" y="588" as="geometry" />
+    </mxCell>
+    <mxCell id="s7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1;strokeWidth=1.5;fontColor=#000000;fontFamily=Helvetica;" value="Nouvelle tentative&lt;br&gt;programmée" vertex="1">
+      <mxGeometry height="84" width="250" x="920" y="700" as="geometry" />
+    </mxCell>
+    <mxCell id="p8" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+      <mxGeometry height="40" width="40" x="2420" y="182" as="geometry" />
+    </mxCell>
+    <mxCell id="p9" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+      <mxGeometry height="40" width="40" x="2410" y="426" as="geometry" />
+    </mxCell>
+    <mxCell id="p10" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#000000;" value="" vertex="1">
+      <mxGeometry height="40" width="40" x="2410" y="610" as="geometry" />
+    </mxCell>
+    <mxCell id="t11" edge="1" parent="1" source="p1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="s2" value="événement créé&lt;br&gt;localement">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="t12" edge="1" parent="1" source="s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="s3" value="lot constitué,&lt;br&gt;réseau disponible">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="t13" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.2;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="s5" value="réponse&lt;br&gt;« accepté »">
+      <mxGeometry relative="1" x="0.0346" as="geometry" />
+    </mxCell>
+    <mxCell id="t15" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="s6" value="réponse&lt;br&gt;« rejeté »">
+      <mxGeometry relative="1" x="0.0788" as="geometry" />
+    </mxCell>
+    <mxCell id="t16" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="s7" value="coupure réseau&lt;br&gt;ou erreur">
+      <mxGeometry relative="1" x="0.3503" as="geometry">
+        <Array as="points">
+          <mxPoint x="1255" y="732" />
+          <mxPoint x="1270" y="732" />
+          <mxPoint x="1270" y="742" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="t17" edge="1" parent="1" source="s7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=0.0;exitY=0.6666666666666666;exitDx=0;exitDy=0;entryX=0.5;entryY=1.0;entryDx=0;entryDy=0;" target="s2" value="temporisation&lt;br&gt;écoulée">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="t18" edge="1" parent="1" source="s5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p8" value="purgé">
+      <mxGeometry relative="1" as="geometry">
+        <Array as="points">
+          <mxPoint x="2380" y="202" />
+        </Array>
+      </mxGeometry>
+    </mxCell>
+    <mxCell id="t19" edge="1" parent="1" source="s4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p9" value="purgé">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="t20" edge="1" parent="1" source="s6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=8;strokeColor=#333333;strokeWidth=1.5;fontSize=12;fontColor=#333333;labelBackgroundColor=#ffffff;fontFamily=Helvetica;exitX=1.0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.0;entryY=0.5;entryDx=0;entryDy=0;" target="p10" value="conservé et&lt;br&gt;signalé">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>

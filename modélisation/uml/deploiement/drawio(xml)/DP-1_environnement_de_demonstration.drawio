@@ -1,0 +1,162 @@
+<mxGraphModel dx="2544" dy="1285" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="1540" background="#FFFFFF" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="n1" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=20;fontStyle=1;fontColor=#1F3864;fontFamily=Helvetica;" value="DP-02 · Diagramme de déploiement — Environnement de production (pilote réel chez Italia)" vertex="1">
+      <mxGeometry height="34" width="2220" x="40" y="20" as="geometry" />
+    </mxCell>
+    <mxCell id="n2" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontColor=#5A5A5A;fontFamily=Helvetica;" value="ChantierSync v0.1 · données réelles · subordonné à l&#39;accord écrit d&#39;Italia [H4] et au choix d&#39;hébergement [H18] · ENF-05, ENF-06, ENF-17" vertex="1">
+      <mxGeometry height="22" width="2220" x="40" y="52" as="geometry" />
+    </mxCell>
+    <mxCell id="n3" parent="1" style="line;strokeWidth=2;strokeColor=#BF8F00;html=1;" value="" vertex="1">
+      <mxGeometry height="4" width="2220" x="40" y="76" as="geometry" />
+    </mxCell>
+    <mxCell id="bnd9" parent="1" style="swimlane;html=1;startSize=32;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#6A4C93;swimlaneFillColor=#FFFFFF;fontSize=13;fontStyle=1;fontColor=#1A1A1A;align=center;fontFamily=Helvetica;collapsible=0;" value="«appareil»  Parc de smartphones du chantier pilote&lt;br&gt;1 magasinier, 1 chef de chantier, quelques techniciens [H25]" vertex="1">
+      <mxGeometry height="420" width="400" x="60" y="160" as="geometry" />
+    </mxCell>
+    <mxCell id="n4" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#6A4C93;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«artefact»  ChantierSync — version minimale imposée (EF-ADM-04)" vertex="1">
+      <mxGeometry height="56" width="320" x="100" y="250" as="geometry" />
+    </mxCell>
+    <mxCell id="n5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="«base de données»  SQLite chiffré&lt;br&gt;file d&#39;envoi persistante" vertex="1">
+      <mxGeometry height="50" width="320" x="100" y="325" as="geometry" />
+    </mxCell>
+    <mxCell id="n6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Appareil enrôlé et révocable (RG-D5)" vertex="1">
+      <mxGeometry height="46" width="320" x="100" y="390" as="geometry" />
+    </mxCell>
+    <mxCell id="n7" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#FFFDE7;strokeColor=#B8A000;fontSize=10;fontColor=#4A3F00;align=left;verticalAlign=top;fontFamily=Helvetica;spacingLeft=6;spacingTop=2;spacingRight=6;" value="Réseau de chantier intermittent (risque R2). L&#39;application ne dépend jamais de la disponibilité du serveur : c&#39;est la raison d&#39;être de l&#39;architecture offline-first et la condition de l&#39;exigence ENF-05." vertex="1">
+      <mxGeometry height="110" width="320" x="100" y="450" as="geometry" />
+    </mxCell>
+    <mxCell id="bnd10" parent="1" style="swimlane;html=1;startSize=32;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#1F3864;swimlaneFillColor=#FFFFFF;fontSize=13;fontStyle=1;fontColor=#1A1A1A;align=center;fontFamily=Helvetica;collapsible=0;" value="«appareil»  Postes du bureau d&#39;Italia&lt;br&gt;réseau interne existant" vertex="1">
+      <mxGeometry height="300" width="400" x="60" y="640" as="geometry" />
+    </mxCell>
+    <mxCell id="n8" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#DFF3E8;strokeColor=#2E7D5B;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«artefact»  Back-office web (direction, RTC, GST, ADF)" vertex="1">
+      <mxGeometry height="50" width="320" x="100" y="710" as="geometry" />
+    </mxCell>
+    <mxCell id="n9" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Exports CSV vers Primus (EF-STK-13)" vertex="1">
+      <mxGeometry height="46" width="320" x="100" y="775" as="geometry" />
+    </mxCell>
+    <mxCell id="n10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;dashed=1;dashPattern=8 4;" value="Primus — devis et comptabilité, base Excel&lt;br&gt;échange par fichier uniquement (risque R11)" vertex="1">
+      <mxGeometry height="60" width="320" x="100" y="840" as="geometry" />
+    </mxCell>
+    <mxCell id="bnd11" parent="1" style="swimlane;html=1;startSize=32;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#B03A2E;swimlaneFillColor=#FFFFFF;fontSize=13;fontStyle=1;fontColor=#1A1A1A;align=center;fontFamily=Helvetica;collapsible=0;" value="«nœud»  Pare-feu et répartition d&#39;entrée" vertex="1">
+      <mxGeometry height="220" width="420" x="600" y="160" as="geometry" />
+    </mxCell>
+    <mxCell id="n11" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#E7EAF2;strokeColor=#1F3864;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«composant»  Pare-feu + certificat TLS&lt;br&gt;seul point d&#39;entrée public" vertex="1">
+      <mxGeometry height="56" width="340" x="640" y="230" as="geometry" />
+    </mxCell>
+    <mxCell id="n12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Limitation de débit, filtrage, journalisation" vertex="1">
+      <mxGeometry height="46" width="340" x="640" y="305" as="geometry" />
+    </mxCell>
+    <mxCell id="bnd12" parent="1" style="swimlane;html=1;startSize=32;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#1F3864;swimlaneFillColor=#FFFFFF;fontSize=13;fontStyle=1;fontColor=#1A1A1A;align=center;fontFamily=Helvetica;collapsible=0;" value="«serveur»  Serveur applicatif" vertex="1">
+      <mxGeometry height="520" width="420" x="600" y="430" as="geometry" />
+    </mxCell>
+    <mxCell id="n13" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#E7EAF2;strokeColor=#1F3864;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«composant»  Nginx — proxy inverse, fichiers statiques" vertex="1">
+      <mxGeometry height="50" width="340" x="640" y="500" as="geometry" />
+    </mxCell>
+    <mxCell id="n14" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#E7EAF2;strokeColor=#1F3864;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«composant»  Gunicorn — plusieurs processus de travail" vertex="1">
+      <mxGeometry height="56" width="340" x="640" y="570" as="geometry" />
+    </mxCell>
+    <mxCell id="n15" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#E7EAF2;strokeColor=#1F3864;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«artefact»  ChantierSync&lt;br&gt;API REST + back-office + logique métier unique" vertex="1">
+      <mxGeometry height="70" width="340" x="640" y="645" as="geometry" />
+    </mxCell>
+    <mxCell id="n16" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#6A4C93;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«composant»  cron + commandes Django&lt;br&gt;seuils, validations en retard, rapports (Q-05)" vertex="1">
+      <mxGeometry height="70" width="340" x="640" y="735" as="geometry" />
+    </mxCell>
+    <mxCell id="n17" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#6A4C93;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«composant»  Journaux et suivi d&#39;erreurs (ENF-17)" vertex="1">
+      <mxGeometry height="56" width="340" x="640" y="825" as="geometry" />
+    </mxCell>
+    <mxCell id="bnd13" parent="1" style="swimlane;html=1;startSize=32;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#5A5A5A;swimlaneFillColor=#FFFFFF;fontSize=13;fontStyle=1;fontColor=#1A1A1A;align=center;fontFamily=Helvetica;collapsible=0;" value="«serveur»  Serveur de base de données" vertex="1">
+      <mxGeometry height="400" width="420" x="1100" y="430" as="geometry" />
+    </mxCell>
+    <mxCell id="n18" parent="1" style="shape=module;jettyWidth=18;jettyHeight=8;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;spacingLeft=10;" value="«base de données»  PostgreSQL 16&lt;br&gt;journal immuable + projections" vertex="1">
+      <mxGeometry height="70" width="340" x="1140" y="500" as="geometry" />
+    </mxCell>
+    <mxCell id="n19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Journalisation WAL continue — RPO ≤ 1 h (ENF-06)" vertex="1">
+      <mxGeometry height="50" width="340" x="1140" y="590" as="geometry" />
+    </mxCell>
+    <mxCell id="n20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Index et vues d&#39;agrégation — chargement ≤ 3 s (ENF-04)" vertex="1">
+      <mxGeometry height="50" width="340" x="1140" y="655" as="geometry" />
+    </mxCell>
+    <mxCell id="n21" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Droits de base restreints : INSERT seul sur les journaux (§ 11.2)" vertex="1">
+      <mxGeometry height="56" width="340" x="1140" y="720" as="geometry" />
+    </mxCell>
+    <mxCell id="bnd14" parent="1" style="swimlane;html=1;startSize=32;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#2E7D5B;swimlaneFillColor=#FFFFFF;fontSize=13;fontStyle=1;fontColor=#1A1A1A;align=center;fontFamily=Helvetica;collapsible=0;" value="«service»  Sauvegarde et restauration" vertex="1">
+      <mxGeometry height="300" width="440" x="1600" y="160" as="geometry" />
+    </mxCell>
+    <mxCell id="n22" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DFF3E8;strokeColor=#2E7D5B;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Sauvegardes chiffrées horaires + copie hors site" vertex="1">
+      <mxGeometry height="56" width="360" x="1640" y="230" as="geometry" />
+    </mxCell>
+    <mxCell id="n23" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#DFF3E8;strokeColor=#2E7D5B;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Restauration testée à chaque jalon (ENF-06, risque R8)" vertex="1">
+      <mxGeometry height="50" width="360" x="1640" y="305" as="geometry" />
+    </mxCell>
+    <mxCell id="n24" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;" value="Reprise visée en 4 heures au plus" vertex="1">
+      <mxGeometry height="46" width="360" x="1640" y="370" as="geometry" />
+    </mxCell>
+    <mxCell id="bnd15" parent="1" style="swimlane;html=1;startSize=32;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#5A5A5A;swimlaneFillColor=#FFFFFF;fontSize=13;fontStyle=1;fontColor=#1A1A1A;align=center;fontFamily=Helvetica;collapsible=0;dashed=1;dashPattern=8 4;" value="«serveur»  Option : serveurs internes d&#39;Italia&lt;br&gt;à arbitrer avec Italia avant mise en production [H4, H18]" vertex="1">
+      <mxGeometry height="330" width="440" x="1600" y="500" as="geometry" />
+    </mxCell>
+    <mxCell id="n25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;dashed=1;dashPattern=8 4;" value="Serveur administratif existant" vertex="1">
+      <mxGeometry height="50" width="360" x="1640" y="590" as="geometry" />
+    </mxCell>
+    <mxCell id="n26" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;dashed=1;dashPattern=8 4;" value="Serveur technique existant" vertex="1">
+      <mxGeometry height="50" width="360" x="1640" y="655" as="geometry" />
+    </mxCell>
+    <mxCell id="n27" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;fontSize=11;fontColor=#1A1A1A;verticalAlign=middle;align=center;fontFamily=Helvetica;dashed=1;dashPattern=8 4;" value="Exposition sécurisée vers Internet requise : compétence et disponibilité à évaluer (§ 10.6)" vertex="1">
+      <mxGeometry height="80" width="360" x="1640" y="720" as="geometry" />
+    </mxCell>
+    <mxCell id="e28" edge="1" parent="1" source="n11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#1F3864;strokeWidth=2;fontSize=10;fontColor=#1F3864;labelBackgroundColor=#FFFFFF;jettySize=auto;" target="n13" value="HTTPS · TLS 1.2+">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e29" edge="1" parent="1" source="n13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#1F3864;strokeWidth=2;fontSize=10;fontColor=#1F3864;labelBackgroundColor=#FFFFFF;jettySize=auto;" target="n14" value="HTTP local">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e30" edge="1" parent="1" source="n14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#1F3864;strokeWidth=2;fontSize=10;fontColor=#1F3864;labelBackgroundColor=#FFFFFF;jettySize=auto;" target="n15" value="WSGI">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e31" edge="1" parent="1" source="n15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#1F3864;strokeWidth=2;fontSize=10;fontColor=#1F3864;labelBackgroundColor=#FFFFFF;jettySize=auto;" target="n18" value="TCP 5432 — réseau privé uniquement">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e32" edge="1" parent="1" source="n16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#1F3864;strokeWidth=2;fontSize=10;fontColor=#1F3864;labelBackgroundColor=#FFFFFF;jettySize=auto;" target="n15" value="">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="e33" edge="1" parent="1" source="n15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#1F3864;strokeWidth=2;fontSize=10;fontColor=#1F3864;labelBackgroundColor=#FFFFFF;jettySize=auto;" target="n17" value="">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="n34" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#FFFDE7;strokeColor=#B8A000;fontSize=11;fontColor=#4A3F00;align=left;verticalAlign=top;fontFamily=Helvetica;spacingLeft=6;spacingTop=2;spacingRight=6;" value="Décision d&#39;hébergement encore ouverte, et c&#39;est volontaire. Le cahier des charges pose le choix sans le trancher (§ 10.6, hypothèses H4 et H18) : héberger chez Italia réduit les coûts mais expose à Internet deux serveurs qui ne l&#39;étaient pas, ce qui demande une compétence de sécurité et une disponibilité à évaluer ; héberger à l&#39;extérieur est plus simple à protéger mais pose la question de la localisation des données au regard de la loi ivoirienne n° 2013-450 et du contrôle de l&#39;ARTCI. Ce diagramme représente donc l&#39;architecture logique : les deux options sont identiques du point de vue applicatif, seul le nœud d&#39;hébergement change. La décision doit être prise AVANT toute donnée réelle." vertex="1">
+      <mxGeometry height="150" width="920" x="600" y="980" as="geometry" />
+    </mxCell>
+    <mxCell id="n35" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#FFFDE7;strokeColor=#B8A000;fontSize=11;fontColor=#4A3F00;align=left;verticalAlign=top;fontFamily=Helvetica;spacingLeft=6;spacingTop=2;spacingRight=6;" value="Ce que la production ajoute à la démonstration : séparation du serveur applicatif et du serveur de base ; pare-feu comme unique point d&#39;entrée ; journalisation WAL continue portant la perte maximale de données de 24 h — situation actuelle d&#39;Italia, à l&#39;origine du problème P3 — à une heure au plus ; restauration testée ; supervision permettant de retrouver toute erreur de synchronisation par appareil et par événement (ENF-17)." vertex="1">
+      <mxGeometry height="150" width="440" x="1600" y="880" as="geometry" />
+    </mxCell>
+    <mxCell id="n36" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=none;strokeColor=#5A5A5A;fontColor=#5A5A5A;fontSize=12;fontStyle=1;fontFamily=Helvetica;align=center;swimlaneFillColor=none;collapsible=0;" value="Conventions de lecture" vertex="1">
+      <mxGeometry height="118" width="460" x="600" y="1160" as="geometry" />
+    </mxCell>
+    <mxCell id="n37" parent="n36" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#1F3864;" value="" vertex="1">
+      <mxGeometry height="12" width="22" x="10" y="34" as="geometry" />
+    </mxCell>
+    <mxCell id="n38" parent="n36" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" value="Cadre = nœud d&#39;exécution («appareil», «serveur», «service»)" vertex="1">
+      <mxGeometry height="16" width="414" x="38" y="32" as="geometry" />
+    </mxCell>
+    <mxCell id="n39" parent="n36" style="rounded=0;html=1;fillColor=#DEEBF7;strokeColor=#2E75B6;" value="" vertex="1">
+      <mxGeometry height="12" width="22" x="10" y="54" as="geometry" />
+    </mxCell>
+    <mxCell id="n40" parent="n36" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" value="Rectangle à ergots = composant déployé" vertex="1">
+      <mxGeometry height="16" width="414" x="38" y="52" as="geometry" />
+    </mxCell>
+    <mxCell id="n41" parent="n36" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#5A5A5A;dashed=1;dashPattern=8 4;" value="" vertex="1">
+      <mxGeometry height="12" width="22" x="10" y="74" as="geometry" />
+    </mxCell>
+    <mxCell id="n42" parent="n36" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" value="Pointillé = option à arbitrer avec Italia ou hors périmètre" vertex="1">
+      <mxGeometry height="16" width="414" x="38" y="72" as="geometry" />
+    </mxCell>
+    <mxCell id="n43" parent="n36" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#1F3864;" value="" vertex="1">
+      <mxGeometry height="12" width="22" x="10" y="94" as="geometry" />
+    </mxCell>
+    <mxCell id="n44" parent="n36" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#333333;fontFamily=Helvetica;" value="Trait épais = chemin de communication" vertex="1">
+      <mxGeometry height="16" width="414" x="38" y="92" as="geometry" />
+    </mxCell>
+    <mxCell id="n45" parent="1" style="shape=note;whiteSpace=wrap;html=1;size=14;fillColor=#FFFDE7;strokeColor=#B8A000;fontSize=11;fontColor=#4A3F00;align=left;verticalAlign=top;fontFamily=Helvetica;spacingLeft=6;spacingTop=2;spacingRight=6;" value="Critère de passage (§ 13.4) : le pilote réel ne démarre que si le cahier des charges est validé, si l&#39;accord écrit sur les données et l&#39;hébergement est obtenu, si le catalogue est importé, si un magasinier est désigné et si l&#39;état de référence a été relevé. Ce diagramme n&#39;est donc exécutable qu&#39;une fois ces cinq conditions réunies — aucune d&#39;elles ne l&#39;est au 20 octobre 2026." vertex="1">
+      <mxGeometry height="130" width="500" x="60" y="1000" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>
