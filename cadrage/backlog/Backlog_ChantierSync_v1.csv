@@ -1,0 +1,72 @@
+﻿Code,Titre,Type,Module,Priorité MoSCoW,Statut,Origine,Cas d'utilisation,Entité MCD,Règle RG liée,Profils,Estimation,Sprint,Dépendances,Arbitrage / notes
+EF-AUT-01,"EF-AUT-01 — Créer, modifier et désactiver un compte nominatif (identifiant, nom, fonction, équipe).",User story,AUT,M,À faire,Cahier v0.1,UC-4,Utilisateur,RG-D4,ADM,,,,
+EF-AUT-02,"EF-AUT-02 — Attribuer un ou plusieurs rôles à un utilisateur, chacun limité à un périmètre (chantier, magasin).",User story,AUT,M,À faire,Cahier v0.1,UC-4,AffectationRole,RG-D2;RG-D3,ADM,,,EF-AUT-01;EF-REF-01;EF-REF-02,
+EF-AUT-03,EF-AUT-03 — Connexion mobile par identifiant et code PIN ; déverrouillage local hors-ligne.,User story,AUT,M,À faire,Cahier v0.1,UC-4,SessionLocale,RG-D4,Tous mobiles,,,,
+EF-AUT-04,EF-AUT-04 — Connexion web par identifiant et mot de passe robuste ; verrouillage temporaire après échecs répétés.,User story,AUT,M,À arbitrer,Cahier v0.1,Aucun,Utilisateur,RG-D4,Tous web,,,,Non couverte (UC-4 cadre surtout le mobile). M au cahier. Reco : MVP — login web indispensable.
+EF-AUT-05,EF-AUT-05 — Authentification renforcée (deuxième facteur) pour l'administrateur et la direction.,User story,AUT,S,À arbitrer,Cahier v0.1,Aucun,Utilisateur,,"ADM, DIR",,,,Non couverte. Reco : phase 2.
+EF-AUT-06,"EF-AUT-06 — Révoquer un appareil ou désactiver un compte : blocage serveur immédiat, effacement des données locales à la reconnexion.",User story,AUT,M,À faire,Cahier v0.1,UC-4,Appareil,RG-D5,ADM,,,EF-AUT-01,
+EF-AUT-07,EF-AUT-07 — Appliquer la matrice de droits côté serveur à chaque requête.,Tâche technique,AUT,M,À faire,Cahier v0.1,UC-4,Permission / DroitAccorde,RG-D1,Système,,,EF-AUT-02,
+EF-AUT-08,"EF-AUT-08 — Consulter le journal d'audit (filtres : acteur, date, action).",User story,AUT,S,À faire,Cahier v0.1,UC-4,JournalAudit,RG-D9,"ADM, DIR",,,EF-AUT-07,
+EF-AUT-09,EF-AUT-09 — Réinitialiser un PIN ou un mot de passe (sans compte partagé).,User story,AUT,S,À arbitrer,Cahier v0.1,Aucun,Utilisateur,RG-D4,ADM,,,EF-AUT-01,Non couverte. Reco : MVP léger (besoin opérationnel) ou phase 2.
+EF-AUT-10,EF-AUT-10 — Expiration automatique de la session locale après 14 jours sans synchronisation réussie ; re-authentification en ligne obligatoire.,Tâche technique,AUT,M,À faire,Créée (backlog),Aucun,SessionLocale,RG-D5,"Système, Mobile",,,EF-AUT-03,"Créée pour couvrir la décision « verrou de session locale à 14 jours » (ET-4, corrige H17). [Hypothèse : priorité MoSCoW et profils proposés — absents du cahier v0.1.]"
+EF-REF-01,"EF-REF-01 — Gérer chantiers, zones ou bâtiments et logements (création, import CSV).",User story,REF,M,À faire,Cahier v0.1,UC-3,Chantier / Zone / Logement,RG-D2,"ADM, RTC",,,,
+EF-REF-02,"EF-REF-02 — Gérer les magasins, rattachés à un chantier.",User story,REF,M,À faire,Cahier v0.1,UC-3,Magasin,,"ADM, GST",,,EF-REF-01,
+EF-REF-03,"EF-REF-03 — Gérer le catalogue d'articles (code, désignation, catégorie, unité, origine interne ou importée) ; import CSV.",User story,REF,M,À faire,Cahier v0.1,UC-1,Article,RG-S1,"GST, ADM",,,,
+EF-REF-04,EF-REF-04 — Gérer les unités de conditionnement et leurs conversions.,User story,REF,S,À faire,Cahier v0.1,UC-3,Conditionnement / UniteMesure,RG-S1,GST,,,,
+EF-REF-05,"EF-REF-05 — Gérer les corps d'état et les gammes de travaux (étapes-modèles par type de logement, ordre, poids, contrôle requis).",User story,REF,M,À faire,Cahier v0.1,UC-3,Gamme / EtapeModele / CorpsEtat,RG-A1,RTC,,,EF-REF-01,
+EF-REF-06,EF-REF-06 — Gérer les équipes et le rattachement des techniciens.,User story,REF,S,À faire,Cahier v0.1,UC-3,Equipe,,"ADM, CCH",,,,
+EF-REF-07,EF-REF-07 — Paramétrer un chantier.,User story,REF,M,À faire,Nouvelle (modélisation),UC-3,ParametreChantier,,"ADM, RTC",,,,[Hypothèse : priorité MoSCoW et profils proposés — absents du cahier v0.1.]
+EF-REF-08,EF-REF-08 — Définir les règles de validation.,User story,REF,M,À faire,Nouvelle (modélisation),UC-3,RegleValidation,RG-A4;RG-S6,"ADM, RTC",,,EF-REF-05,[Hypothèse : priorité MoSCoW et profils proposés — absents du cahier v0.1.]
+EF-REF-09,EF-REF-09 — Publier une version de gamme de travaux.,User story,REF,M,À faire,Nouvelle (modélisation),UC-3,Gamme,RG-A1,RTC,,,EF-REF-05,[Hypothèse : priorité MoSCoW et profils proposés — absents du cahier v0.1.]
+EF-REF-10,EF-REF-10 — Importer un référentiel en CSV.,User story,REF,S,À faire,Nouvelle (modélisation),UC-3,Référentiels (multi-entités),,ADM,,,,[Hypothèse : priorité MoSCoW et profils proposés — absents du cahier v0.1.]
+EF-STK-01,"EF-STK-01 — Enregistrer une sortie (article, quantité, destination logement et corps d'état, bénéficiaire) en 30 secondes ou moins.",User story,STK,M,À faire,Cahier v0.1,UC-1,MouvementStock,RG-S4,"MAG, GST",,,EF-REF-03;EF-REF-01,
+EF-STK-02,EF-STK-02 — Enregistrer une réception avec référence de bon de livraison ou de conteneur (texte libre).,User story,STK,M,À faire,Cahier v0.1,UC-1,MouvementStock,RG-S3,"MAG, GST",,,EF-REF-03,
+EF-STK-03,EF-STK-03 — Enregistrer un retour au magasin et une perte ou casse (motif obligatoire).,User story,STK,M,À faire,Cahier v0.1,UC-1,MouvementStock,RG-S3,"MAG, GST",,,EF-REF-03,
+EF-STK-04,EF-STK-04 — Enregistrer un transfert entre deux magasins.,User story,STK,S,À arbitrer,Cahier v0.1,Aucun,MouvementStock,RG-S3,"MAG, GST",,,,Non couverte. Hors pilote mono-magasin. Reco : phase 2.
+EF-STK-05,"EF-STK-05 — Consulter le stock par magasin et par article, y compris hors-ligne (dernier état connu + mouvements locaux, horodaté).",User story,STK,M,À faire,Cahier v0.1,UC-1,StockCourant,RG-Y3,"MAG, CCH, GST",,,EF-SYN-01;EF-SYN-04,
+EF-STK-06,EF-STK-06 — Définir les seuils minimal et critique par article et par magasin.,User story,STK,M,À faire,Cahier v0.1,UC-1,SeuilStock,RG-S5,GST,,,,
+EF-STK-07,EF-STK-07 — Afficher les alertes de seuil dans l'application et sur le tableau de bord.,User story,STK,M,À faire,Cahier v0.1,UC-4,Alerte,RG-S5,"MAG, GST, DIR",,,EF-STK-06,
+EF-STK-08,"EF-STK-08 — Inventaire : saisir un comptage, calculer les écarts, ajuster après validation.",User story,STK,M,À faire,Cahier v0.1,UC-1,Inventaire,RG-S9,"MAG, GST",,,,
+EF-STK-09,EF-STK-09 — Valider ou refuser les sorties soumises à validation (RG-S6).,User story,STK,M,À faire,Cahier v0.1,UC-1,EvenementValidation,RG-S6;RG-D8,"CCH, RTC, GST",,,EF-STK-01;EF-REF-08,
+EF-STK-10,"EF-STK-10 — Consulter l'historique des mouvements, filtrable par article, période, destination et auteur.",User story,STK,M,À faire,Cahier v0.1,UC-1,MouvementStock,RG-S8,"GST, CCH, DIR",,,,
+EF-STK-11,EF-STK-11 — Annuler un mouvement par contre-mouvement ; aucune suppression.,User story,STK,M,À faire,Cahier v0.1,UC-1,MouvementStock,RG-S8,"MAG, GST",,,,
+EF-STK-12,EF-STK-12 — Scanner un code-barres ou QR code d'article avec la caméra.,User story,STK,S,À faire,Cahier v0.1,UC-1,Article,,MAG,,,,
+EF-STK-13,EF-STK-13 — Exporter le stock et les mouvements en CSV (pour Primus ou Excel).,User story,STK,S,À faire,Cahier v0.1,UC-1;UC-5,MouvementStock,,"GST, ADF",,,,
+EF-STK-14,EF-STK-14 — Joindre une photo à une réception (bon de livraison).,User story,STK,C,À arbitrer,Cahier v0.1,Aucun,MouvementStock,,MAG,,,,Non couverte. Reco : phase 2.
+EF-STK-15,EF-STK-15 — Prévoir la rupture (couverture en jours) à partir des consommations observées.,User story,STK,C,À faire,Cahier v0.1,UC-1,StockCourant,RG-S5,GST,,,,
+EF-STK-16,EF-STK-16 — Valider un écart d'inventaire.,User story,STK,M,À faire,Nouvelle (modélisation),UC-1,LigneInventaire / EvenementValidation,RG-S9;RG-D8,"GST, CCH",,,EF-STK-08,[Hypothèse : priorité MoSCoW et profils proposés — absents du cahier v0.1.]
+EF-AVA-01,EF-AVA-01 — Générer les étapes d'un logement à partir de la gamme de son type.,Tâche technique,AVA,M,À arbitrer,Cahier v0.1,Aucun,EtapeTravaux,RG-A1,Système,,,EF-REF-05;EF-REF-01,Non couverte (déclencheur système automatique). M. Reco : MVP — socle des fiches de route.
+EF-AVA-02,"EF-AVA-02 — Affecter une étape ou un lot d'étapes à un technicien, avec date prévue ; réaffecter avec trace.",User story,AVA,M,À faire,Cahier v0.1,UC-2,EtapeTravaux,RG-A3,"RTC, CCH",,,EF-AVA-01,
+EF-AVA-03,"EF-AVA-03 — Afficher sur mobile la fiche de route du technicien : liste ordonnée des étapes de son cycle, avec statut.",User story,AVA,M,À faire,Cahier v0.1,UC-2,FicheRoute,RG-A7;RG-A3,TEC,,,EF-AVA-01;EF-AVA-02,
+EF-AVA-04,"EF-AVA-04 — Cocher une étape terminée en deux actions au plus, hors-ligne, avec horodatage et auteur.",User story,AVA,M,À faire,Cahier v0.1,UC-2,EvenementExecution,RG-A5;RG-A2,"TEC, CCH",,,EF-AVA-03,
+EF-AVA-05,EF-AVA-05 — Déclarer une étape bloquée avec motif (liste) ; motif « manque de matériel » lié à un article.,User story,AVA,M,À faire,Cahier v0.1,UC-2,EvenementExecution / MotifBlocage,RG-A10;RG-A8,"TEC, CCH",,,EF-AVA-03,
+EF-AVA-06,"EF-AVA-06 — Valider ou rejeter, avec motif, les étapes à contrôle.",User story,AVA,M,À faire,Cahier v0.1,UC-2,EvenementExecution,RG-A4;RG-D8,"CCH, RTC",,,EF-AVA-04;EF-REF-08,
+EF-AVA-07,"EF-AVA-07 — Déclarer pour le compte d'un technicien (délégation), visible comme telle.",User story,AVA,M,À faire,Cahier v0.1,UC-2,EvenementExecution,RG-A9,"TEC (équipe), CCH",,,,
+EF-AVA-08,"EF-AVA-08 — Clôturer la fiche de route en fin de cycle, avec report motivé des étapes non faites.",User story,AVA,S,À faire,Cahier v0.1,UC-2,FicheRoute,RG-A7,"TEC, CCH",,,EF-AVA-03,
+EF-AVA-09,EF-AVA-09 — Alerter sur les étapes en retard (date prévue dépassée).,User story,AVA,S,À faire,Cahier v0.1,UC-4,EtapeTravaux,RG-A8,"CCH, RTC",,,EF-AVA-02,
+EF-AVA-10,EF-AVA-10 — Consulter l'historique complet d'une étape (tous ses événements).,User story,AVA,M,À faire,Cahier v0.1,UC-2,EvenementExecution,RG-A5,"CCH, RTC, DIR",,,,
+EF-AVA-11,EF-AVA-11 — Ajouter un commentaire et une photo à une étape.,User story,AVA,C,À faire,Cahier v0.1,UC-2,EvenementExecution,,"TEC, CCH",,,,
+EF-AVA-12,EF-AVA-12 — Géolocaliser la déclaration (avec information de l'utilisateur).,User story,AVA,C,À arbitrer,Cahier v0.1,Aucun,EvenementExecution,,TEC,,,,Non couverte. Reco : phase 2 / abandon.
+EF-DSH-01,"EF-DSH-01 — Vue globale de l'avancement par chantier, zone et logement (% pondéré, déclaré et validé).",User story,DSH,M,À faire,Cahier v0.1,UC-5,AvancementAgrege,RG-A6,"DIR, RTC, CCH, COM",,,EF-AVA-04,
+EF-DSH-02,"EF-DSH-02 — Détail par corps d'état (maçonnerie, plomberie, carrelage…) avec le % et la liste des étapes.",User story,DSH,M,À faire,Cahier v0.1,UC-5,AvancementAgrege,RG-A6,"DIR, RTC, CCH",,,EF-AVA-04,
+EF-DSH-03,"EF-DSH-03 — Journal d'exécution : quels travaux, à quelle date, par quels intervenants (noms), filtrable.",User story,DSH,M,À faire,Cahier v0.1,UC-5,EvenementExecution,RG-A5,"DIR, RTC, CCH",,,EF-AVA-04,
+EF-DSH-04,"EF-DSH-04 — Vue stock : niveaux, alertes, mouvements récents, dernière synchronisation par appareil.",User story,DSH,M,À faire,Cahier v0.1,UC-5,StockCourant,RG-S5;RG-Y7,"DIR, RTC, GST, CCH",,,EF-STK-05,
+EF-DSH-05,EF-DSH-05 — Vue des retards et des blocages (étapes bloquées et motifs).,User story,DSH,S,À faire,Cahier v0.1,UC-2;UC-5,EtapeTravaux,RG-A8,"RTC, CCH",,,EF-AVA-05,
+EF-DSH-06,EF-DSH-06 — Rapport hebdomadaire exportable (PDF ou CSV) pour la réunion des associés.,User story,DSH,S,À faire,Cahier v0.1,UC-5,AvancementAgrege,,"DIR, RTC",,,,
+EF-DSH-07,"EF-DSH-07 — Indicateurs d'usage du pilote (mouvements saisis, taux de synchronisation, écarts).",User story,DSH,S,À faire,Cahier v0.1,UC-5,Appareil / LotSynchronisation,,ADM,,,,
+EF-DSH-08,"EF-DSH-08 — Consommation réelle de matériaux par logement et corps d'état, comparée au prévisionnel.",User story,DSH,C,À arbitrer,Cahier v0.1,Aucun,MouvementStock,,"RTC, GST",,,EF-STK-01;EF-AVA-04,Non couverte. Reco : phase 2.
+EF-SYN-01,"EF-SYN-01 — Fonctionnement complet hors-ligne pour le stock et les fiches de route (saisie, consultation des données déjà téléchargées).",Tâche technique,SYN,M,À faire,Cahier v0.1,UC-4,FileEnvoi,RG-Y3,Mobile,,,,
+EF-SYN-02,EF-SYN-02 — File d'envoi persistante ; reprise automatique ; envoi idempotent.,Tâche technique,SYN,M,À faire,Cahier v0.1,UC-4,FileEnvoi,RG-Y1;RG-Y2,Mobile,,,EF-SYN-01,
+EF-SYN-03,"EF-SYN-03 — Indicateur visible de l'état de synchronisation (à jour, en attente de n éléments, erreur).",Tâche technique,SYN,M,À arbitrer,Cahier v0.1,Aucun,FileEnvoi,RG-Y7,Mobile,,,EF-SYN-02,"Non couverte. M, mobile. Reco : MVP."
+EF-SYN-04,EF-SYN-04 — Téléchargement incrémental des données de référence et des affectations.,Tâche technique,SYN,M,À arbitrer,Cahier v0.1,Aucun,CurseurReference,RG-Y5,Mobile,,,,"Non couverte. M, mobile. Reco : MVP — socle hors-ligne."
+EF-SYN-05,"EF-SYN-05 — Détection et signalement des anomalies (stock négatif, dérive d'horloge, conflit).",Tâche technique,SYN,S,À arbitrer,Cahier v0.1,Aucun,AnomalieSynchronisation,RG-S7;RG-S11,"GST, CCH",,,,Non couverte. Reco : MVP (stock négatif / dérive d'horloge à signaler).
+EF-SYN-06,EF-SYN-06 — Rejet motivé d'un événement invalide sans bloquer les autres.,Tâche technique,SYN,M,À arbitrer,Cahier v0.1,Aucun,ResultatEvenement,RG-Y6,Système,,,EF-SYN-02,"Non couverte. M, système. Reco : MVP — robustesse synchronisation."
+EF-ADM-01,EF-ADM-01 — Sauvegarde automatique chiffrée et procédure de restauration testée.,Tâche technique,ADM,M,À faire,Cahier v0.1,UC-4,— (infrastructure),,ADM,,,,
+EF-ADM-02,"EF-ADM-02 — Import initial CSV (articles, stock de départ, logements).",User story,ADM,M,À faire,Cahier v0.1,UC-4,Référentiels (import initial),,"ADM, GST",,,,
+EF-ADM-03,"EF-ADM-03 — Supervision des appareils (dernière synchronisation, version de l'application).",User story,ADM,S,À faire,Cahier v0.1,UC-4,Appareil,RG-Y7,ADM,,,,
+EF-ADM-04,EF-ADM-04 — Exiger une version minimale de l'application.,User story,ADM,S,À arbitrer,Cahier v0.1,Aucun,Appareil,,ADM,,,,Non couverte. Reco : phase 2.
+EF-NOT-01,"EF-NOT-01 — Notifications dans l'application (seuils, sorties à valider, étapes rejetées).",User story,NOT,S,À faire,Cahier v0.1,UC-5,Notification,,Concernés,,,EF-STK-07,
+EF-NOT-02,EF-NOT-02 — Notifications push.,User story,NOT,C,À faire,Cahier v0.1,UC-5,Notification / AbonnementNotification,,Concernés,,,,
+EF-ACQ-01,"EF-ACQ-01 — Portail acquéreur en lecture seule : grandes étapes, dates clés, photos validées [H1].",User story,ACQ,W,À faire,Cahier v0.1,UC-5,Acquereur,RG-D10,ACQ,,,,
+EF-ACQ-02,EF-ACQ-02 — Notification à l'acquéreur à chaque étape franchie.,User story,ACQ,W,À faire,Cahier v0.1,UC-5,Notification / Acquereur,RG-D10,ACQ,,,EF-ACQ-01,
+EF-ACQ-03,EF-ACQ-03 — Canal de questions de l'acquéreur vers le commercial (à cadrer).,User story,ACQ,W,À arbitrer,Cahier v0.1,Aucun,Acquereur,RG-D10,"ACQ, COM",,,,Non couverte. Module acquéreur (W) reporté. Reco : phase 2.
