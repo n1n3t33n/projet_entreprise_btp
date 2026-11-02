@@ -1,0 +1,59 @@
+# ==========================================================================================================================
+#  couvre le backend Django, frontend web (Node/Vite), frontend mobile (Flutter), environnement Python et fichiers système.
+# ==========================================================================================================================
+
+# --- Environnements Python / Django (backend, venv) ---
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+db.sqlite3
+db.sqlite3-journal
+/backend/staticfiles/
+/backend/media/
+celerybeat-schedule
+
+# --- Frontend web (Node / Vite / React) ---
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.tsbuildinfo
+*.local
+
+# --- Frontend mobile (Flutter) ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+.pub-cache/
+.pub/
+*.iml
+
+# --- Variables d'environnement (tous sous-projets) ---
+.env
+.env.*
+!.env.example
+
+# --- Journaux ---
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# --- Éditeurs et système d'exploitation ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
