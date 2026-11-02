@@ -1,0 +1,38 @@
+# Normalisation des fins de ligne : stockage en LF dans le dépôt,
+# cohérent entre Windows, Linux et macOS. Supprime les avertissements LF/CRLF.
+* text=auto
+
+# Sources explicitement en LF (fin de ligne unique partout)
+*.ts    text eol=lf
+*.tsx   text eol=lf
+*.js    text eol=lf
+*.jsx   text eol=lf
+*.mjs   text eol=lf
+*.cjs   text eol=lf
+*.json  text eol=lf
+*.css   text eol=lf
+*.html  text eol=lf
+*.md    text eol=lf
+*.py    text eol=lf
+*.dart  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.svg   text eol=lf
+*.xml   text eol=lf
+*.drawio text eol=lf
+
+# Fichiers binaires : aucune conversion
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.webp  binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.pdf   binary
+*.docx  binary
+*.xlsx  binary
+*.pptx  binary
