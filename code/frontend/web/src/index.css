@@ -1,1 +1,51 @@
 @import 'tailwindcss';
+
+/*
+  Jetons de la charte graphique Schiavone.
+  Source de vérité du style : les composants consomment ces jetons,
+  aucune valeur de couleur, de rayon ou d'ombre n'est réécrite en dur.
+*/
+@theme {
+  /* Couleurs de marque */
+  --color-marine: #002e5e;
+  --color-sarcelle: #1f7fa8;
+  --color-or: #8a6508;
+  --color-or-clair: #fbf1cf;
+  --color-or-vif: #f6df94;
+
+  /* Fonds et surfaces */
+  --color-fond: #f3f8fc;
+  --color-fond-alt: #eaf6fc;
+  --color-surface: #ffffff;
+
+  /* Textes */
+  --color-texte: #2b3a4a;
+  --color-texte-secondaire: #5a6572;
+  --color-texte-attenue: #9aa5b1;
+
+  /* États */
+  --color-succes: #2e7d32;
+  --color-danger: #c0392b;
+
+  /* Bordures */
+  --color-bordure: #e3edf5;
+
+  /* Rayons d'angle */
+  --radius-carte: 1rem; /* 16px — cartes */
+  --radius-controle: 0.75rem; /* 12px — boutons, champs */
+
+  /* Ombres */
+  --shadow-douce: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-levee: 0 8px 24px rgba(0, 46, 94, 0.12);
+
+  /* Typographie */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-texte);
+    background-color: var(--color-fond);
+  }
+}
