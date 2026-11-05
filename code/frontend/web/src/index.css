@@ -40,6 +40,133 @@
 
   /* Typographie */
   --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /*
+    Animations de la charte. Chaque jeton produit une classe utilitaire
+    (« animate-cascade », « animate-tiroir-entree », …) et ne déplace
+    que « transform » et « opacity », les deux seules propriétés que le
+    navigateur peut animer sans recalculer la mise en page.
+  */
+  --animate-cascade: cascade var(--duree-cascade) var(--courbe-entree) both;
+  --animate-voile-entree: voile-entree var(--duree-modale) var(--courbe-entree) both;
+  --animate-voile-sortie: voile-sortie var(--duree-sortie) var(--courbe-sortie) both;
+  --animate-modale-entree: modale-entree var(--duree-modale) var(--courbe-entree) both;
+  --animate-modale-sortie: modale-sortie var(--duree-sortie) var(--courbe-sortie) both;
+  --animate-tiroir-entree: tiroir-entree var(--duree-tiroir) var(--courbe-entree) both;
+  --animate-tiroir-sortie: tiroir-sortie var(--duree-sortie) var(--courbe-sortie) both;
+  --animate-toast-entree: toast-entree var(--duree-cascade) var(--courbe-entree) both;
+  --animate-toast-sortie: toast-sortie var(--duree-sortie) var(--courbe-sortie) both;
+}
+
+/*
+  Durées et courbes de mouvement.
+  Déclarées hors du bloc @theme pour rester disponibles telles quelles
+  dans les valeurs arbitraires des composants (« duration-[var(--duree-bouton)] »).
+  Toute modification ici doit être reportée dans les constantes de
+  « src/components/ui/motion.ts », que le code JavaScript utilise pour
+  démonter les panneaux au bon moment.
+*/
+:root {
+  --duree-bouton: 160ms; /* retour tactile immédiat d'un contrôle */
+  --duree-survol: 240ms; /* survol, changement d'état d'une surface */
+  --duree-cascade: 200ms; /* entrée en cascade d'une liste de blocs */
+  --duree-tiroir: 240ms; /* glissement du tiroir latéral */
+  --duree-modale: 200ms; /* fondu et léger agrandissement d'une modale */
+  --duree-sortie: 140ms; /* une sortie est plus rapide qu'une entrée */
+
+  --courbe-entree: cubic-bezier(0.16, 1, 0.3, 1); /* décélère à l'arrivée */
+  --courbe-sortie: cubic-bezier(0.4, 0, 1, 1); /* accélère au départ */
+}
+
+@keyframes cascade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes voile-entree {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes voile-sortie {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modale-entree {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modale-sortie {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes tiroir-entree {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes tiroir-sortie {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes toast-entree {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-sortie {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(16px);
+  }
 }
 
 @layer base {
