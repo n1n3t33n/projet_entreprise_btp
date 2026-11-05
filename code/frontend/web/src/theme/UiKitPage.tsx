@@ -12,6 +12,7 @@ import {
   Trash,
   Users,
   Warehouse,
+  Warning,
   WarningOctagon,
 } from '@phosphor-icons/react'
 import { useState, type ReactNode } from 'react'
@@ -38,6 +39,8 @@ import {
   type NoeudArbre,
   type TonStatut,
 } from '@/components/ui'
+import { PARAMETRES_PAR_DEFAUT, resoudreSeuilConfort } from '@/config/parametres'
+import { calculerNiveauSeuil, declencheAlerte, type NiveauSeuil } from '@/lib/seuils'
 
 /*
   Données d'exemple.
@@ -56,6 +59,7 @@ type ArticleExemple = {
   unite: string
   stock: number
   seuilMini: number
+  seuilConfort: number | null
   capacite: number
   statut: { libelle: string; ton: TonStatut }
 }
@@ -69,6 +73,7 @@ const articles: ArticleExemple[] = [
     unite: 'sac',
     stock: 18,
     seuilMini: 40,
+    seuilConfort: 90,
     capacite: 200,
     statut: { libelle: 'À réapprovisionner', ton: 'alerte' },
   },
@@ -80,6 +85,7 @@ const articles: ArticleExemple[] = [
     unite: 'barre',
     stock: 310,
     seuilMini: 120,
+    seuilConfort: 260,
     capacite: 400,
     statut: { libelle: 'Disponible', ton: 'succes' },
   },
@@ -91,6 +97,7 @@ const articles: ArticleExemple[] = [
     unite: 'm³',
     stock: 0,
     seuilMini: 15,
+    seuilConfort: 35,
     capacite: 60,
     statut: { libelle: 'Rupture', ton: 'danger' },
   },
@@ -102,6 +109,7 @@ const articles: ArticleExemple[] = [
     unite: 'pot',
     stock: 46,
     seuilMini: 20,
+    seuilConfort: 45,
     capacite: 80,
     statut: { libelle: 'Disponible', ton: 'succes' },
   },
@@ -111,10 +119,11 @@ const articles: ArticleExemple[] = [
     designation: 'Carreaux grès 60 × 60',
     magasin: 'Magasin finitions',
     unite: 'boîte',
-    stock: -4,
+    stock: 0,
     seuilMini: 25,
+    seuilConfort: null,
     capacite: 150,
-    statut: { libelle: 'Écart de saisie', ton: 'danger' },
+    statut: { libelle: 'Rupture', ton: 'danger' },
   },
   {
     id: 'a-006',
@@ -124,6 +133,7 @@ const articles: ArticleExemple[] = [
     unite: 'barre',
     stock: 52,
     seuilMini: 30,
+    seuilConfort: 70,
     capacite: 120,
     statut: { libelle: 'Disponible', ton: 'succes' },
   },
@@ -135,6 +145,7 @@ const articles: ArticleExemple[] = [
     unite: 'm³',
     stock: 9,
     seuilMini: 20,
+    seuilConfort: 45,
     capacite: 80,
     statut: { libelle: 'À réapprovisionner', ton: 'alerte' },
   },
@@ -146,6 +157,7 @@ const articles: ArticleExemple[] = [
     unite: 'sac',
     stock: 74,
     seuilMini: 25,
+    seuilConfort: 55,
     capacite: 90,
     statut: { libelle: 'Disponible', ton: 'succes' },
   },
@@ -194,6 +206,7 @@ const colonnesArticles: ColonneTable<ArticleExemple>[] = [
       <ThresholdGauge
         valeur={ligne.stock}
         seuilMini={ligne.seuilMini}
+        seuilConfort={resoudreSeuilConfort(ligne.seuilMini, ligne.seuilConfort)}
         capacite={ligne.capacite}
         unite={ligne.unite}
         afficherValeurs={false}
@@ -254,6 +267,24 @@ const arborescenceMagasins: NoeudArbre[] = [
   },
 ]
 
+/*
+  Niveaux déduits des seuils, exactement comme le fera le module stock : le
+  seuil de confort vient du référentiel quand l'article le porte, sinon des
+  paramètres de l'application. Aucun comptage n'est saisi à la main.
+*/
+const niveauxArticles = articles.map((article) =>
+  calculerNiveauSeuil({
+    valeur: article.stock,
+    seuilMini: article.seuilMini,
+    seuilConfort: resoudreSeuilConfort(article.seuilMini, article.seuilConfort),
+  }),
+)
+
+const compterNiveau = (niveau: NiveauSeuil) =>
+  niveauxArticles.filter((element) => element === niveau).length
+
+const articlesEnAlerte = niveauxArticles.filter(declencheAlerte).length
+
 const tonsStatut: { ton: TonStatut; libelle: string }[] = [
   { ton: 'neutre', libelle: 'À faire' },
   { ton: 'information', libelle: 'En cours' },
@@ -263,11 +294,10 @@ const tonsStatut: { ton: TonStatut; libelle: string }[] = [
 ]
 
 const casSeuil = [
-  { titre: 'Stock plein', valeur: 180, seuilMini: 40, capacite: 200 },
-  { titre: 'Au-dessus du mini', valeur: 70, seuilMini: 40, capacite: 200 },
-  { titre: 'Sous le seuil mini', valeur: 18, seuilMini: 40, capacite: 200 },
-  { titre: 'Rupture', valeur: 0, seuilMini: 40, capacite: 200 },
-  { titre: 'Écart de saisie', valeur: -4, seuilMini: 40, capacite: 200 },
+  { titre: 'Stock confortable', valeur: 180, seuilMini: 40, seuilConfort: 90, capacite: 200 },
+  { titre: 'Seuil d’alerte atteint', valeur: 70, seuilMini: 40, seuilConfort: 90, capacite: 200 },
+  { titre: 'Sous le seuil d’alerte', valeur: 18, seuilMini: 40, seuilConfort: 90, capacite: 200 },
+  { titre: 'Rupture', valeur: 0, seuilMini: 40, seuilConfort: 90, capacite: 200 },
 ]
 
 function Section({
@@ -436,7 +466,7 @@ function ContenuUiKit() {
 
         <Section
           titre="Jauges de seuil"
-          description="Quatre niveaux nominaux et un cinquième affichage réservé aux stocks calculés négatifs, qui signalent un écart entre entrées et sorties."
+          description="Quatre niveaux : plein tant que le stock reste confortable, mini dès que le seuil d'alerte est atteint, critique en dessous, vide à l'épuisement. Les rappels se déclenchent à partir du niveau mini et se resserrent à mesure que le stock descend."
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {casSeuil.map((cas) => (
@@ -444,6 +474,7 @@ function ContenuUiKit() {
                 <ThresholdGauge
                   valeur={cas.valeur}
                   seuilMini={cas.seuilMini}
+                  seuilConfort={cas.seuilConfort}
                   capacite={cas.capacite}
                   unite="sac"
                 />
@@ -654,7 +685,13 @@ function ContenuUiKit() {
             }
           >
             <div className="space-y-5">
-              <ThresholdGauge valeur={18} seuilMini={40} capacite={200} unite="sac" />
+              <ThresholdGauge
+                valeur={18}
+                seuilMini={40}
+                seuilConfort={90}
+                capacite={200}
+                unite="sac"
+              />
               <FormField libelle="Seuil minimum" aide="Déclenche l'alerte de réapprovisionnement.">
                 {(champ) => <Input {...champ} type="number" defaultValue={40} />}
               </FormField>
@@ -791,15 +828,25 @@ function ContenuUiKit() {
                 <>
                   <KpiCard libelle="Références suivies" valeur={articles.length} icone={Package} />
                   <KpiCard
-                    libelle="Sous le seuil mini"
-                    valeur={2}
-                    icone={WarningOctagon}
+                    libelle="En alerte"
+                    valeur={articlesEnAlerte}
+                    icone={Warning}
                     accent="or"
                     tendanceSouhaitee="baisse"
-                    variation={-33.3}
+                    variation={-16.7}
                   />
-                  <KpiCard libelle="En rupture" valeur={1} icone={WarningOctagon} accent="danger" />
-                  <KpiCard libelle="Écarts de saisie" valeur={1} icone={Stack} accent="marine" />
+                  <KpiCard
+                    libelle="Sous le seuil d'alerte"
+                    valeur={compterNiveau('critique')}
+                    icone={WarningOctagon}
+                    accent="or"
+                  />
+                  <KpiCard
+                    libelle="En rupture"
+                    valeur={compterNiveau('vide')}
+                    icone={WarningOctagon}
+                    accent="danger"
+                  />
                 </>
               }
               filtres={
@@ -829,7 +876,7 @@ function ContenuUiKit() {
 
 export function UiKitPage() {
   return (
-    <ToastProvider>
+    <ToastProvider dureeParDefautMs={PARAMETRES_PAR_DEFAUT.notifications.dureeToastMs}>
       <ContenuUiKit />
     </ToastProvider>
   )

@@ -8,12 +8,22 @@ import {
   type ToastEnregistre,
 } from '@/components/ui/toast-context'
 
-const DUREE_PAR_DEFAUT_MS = 5000
+export type ToastProviderProps = {
+  children: ReactNode
+  /**
+   * Durée d'affichage appliquée aux notifications qui n'en précisent pas.
+   *
+   * Obligatoire et fournie par l'appelant : la valeur est un réglage
+   * d'exploitation, déclaré dans `config/parametres.ts`, et n'a pas à être
+   * écrite dans ce composant.
+   */
+  dureeParDefautMs: number
+}
 
 /** Compteur de module : garantit un identifiant unique sans dépendance externe. */
 let compteurToast = 0
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+export function ToastProvider({ children, dureeParDefautMs }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastEnregistre[]>([])
   const [sortants, setSortants] = useState<string[]>([])
   const minuteurs = useRef<Map<string, number>>(new Map())
@@ -54,7 +64,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
       setToasts((liste) => [...liste, { ...options, id }])
 
-      const duree = options.dureeMs ?? DUREE_PAR_DEFAUT_MS
+      const duree = options.dureeMs ?? dureeParDefautMs
       if (duree > 0) {
         minuteurs.current.set(
           id,
@@ -64,7 +74,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
       return id
     },
-    [fermerToast],
+    [dureeParDefautMs, fermerToast],
   )
 
   // Un démontage pendant qu'une notification est encore affichée laisserait des

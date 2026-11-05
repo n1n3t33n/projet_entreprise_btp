@@ -1,18 +1,11 @@
-import {
-  CheckCircle,
-  Gauge,
-  type Icon,
-  Prohibit,
-  Warning,
-  WarningOctagon,
-} from '@phosphor-icons/react'
+import { CheckCircle, Gauge, type Icon, Warning, WarningOctagon } from '@phosphor-icons/react'
+import { cn } from '@/lib/cn'
 import {
   calculerNiveauSeuil,
   referenceRemplissage,
   type NiveauSeuil,
   type ParametresSeuil,
-} from '@/components/ui/seuils'
-import { cn } from '@/lib/cn'
+} from '@/lib/seuils'
 
 export type ThresholdGaugeProps = ParametresSeuil & {
   /** Unité de la quantité, par exemple « sac » ou « m³ ». */
@@ -30,7 +23,6 @@ export type ThresholdGaugeProps = ParametresSeuil & {
 }
 
 const LIBELLE_PAR_NIVEAU: Record<NiveauSeuil, string> = {
-  negatif: 'Stock négatif signalé',
   vide: 'Vide',
   critique: 'Critique',
   mini: 'Mini',
@@ -38,7 +30,6 @@ const LIBELLE_PAR_NIVEAU: Record<NiveauSeuil, string> = {
 }
 
 const ICONE_PAR_NIVEAU: Record<NiveauSeuil, Icon> = {
-  negatif: Prohibit,
   vide: WarningOctagon,
   critique: Warning,
   mini: Gauge,
@@ -46,7 +37,6 @@ const ICONE_PAR_NIVEAU: Record<NiveauSeuil, Icon> = {
 }
 
 const TEXTE_PAR_NIVEAU: Record<NiveauSeuil, string> = {
-  negatif: 'text-danger',
   vide: 'text-danger',
   critique: 'text-or',
   mini: 'text-sarcelle',
@@ -54,7 +44,6 @@ const TEXTE_PAR_NIVEAU: Record<NiveauSeuil, string> = {
 }
 
 const REMPLISSAGE_PAR_NIVEAU: Record<NiveauSeuil, string> = {
-  negatif: 'bg-danger',
   vide: 'bg-danger',
   critique: 'bg-or',
   mini: 'bg-sarcelle',
@@ -76,10 +65,10 @@ export function ThresholdGauge({
   const niveauEffectif = niveau ?? calculerNiveauSeuil(parametres)
 
   const reference = referenceRemplissage(parametres)
-  const proportion =
-    niveauEffectif === 'negatif' || reference <= 0
-      ? 0
-      : Math.min(1, Math.max(0, valeur / reference))
+  // Une quantité négative ne peut venir que d'un écart de données : elle est
+  // ramenée à zéro, comme le niveau l'est à « vide ».
+  const quantiteAffichee = Math.max(0, valeur)
+  const proportion = reference <= 0 ? 0 : Math.min(1, quantiteAffichee / reference)
 
   const Icone = ICONE_PAR_NIVEAU[niveauEffectif]
   const libelle = LIBELLE_PAR_NIVEAU[niveauEffectif]
@@ -102,8 +91,8 @@ export function ThresholdGauge({
         aria-label={`Niveau de stock : ${libelle}`}
         aria-valuemin={0}
         aria-valuemax={reference}
-        aria-valuenow={Math.max(0, valeur)}
-        aria-valuetext={`${valeur}${unite ? ` ${unite}` : ''} — ${libelle}`}
+        aria-valuenow={quantiteAffichee}
+        aria-valuetext={`${quantiteAffichee}${unite ? ` ${unite}` : ''} — ${libelle}`}
         className={cn(
           'w-full overflow-hidden rounded-full bg-bordure',
           taille === 'sm' ? 'h-1.5' : 'h-2',
@@ -125,8 +114,8 @@ export function ThresholdGauge({
 
       {afficherValeurs && (
         <p className="text-xs text-texte-secondaire">
-          {valeur}
-          {unite ? ` ${unite}` : ''} · seuil mini {seuilMini}
+          {quantiteAffichee}
+          {unite ? ` ${unite}` : ''} · alerte à {seuilMini} · confort à {seuilConfort}
           {capacite !== undefined ? ` · capacité ${capacite}` : ''}
         </p>
       )}
