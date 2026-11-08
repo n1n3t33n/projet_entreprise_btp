@@ -2,11 +2,12 @@ import { SignOut, UserCircle } from '@phosphor-icons/react'
 import { NavLink } from 'react-router-dom'
 import { ROLES, useRole } from '@/app/role-context'
 import { Logo } from '@/components/ui/Logo'
-import { navigation } from '@/config/navigation'
+import { useDroits } from '@/app/droits-context'
 
 export function Sidebar() {
   const { role } = useRole()
-  const entrees = navigation.filter((entree) => entree.roles.includes(role))
+  const { ecransAutorises } = useDroits()
+  const entrees = ecransAutorises(role)
   const roleCourant = ROLES.find((item) => item.value === role)
 
   return (
@@ -50,7 +51,9 @@ export function Sidebar() {
         </div>
         <button
           type="button"
-          className="mt-3 flex w-full items-center gap-2 rounded-controle px-3 py-2 text-sm font-medium text-white/85 transition-colors duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          disabled
+          title="La connexion et la déconnexion arrivent avec le module d'authentification."
+          className="mt-3 flex w-full items-center gap-2 rounded-controle px-3 py-2 text-sm font-medium text-white/85 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
         >
           <SignOut size={18} weight="regular" aria-hidden />
           Se déconnecter

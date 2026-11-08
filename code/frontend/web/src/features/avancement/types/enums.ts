@@ -16,12 +16,7 @@
  * contrôle doit être validée (→ `validee`) ou rejetée (→ `en_cours`) ; sans
  * contrôle requis, la validation est implicite (hypothèse H-M3).
  */
-export type StatutEtape =
-  | 'a_faire'
-  | 'en_cours'
-  | 'terminee_declaree'
-  | 'validee'
-  | 'bloquee'
+export type StatutEtape = 'a_faire' | 'en_cours' | 'terminee_declaree' | 'validee' | 'bloquee'
 
 /** Portée d'un avancement agrégé (MPD-5 `avancement_agrege.portee`). */
 export type Portee = 'chantier' | 'zone' | 'logement'

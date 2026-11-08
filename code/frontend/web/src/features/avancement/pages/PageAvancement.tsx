@@ -116,8 +116,7 @@ export function PageAvancement() {
           { id: 'suivi', libelle: 'Suivi par logement', icone: Buildings },
           {
             id: 'a-valider',
-            libelle:
-              aValider.length > 0 ? `À valider (${aValider.length})` : 'À valider',
+            libelle: aValider.length > 0 ? `À valider (${aValider.length})` : 'À valider',
             icone: ClipboardText,
           },
         ]}
@@ -135,7 +134,11 @@ export function PageAvancement() {
               filtre={filtre}
               onFiltre={setFiltre}
               onVoirLogement={(ligne) =>
-                setCible({ idLogement: ligne.idLogement, numero: ligne.numero, idEtapeInitiale: null })
+                setCible({
+                  idLogement: ligne.idLogement,
+                  numero: ligne.numero,
+                  idEtapeInitiale: null,
+                })
               }
             />
           )

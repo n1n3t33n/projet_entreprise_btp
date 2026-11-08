@@ -4,12 +4,13 @@
   Même constat que pour le stock : les acteurs de terrain de la modélisation
   (Technicien, Chef d'équipe, Chef de chantier) n'existent pas dans le jeu de
   rôles du poste de pilotage web. Sur le web, le contrôle des étapes et la
-  déclaration de blocage sont donc portés par les rôles bureau. Règle imposée :
-  l'acquéreur ne voit aucune action d'écriture (il dispose d'une vue simplifiée
-  de l'avancement, en lecture seule).
+  déclaration de blocage sont donc portés par les rôles bureau. L'acquéreur
+  n'accède pas à ce module : il suit son logement dans l'espace acquéreur.
 
   Table déclarative, modifiable sans toucher aux écrans — préserve la modularité
-  et prépare des droits servis par l'API.
+  et prépare des droits servis par l'API. L'accès à l'écran est décidé par la
+  matrice de `config/navigation` ; les valeurs ci-dessous suivent le tableau des
+  profils du cahier des charges.
 */
 
 import type { Role } from '@/app/role-context'
@@ -39,13 +40,18 @@ const AUCUNE: CapacitesAvancement = {
 }
 
 const CAPACITES_AVANCEMENT_PAR_ROLE: Record<Role, CapacitesAvancement> = {
-  administrateur: { peutConsulter: true, peutValider: true, peutDeclarerBlocage: true },
+  // Cahier des charges : gammes, affectation, validation, suivi des retards.
   responsable_technique: { peutConsulter: true, peutValider: true, peutDeclarerBlocage: true },
-  // Pilotage : consulte et tranche les validations, ne déclare pas les blocages de terrain.
-  direction: { peutConsulter: true, peutValider: true, peutDeclarerBlocage: false },
-  commercial: AUCUNE,
-  // Vue simplifiée en lecture seule.
-  acquereur: { peutConsulter: true, peutValider: false, peutDeclarerBlocage: false },
+  // « Voir l'avancement et le stock, sans modifier » : corrigé, la direction ne
+  // valide plus d'étape (lecture seule stricte).
+  direction: { peutConsulter: true, peutValider: false, peutDeclarerBlocage: false },
+  // « Connaître l'avancement simplifié d'un logement » : corrigé, le commercial
+  // consulte (il n'avait aucun accès alors que le menu lui proposait l'écran).
+  commercial: { peutConsulter: true, peutValider: false, peutDeclarerBlocage: false },
+  // « Pas d'accès aux données métier » : corrigé, plus aucun accès.
+  administrateur: AUCUNE,
+  // Phase 2 : l'acquéreur suit son seul logement dans l'espace acquéreur.
+  acquereur: AUCUNE,
 }
 
 export function capacitesAvancementPourRole(role: Role): CapacitesAvancement {

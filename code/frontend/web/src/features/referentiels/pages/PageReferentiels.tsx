@@ -46,9 +46,9 @@ export function PageReferentiels() {
           { id: 'chantiers', libelle: 'Chantiers & zones', icone: Buildings },
         ]}
       >
-        {onglet === 'catalogue' && <CatalogueArticles peutEditer={capacites.peutEditer} />}
-        {onglet === 'magasins' && <MagasinsReferentiel peutEditer={capacites.peutEditer} />}
-        {onglet === 'chantiers' && <ChantiersZones peutEditer={capacites.peutEditer} />}
+        {onglet === 'catalogue' && <CatalogueArticles peutEditer={capacites.peutEditerCatalogue} />}
+        {onglet === 'magasins' && <MagasinsReferentiel peutEditer={capacites.peutEditerMagasins} />}
+        {onglet === 'chantiers' && <ChantiersZones peutEditer={capacites.peutEditerStructure} />}
       </Tabs>
     </div>
   )

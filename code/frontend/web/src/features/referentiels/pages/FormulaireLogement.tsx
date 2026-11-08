@@ -118,13 +118,23 @@ export function FormulaireLogement({
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
             Annuler
           </Button>
-          <Button variante="primaire" type="submit" form="formulaire-logement" enChargement={enCours}>
+          <Button
+            variante="primaire"
+            type="submit"
+            form="formulaire-logement"
+            enChargement={enCours}
+          >
             {modeModification ? 'Enregistrer' : 'Créer le logement'}
           </Button>
         </>
       }
     >
-      <form id="formulaire-logement" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
+      <form
+        id="formulaire-logement"
+        onSubmit={soumettre}
+        className="flex flex-col gap-4"
+        noValidate
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField libelle="Numéro" requis erreur={erreurs.numero}>
             {(champ) => (

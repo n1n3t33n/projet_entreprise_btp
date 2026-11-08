@@ -145,7 +145,12 @@ export function FormulaireArticle({
           <Button variante="secondaire" onClick={fermer} disabled={enCours}>
             Annuler
           </Button>
-          <Button variante="primaire" type="submit" form="formulaire-article" enChargement={enCours}>
+          <Button
+            variante="primaire"
+            type="submit"
+            form="formulaire-article"
+            enChargement={enCours}
+          >
             {modeModification ? 'Enregistrer' : "Créer l'article"}
           </Button>
         </>

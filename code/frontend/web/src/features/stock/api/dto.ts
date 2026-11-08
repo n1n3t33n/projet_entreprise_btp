@@ -13,12 +13,7 @@ export type NiveauAlerteDb = 'NORMAL' | 'MINIMAL' | 'CRITIQUE' | 'VIDE'
 
 /** Statut de validation stocké (`mouvement_stock.statut_validation`). */
 export type StatutValidationDb =
-  | 'ENREGISTRE'
-  | 'A_VALIDER'
-  | 'EN_ALERTE'
-  | 'VALIDE'
-  | 'REJETE'
-  | 'ANNULE'
+  'ENREGISTRE' | 'A_VALIDER' | 'EN_ALERTE' | 'VALIDE' | 'REJETE' | 'ANNULE'
 
 export type UniteMesureDto = {
   code_unite: string
@@ -97,4 +92,12 @@ export type MouvementStockDto = {
   utilisateur_id_utilisateur: string
   nom_auteur: string
   motif: string | null
+}
+
+/** Logement du chantier servi par `GET /chantiers/{id}/logements` (MPD-2, joint). */
+export type LogementDestinationDto = {
+  id_logement: string
+  numero: string
+  libelle_zone: string
+  libelle_type: string
 }

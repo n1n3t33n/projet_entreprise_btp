@@ -85,7 +85,8 @@ export function routerReferentiels(
   }
 
   if (methode === 'post' && url === '/referentiels/magasins') {
-    return reponse(config, creerMagasinMock(corpsJson(config)), 201)
+    const magasin = creerMagasinMock(corpsJson(config))
+    return magasin ? reponse(config, magasin, 201) : reponse(config, null, 400)
   }
 
   const magasinMatch = url.match(/^\/referentiels\/magasins\/([^/]+)$/)

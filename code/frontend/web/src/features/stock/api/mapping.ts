@@ -4,10 +4,7 @@
 */
 
 import type { NiveauSeuil } from '@/lib/seuils'
-import type {
-  SensMouvement,
-  StatutValidationMouvement,
-} from '@/features/stock/types'
+import type { SensMouvement, StatutValidationMouvement } from '@/features/stock/types'
 import type { LigneStock, MouvementStock, TypeMouvement } from '@/features/stock/types'
 import type {
   LigneStockDto,
@@ -37,7 +34,10 @@ import type {
  * Le nom « minimal » du modèle devient donc la borne « confort » de la jauge.
  * La conversion est faite ici, une fois, jamais dans un composant.
  */
-export function seuilsVersJauge(seuilMinimal: number, seuilCritique: number): {
+export function seuilsVersJauge(
+  seuilMinimal: number,
+  seuilCritique: number,
+): {
   seuilMini: number
   seuilConfort: number
 } {

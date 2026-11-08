@@ -109,7 +109,12 @@ export function FormulaireMagasin({
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
             Annuler
           </Button>
-          <Button variante="primaire" type="submit" form="formulaire-magasin" enChargement={enCours}>
+          <Button
+            variante="primaire"
+            type="submit"
+            form="formulaire-magasin"
+            enChargement={enCours}
+          >
             {modeModification ? 'Enregistrer' : 'Créer le magasin'}
           </Button>
         </>

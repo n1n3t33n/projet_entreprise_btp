@@ -20,12 +20,7 @@
  * `presentation/libelles`).
  */
 export type StatutValidationMouvement =
-  | 'enregistre'
-  | 'a_valider'
-  | 'en_alerte'
-  | 'valide'
-  | 'rejete'
-  | 'annule'
+  'enregistre' | 'a_valider' | 'en_alerte' | 'valide' | 'rejete' | 'annule'
 
 /** Décision portée par un événement de validation (CL-4, MPD-4 `decision`). */
 export type DecisionValidation = 'acceptee' | 'refusee'

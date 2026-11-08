@@ -3,8 +3,8 @@
 */
 
 import { http } from '@/lib/api/http'
-import type { Magasin, NoeudStock } from '@/features/stock/types'
-import type { MagasinDto } from '@/features/stock/api/dto'
+import type { LogementDestination, Magasin, NoeudStock } from '@/features/stock/types'
+import type { LogementDestinationDto, MagasinDto } from '@/features/stock/api/dto'
 
 function mapperMagasin(dto: MagasinDto): Magasin {
   return {
@@ -30,4 +30,17 @@ export async function listerMagasins(): Promise<Magasin[]> {
 export async function listerArborescenceStock(): Promise<NoeudStock[]> {
   const reponse = await http.get<NoeudStock[]>('/stock/arborescence')
   return reponse.data
+}
+
+/**
+ * Logements du chantier d'un magasin, destinations possibles d'une sortie
+ * (EF-STK-01). Remplace la liste codée en dur des premières étapes : une
+ * sortie est désormais rattachée à un vrai logement du chantier.
+ */
+export async function listerLogementsChantier(idChantier: string): Promise<LogementDestination[]> {
+  const reponse = await http.get<LogementDestinationDto[]>(`/chantiers/${idChantier}/logements`)
+  return reponse.data.map((dto) => ({
+    idLogement: dto.id_logement,
+    libelle: `${dto.libelle_zone} · ${dto.numero} · ${dto.libelle_type}`,
+  }))
 }
