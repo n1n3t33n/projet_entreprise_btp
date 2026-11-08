@@ -9,7 +9,7 @@
 import { Buildings, type Icon, Package, Stack } from '@phosphor-icons/react'
 import { Card, type NoeudArbre, Tree } from '@/components/ui'
 import { listerArborescenceStock } from '@/features/stock/api'
-import { useRequete } from '@/features/stock/hooks/useRequete'
+import { useRequete } from '@/lib/hooks/useRequete'
 import type { NoeudStock } from '@/features/stock/types'
 
 const ICONE_PAR_TYPE: Record<NoeudStock['type'], Icon> = {

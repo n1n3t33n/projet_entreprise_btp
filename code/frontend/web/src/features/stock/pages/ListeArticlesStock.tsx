@@ -20,7 +20,7 @@ import {
 } from '@/components/ui'
 import { PageListe } from '@/components/templates'
 import type { NiveauSeuil } from '@/lib/seuils'
-import { formatQuantite } from '@/features/stock/presentation/format'
+import { formatQuantite } from '@/lib/format'
 import { LIBELLE_NIVEAU } from '@/features/stock/presentation/libelles'
 import type { FiltreStock, LigneStock } from '@/features/stock/types'
 

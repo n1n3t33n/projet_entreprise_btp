@@ -1,10 +1,15 @@
 /*
-  Crochet de chargement de données avec état explicite (attente, chargement,
-  succès, erreur) et garde anti-course.
+  Crochet partagé de chargement de données, sans dépendance externe.
 
-  Note : identique à `features/stock/hooks/useRequete`. Il est dupliqué ici pour
-  garder le module autonome ; un nettoyage ultérieur pourrait le remonter dans
-  un dossier partagé `lib/hooks` consommé par les deux modules.
+  Il expose un état explicite — attente, chargement, succès, erreur — plutôt
+  qu'un simple « données ou undefined » : chaque écran peut alors afficher un
+  squelette pendant le chargement et un message en cas d'échec, sans réinventer
+  cette mécanique. C'est l'équivalent maison d'une bibliothèque de requêtes,
+  suffisant pour le périmètre du pilote.
+
+  Exemplaire unique consommé par tous les modules (stock, avancement,
+  référentiels). Il remplace les trois copies locales qui existaient jusqu'à
+  l'étape 7 : toute évolution du chargement se fait désormais ici, une fois.
 */
 
 import { useCallback, useEffect, useState } from 'react'
@@ -22,6 +27,13 @@ function messageErreur(erreur: unknown): string {
   return 'Une erreur est survenue pendant le chargement.'
 }
 
+/**
+ * Charge une donnée asynchrone et suit son état.
+ *
+ * @param charger fonction qui produit la promesse à chaque exécution
+ * @param deps dépendances qui, en changeant, relancent le chargement
+ * @returns l'état courant et une fonction `recharger` pour forcer un nouvel appel
+ */
 export function useRequete<T>(
   charger: () => Promise<T>,
   deps: readonly unknown[],
@@ -38,6 +50,8 @@ export function useRequete<T>(
   useEffect(() => {
     let annule = false
 
+    // On conserve les données précédentes pendant un rechargement, pour éviter
+    // un clignotement de la liste quand l'utilisateur change de filtre.
     setEtat((precedent) => ({
       statut: 'chargement',
       donnees: precedent.statut === 'succes' ? precedent.donnees : null,
@@ -56,6 +70,8 @@ export function useRequete<T>(
         }
       })
 
+    // Le nettoyage marque l'appel comme obsolète : si les dépendances changent
+    // avant la fin de la promesse, sa réponse tardive est ignorée.
     return () => {
       annule = true
     }

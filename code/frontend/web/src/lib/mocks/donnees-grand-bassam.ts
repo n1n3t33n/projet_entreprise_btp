@@ -214,7 +214,9 @@ export const ARTICLES: ArticleDto[] = CATALOGUE.map((entree, index) => {
     id_article: `ART-${numero}`,
     code: `A${numero}`,
     designation: entree.designation,
-    origine: index % 5 === 0 ? 'import' : 'local',
+    // Valeurs du MPD-3 (`ACHAT`, `PRODUCTION_INTERNE`, `RECUPERATION`) : la
+    // plupart des articles sont achetés, quelques-uns produits en atelier.
+    origine: index % 9 === 0 ? 'PRODUCTION_INTERNE' : 'ACHAT',
     code_barre: String(6_000_000_000_000 + index * 137),
     actif: true,
     unite_base: unite(entree.unite),

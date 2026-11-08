@@ -5,7 +5,7 @@
 */
 
 import { Button, Card, type ColonneTable, StatusPill, Table } from '@/components/ui'
-import { formatDate } from '@/features/avancement/presentation/format'
+import { formatDate } from '@/lib/format'
 import type { LigneEtape } from '@/features/avancement/types'
 
 export type EtapesAValiderProps = {

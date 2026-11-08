@@ -44,6 +44,7 @@ export type ArticleDto = {
   id_article: string
   code: string
   designation: string
+  /** `UPPER_SNAKE` (MPD-3) : ACHAT, PRODUCTION_INTERNE, RECUPERATION. */
   origine: string
   code_barre: string | null
   actif: boolean

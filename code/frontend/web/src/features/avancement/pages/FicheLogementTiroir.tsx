@@ -32,9 +32,9 @@ import {
   listerEvenementsEtape,
   validerEtape,
 } from '@/features/avancement/api'
-import { useRequete, type EtatRequete } from '@/features/avancement/hooks/useRequete'
+import { useRequete, type EtatRequete } from '@/lib/hooks/useRequete'
 import { ID_UTILISATEUR_COURANT, type CapacitesAvancement } from '@/features/avancement/config/capacites'
-import { formatDate, formatDateHeure } from '@/features/avancement/presentation/format'
+import { formatDate, formatDateHeure } from '@/lib/format'
 import {
   LIBELLE_STATUT_ETAPE,
   TON_STATUT_ETAPE,
@@ -100,7 +100,10 @@ function ContenuLogement({ cible, capacites, motifs, onChangement }: ContenuLoge
   const etapesEtat = useRequete(() => listerEtapesLogement(cible.idLogement), [cible.idLogement])
   const [idEtapeSel, setIdEtapeSel] = useState<string | null>(cible.idEtapeInitiale)
 
-  const etapes = etapesEtat.donnees ?? []
+  // Mémoïsé : `?? []` seul créerait un nouveau tableau à chaque rendu, ce qui
+  // invaliderait le `useMemo` de calcul d'avancement ci-dessous (avertissement
+  // react-hooks/exhaustive-deps relevé à l'étape 6, corrigé à l'étape 8).
+  const etapes = useMemo(() => etapesEtat.donnees ?? [], [etapesEtat.donnees])
   const etapeSelectionnee = etapes.find((etape) => etape.idEtape === idEtapeSel) ?? null
 
   const { declare, valide } = useMemo(() => calculerAvancement(etapes), [etapes])

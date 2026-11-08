@@ -14,12 +14,9 @@
   correspondance avec les libellés `UPPER_SNAKE` de la base est faite dans
   `api/mapping`. Aucun code n'est affiché tel quel (charte § 8).
 
-  INCOHÉRENCE SIGNALÉE : le module `stock` (étape 5) déclare
-  `OrigineArticle = 'local' | 'import'`, valeurs qui n'apparaissent dans aucune
-  source de modélisation. La valeur fondée est celle du MPD-3 ci-dessous. Le
-  type du module stock n'est utilisé qu'en couche type/dto (aucun écran ne
-  l'affiche) : l'alignement est un nettoyage sans régression, renvoyé à une
-  branche dédiée pour ne pas élargir le périmètre de cette étape.
+  Incohérence signalée à l'étape 7 et résolue à l'étape 8 : le module `stock`
+  employait `'local' | 'import'`, sans fondement dans la modélisation. Il
+  utilise désormais les mêmes valeurs que ce module (MPD-3).
 */
 
 /** Origine d'un article (MPD-3 `article.origine ∈ {ACHAT, PRODUCTION_INTERNE, RECUPERATION, …}`). */
