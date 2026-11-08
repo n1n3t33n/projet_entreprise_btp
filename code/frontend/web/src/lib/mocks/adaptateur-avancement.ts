@@ -95,7 +95,7 @@ export function routerAvancement(
     const commentaire = typeof corps.commentaire === 'string' ? corps.commentaire : null
     const evenement = appliquerBlocage(blocageMatch[1] ?? '', texte(corps.code_motif), commentaire)
     if (!evenement) {
-      throw new Error("Cette étape ne peut pas être déclarée bloquée dans son état actuel.")
+      throw new Error('Cette étape ne peut pas être déclarée bloquée dans son état actuel.')
     }
     return reponse(config, evenement, 201)
   }

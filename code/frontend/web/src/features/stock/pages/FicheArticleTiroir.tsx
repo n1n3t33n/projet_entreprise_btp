@@ -123,13 +123,16 @@ function OngletEtat({ ligne }: { ligne: LigneStock }) {
 
       {ligne.quantite < 0 && (
         <p className="rounded-controle bg-danger/10 px-3 py-2 text-sm text-danger">
-          Stock négatif : anomalie à régulariser par un inventaire. La valeur est conservée
-          telle quelle, elle ne bloque pas la consultation.
+          Stock négatif : anomalie à régulariser par un inventaire. La valeur est conservée telle
+          quelle, elle ne bloque pas la consultation.
         </p>
       )}
 
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-        <Donnee intitule="Quantité en stock" valeur={formatQuantite(ligne.quantite, ligne.uniteLibelle)} />
+        <Donnee
+          intitule="Quantité en stock"
+          valeur={formatQuantite(ligne.quantite, ligne.uniteLibelle)}
+        />
         <Donnee intitule="Unité de base" valeur={ligne.uniteLibelle} />
         <Donnee intitule="Famille" valeur={ligne.libelleFamille} />
         <Donnee intitule="Code article" valeur={ligne.code} />
@@ -205,8 +208,14 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
   if (!modifiable) {
     return (
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-        <Donnee intitule="Seuil minimal" valeur={formatQuantite(ligne.seuilMinimal, ligne.uniteLibelle)} />
-        <Donnee intitule="Seuil critique" valeur={formatQuantite(ligne.seuilCritique, ligne.uniteLibelle)} />
+        <Donnee
+          intitule="Seuil minimal"
+          valeur={formatQuantite(ligne.seuilMinimal, ligne.uniteLibelle)}
+        />
+        <Donnee
+          intitule="Seuil critique"
+          valeur={formatQuantite(ligne.seuilCritique, ligne.uniteLibelle)}
+        />
       </dl>
     )
   }
@@ -214,8 +223,8 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
   return (
     <form onSubmit={soumettre} className="flex max-w-md flex-col gap-4" noValidate>
       <p className="text-sm text-texte-secondaire">
-        Seuils définis pour cet article dans ce magasin. En dessous du seuil minimal, le stock
-        passe « mini » ; en dessous du seuil critique, « critique ».
+        Seuils définis pour cet article dans ce magasin. En dessous du seuil minimal, le stock passe
+        « mini » ; en dessous du seuil critique, « critique ».
       </p>
 
       <FormField libelle="Seuil minimal" requis aide={`Unité : ${ligne.uniteLibelle}`}>

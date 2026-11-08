@@ -2,6 +2,7 @@ import { CheckCircle, Gauge, type Icon, Warning, WarningOctagon } from '@phospho
 import { cn } from '@/lib/cn'
 import {
   calculerNiveauSeuil,
+  estStockNegatif,
   referenceRemplissage,
   type NiveauSeuil,
   type ParametresSeuil,
@@ -28,6 +29,15 @@ const LIBELLE_PAR_NIVEAU: Record<NiveauSeuil, string> = {
   mini: 'Mini',
   plein: 'Plein',
 }
+
+/*
+  Anomalie de stock négatif (cahier des charges : « un stock négatif est
+  autorisé et signalé comme anomalie à corriger » ; charte : « représentation
+  explicite du stock négatif »). Elle ne remplace pas le niveau — qui reste
+  « vide » comme en base — mais prend sa place à l'affichage, pour qu'une
+  quantité négative ne se confonde jamais avec un stock épuisé à zéro.
+*/
+const LIBELLE_ANOMALIE = 'Stock négatif'
 
 const ICONE_PAR_NIVEAU: Record<NiveauSeuil, Icon> = {
   vide: WarningOctagon,
@@ -65,13 +75,16 @@ export function ThresholdGauge({
   const niveauEffectif = niveau ?? calculerNiveauSeuil(parametres)
 
   const reference = referenceRemplissage(parametres)
-  // Une quantité négative ne peut venir que d'un écart de données : elle est
-  // ramenée à zéro, comme le niveau l'est à « vide ».
-  const quantiteAffichee = Math.max(0, valeur)
-  const proportion = reference <= 0 ? 0 : Math.min(1, quantiteAffichee / reference)
+  const anomalie = estStockNegatif(valeur)
+  // La barre ne peut pas représenter une quantité négative : elle reste vide.
+  // La valeur réelle, elle, continue d'être affichée telle quelle — c'est
+  // l'anomalie à corriger, la masquer reviendrait à la dissimuler.
+  const remplissage = Math.max(0, valeur)
+  const proportion = reference <= 0 ? 0 : Math.min(1, remplissage / reference)
 
-  const Icone = ICONE_PAR_NIVEAU[niveauEffectif]
-  const libelle = LIBELLE_PAR_NIVEAU[niveauEffectif]
+  const Icone = anomalie ? WarningOctagon : ICONE_PAR_NIVEAU[niveauEffectif]
+  const libelle = anomalie ? LIBELLE_ANOMALIE : LIBELLE_PAR_NIVEAU[niveauEffectif]
+  const classeTexte = anomalie ? 'text-danger' : TEXTE_PAR_NIVEAU[niveauEffectif]
 
   return (
     <div className={cn('flex min-w-0 flex-col gap-1.5', className)}>
@@ -79,10 +92,14 @@ export function ThresholdGauge({
         className={cn(
           'flex items-center gap-1.5 font-semibold',
           taille === 'sm' ? 'text-xs' : 'text-sm',
-          TEXTE_PAR_NIVEAU[niveauEffectif],
+          classeTexte,
         )}
       >
-        <Icone size={taille === 'sm' ? 14 : 16} weight="regular" aria-hidden />
+        <Icone
+          size={taille === 'sm' ? 14 : 16}
+          weight={anomalie ? 'fill' : 'regular'}
+          aria-hidden
+        />
         <span>{libelle}</span>
       </div>
 
@@ -91,8 +108,8 @@ export function ThresholdGauge({
         aria-label={`Niveau de stock : ${libelle}`}
         aria-valuemin={0}
         aria-valuemax={reference}
-        aria-valuenow={quantiteAffichee}
-        aria-valuetext={`${quantiteAffichee}${unite ? ` ${unite}` : ''} — ${libelle}`}
+        aria-valuenow={remplissage}
+        aria-valuetext={`${valeur}${unite ? ` ${unite}` : ''} — ${libelle}`}
         className={cn(
           'w-full overflow-hidden rounded-full bg-bordure',
           taille === 'sm' ? 'h-1.5' : 'h-2',
@@ -113,8 +130,10 @@ export function ThresholdGauge({
       </div>
 
       {afficherValeurs && (
-        <p className="text-xs text-texte-secondaire">
-          {quantiteAffichee}
+        <p
+          className={cn('text-xs', anomalie ? 'font-medium text-danger' : 'text-texte-secondaire')}
+        >
+          {valeur}
           {unite ? ` ${unite}` : ''} · alerte à {seuilMini} · confort à {seuilConfort}
           {capacite !== undefined ? ` · capacité ${capacite}` : ''}
         </p>

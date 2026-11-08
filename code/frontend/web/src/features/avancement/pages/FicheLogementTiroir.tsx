@@ -33,12 +33,12 @@ import {
   validerEtape,
 } from '@/features/avancement/api'
 import { useRequete, type EtatRequete } from '@/lib/hooks/useRequete'
-import { ID_UTILISATEUR_COURANT, type CapacitesAvancement } from '@/features/avancement/config/capacites'
-import { formatDate, formatDateHeure } from '@/lib/format'
 import {
-  LIBELLE_STATUT_ETAPE,
-  TON_STATUT_ETAPE,
-} from '@/features/avancement/presentation/libelles'
+  ID_UTILISATEUR_COURANT,
+  type CapacitesAvancement,
+} from '@/features/avancement/config/capacites'
+import { formatDate, formatDateHeure } from '@/lib/format'
+import { LIBELLE_STATUT_ETAPE, TON_STATUT_ETAPE } from '@/features/avancement/presentation/libelles'
 import type { EvenementExecution, LigneEtape, MotifBlocage } from '@/features/avancement/types'
 
 export type CibleLogement = {
@@ -264,7 +264,7 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
     } catch (erreurAppel) {
       afficherToast({
         ton: 'danger',
-        titre: "La validation a échoué",
+        titre: 'La validation a échoué',
         message: erreurAppel instanceof Error ? erreurAppel.message : undefined,
       })
     } finally {
@@ -287,7 +287,7 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
     } catch (erreurAppel) {
       afficherToast({
         ton: 'danger',
-        titre: "Le rejet a échoué",
+        titre: 'Le rejet a échoué',
         message: erreurAppel instanceof Error ? erreurAppel.message : undefined,
       })
     } finally {
@@ -314,7 +314,7 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
     } catch (erreurAppel) {
       afficherToast({
         ton: 'danger',
-        titre: "La déclaration a échoué",
+        titre: 'La déclaration a échoué',
         message: erreurAppel instanceof Error ? erreurAppel.message : undefined,
       })
     } finally {
@@ -348,10 +348,7 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
           <Donnee intitule="Date prévue" valeur={formatDate(etape.datePrevue)} />
           <Donnee intitule="Déclarée terminée le" valeur={formatDate(etape.dateFinDeclaree)} />
           <Donnee intitule="Validée le" valeur={formatDate(etape.dateValidation)} />
-          <Donnee
-            intitule="Déclarée par"
-            valeur={etape.nomAuteurDeclaration ?? '—'}
-          />
+          <Donnee intitule="Déclarée par" valeur={etape.nomAuteurDeclaration ?? '—'} />
         </dl>
 
         {etape.enRetard && (
@@ -490,7 +487,10 @@ function HistoriqueEtape({
         <ol className="flex flex-col gap-3 border-l border-bordure pl-4">
           {evenements.map((evenement) => (
             <li key={evenement.uuid} className="relative">
-              <span className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-sarcelle" aria-hidden />
+              <span
+                className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-sarcelle"
+                aria-hidden
+              />
               <p className="text-sm text-texte">
                 {evenement.statutAvant
                   ? `${LIBELLE_STATUT_ETAPE[evenement.statutAvant]} → ${LIBELLE_STATUT_ETAPE[evenement.statutApres]}`

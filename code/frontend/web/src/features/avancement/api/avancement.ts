@@ -76,18 +76,20 @@ export async function listerMotifsBlocage(): Promise<MotifBlocage[]> {
 
 /** Valide ou rejette une étape à contrôle (EF-AVA-06). Renvoie l'événement créé. */
 export async function validerEtape(decision: DecisionValidationEtape): Promise<EvenementExecution> {
-  const reponse = await http.post<EvenementExecutionDto>(
-    `/etapes/${decision.idEtape}/validation`,
-    { decision: decision.decision, motif: decision.motif },
-  )
+  const reponse = await http.post<EvenementExecutionDto>(`/etapes/${decision.idEtape}/validation`, {
+    decision: decision.decision,
+    motif: decision.motif,
+  })
   return mapperEvenement(reponse.data)
 }
 
 /** Déclare une étape bloquée avec motif (EF-AVA-05). Renvoie l'événement créé. */
-export async function declarerBlocage(declaration: DeclarationBlocage): Promise<EvenementExecution> {
-  const reponse = await http.post<EvenementExecutionDto>(
-    `/etapes/${declaration.idEtape}/blocage`,
-    { code_motif: declaration.codeMotif, commentaire: declaration.commentaire },
-  )
+export async function declarerBlocage(
+  declaration: DeclarationBlocage,
+): Promise<EvenementExecution> {
+  const reponse = await http.post<EvenementExecutionDto>(`/etapes/${declaration.idEtape}/blocage`, {
+    code_motif: declaration.codeMotif,
+    commentaire: declaration.commentaire,
+  })
   return mapperEvenement(reponse.data)
 }

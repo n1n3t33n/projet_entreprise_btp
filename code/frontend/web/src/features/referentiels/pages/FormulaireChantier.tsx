@@ -106,13 +106,23 @@ export function FormulaireChantier({
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
             Annuler
           </Button>
-          <Button variante="primaire" type="submit" form="formulaire-chantier" enChargement={enCours}>
+          <Button
+            variante="primaire"
+            type="submit"
+            form="formulaire-chantier"
+            enChargement={enCours}
+          >
             Enregistrer
           </Button>
         </>
       }
     >
-      <form id="formulaire-chantier" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
+      <form
+        id="formulaire-chantier"
+        onSubmit={soumettre}
+        className="flex flex-col gap-4"
+        noValidate
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField libelle="Code chantier" requis erreur={erreurs.code}>
             {(champ) => (

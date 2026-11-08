@@ -8,23 +8,24 @@
 */
 
 import { useMemo, useState, type ReactNode } from 'react'
-import {
-  Buildings,
-  HouseLine,
-  MapPinLine,
-  PencilSimple,
-  Plus,
-  Stack,
-} from '@phosphor-icons/react'
+import { Buildings, HouseLine, MapPinLine, PencilSimple, Plus, Stack } from '@phosphor-icons/react'
 import { Button, Card, type NoeudArbre, StatusPill, Tree } from '@/components/ui'
 import { EnTetePage } from '@/components/templates'
-import { chargerArborescence, listerChantiers, listerTypesLogement } from '@/features/referentiels/api'
+import {
+  chargerArborescence,
+  listerChantiers,
+  listerTypesLogement,
+} from '@/features/referentiels/api'
 import { FormulaireChantier } from '@/features/referentiels/pages/FormulaireChantier'
 import { FormulaireLogement } from '@/features/referentiels/pages/FormulaireLogement'
 import { FormulaireZone } from '@/features/referentiels/pages/FormulaireZone'
 import { useRequete } from '@/lib/hooks/useRequete'
 import { formatDate, formatSurface } from '@/lib/format'
-import { libelleStatut, libelleTypeZone, tonStatut } from '@/features/referentiels/presentation/libelles'
+import {
+  libelleStatut,
+  libelleTypeZone,
+  tonStatut,
+} from '@/features/referentiels/presentation/libelles'
 import type {
   Chantier,
   ChantierArbre,
@@ -60,7 +61,8 @@ export function ChantiersZones({ peutEditer }: ChantiersZonesProps) {
   const idChantier = chantiers[0]?.id ?? ''
 
   const arbreEtat = useRequete(
-    () => (idChantier ? chargerArborescence(idChantier) : Promise.resolve<ChantierArbre | null>(null)),
+    () =>
+      idChantier ? chargerArborescence(idChantier) : Promise.resolve<ChantierArbre | null>(null),
     [idChantier],
   )
   const arbre = arbreEtat.donnees ?? null
@@ -138,7 +140,10 @@ export function ChantiersZones({ peutEditer }: ChantiersZonesProps) {
               noeuds={noeuds}
               selectionne={selection ?? undefined}
               onSelectionner={setSelectionId}
-              ouvertsInitiaux={[`chantier:${arbre.chantier.id}`, ...arbre.zones.map((z) => `zone:${z.zone.id}`)]}
+              ouvertsInitiaux={[
+                `chantier:${arbre.chantier.id}`,
+                ...arbre.zones.map((z) => `zone:${z.zone.id}`),
+              ]}
             />
           ) : (
             <p className="text-sm text-texte-secondaire">Chargement de la structure…</p>
@@ -299,7 +304,9 @@ function DetailChantier({
         <Ligne intitule="Code" valeur={chantier.code} />
         <Ligne
           intitule="Statut"
-          valeur={<StatusPill ton={tonStatut(chantier.statut)} libelle={libelleStatut(chantier.statut)} />}
+          valeur={
+            <StatusPill ton={tonStatut(chantier.statut)} libelle={libelleStatut(chantier.statut)} />
+          }
         />
         <Ligne intitule="Programme" valeur={chantier.programme || '—'} />
         <Ligne intitule="Date de début" valeur={formatDate(chantier.dateDebut)} />
@@ -414,7 +421,9 @@ function DetailLogement({
         <Ligne intitule="Surface de référence" valeur={formatSurface(logement.surfaceReference)} />
         <Ligne
           intitule="Statut"
-          valeur={<StatusPill ton={tonStatut(logement.statut)} libelle={libelleStatut(logement.statut)} />}
+          valeur={
+            <StatusPill ton={tonStatut(logement.statut)} libelle={libelleStatut(logement.statut)} />
+          }
         />
         <Ligne intitule="Livraison prévue" valeur={formatDate(logement.dateLivraisonPrevue)} />
       </dl>

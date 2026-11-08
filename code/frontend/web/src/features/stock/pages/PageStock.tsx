@@ -17,7 +17,12 @@
 import { useState } from 'react'
 import { Package, TreeStructure } from '@phosphor-icons/react'
 import { Card, Tabs } from '@/components/ui'
-import { listerMagasins, listerStockMagasin, listerTypesMouvement } from '@/features/stock/api'
+import {
+  listerLogementsChantier,
+  listerMagasins,
+  listerStockMagasin,
+  listerTypesMouvement,
+} from '@/features/stock/api'
 import { estLectureSeule } from '@/features/stock/config/capacites'
 import { useCapacitesStock } from '@/features/stock/hooks/useCapacitesStock'
 import { useRequete } from '@/lib/hooks/useRequete'
@@ -26,7 +31,7 @@ import { FicheArticleTiroir } from '@/features/stock/pages/FicheArticleTiroir'
 import { FormulaireEntree } from '@/features/stock/pages/FormulaireEntree'
 import { FormulaireSortie } from '@/features/stock/pages/FormulaireSortie'
 import { ListeArticlesStock } from '@/features/stock/pages/ListeArticlesStock'
-import type { FiltreStock, LigneStock } from '@/features/stock/types'
+import type { FiltreStock, LigneStock, LogementDestination } from '@/features/stock/types'
 
 const FILTRE_INITIAL: FiltreStock = { recherche: '', niveau: 'tous', codeFamille: 'toutes' }
 
@@ -48,6 +53,12 @@ export function PageStock() {
     [idMagasin],
   )
   const typesEtat = useRequete(listerTypesMouvement, [])
+  const idChantier = magasin?.idChantier ?? ''
+  const logementsEtat = useRequete(
+    () =>
+      idChantier ? listerLogementsChantier(idChantier) : Promise.resolve<LogementDestination[]>([]),
+    [idChantier],
+  )
 
   const lignes = stockEtat.donnees ?? []
   const types = typesEtat.donnees ?? []
@@ -126,6 +137,7 @@ export function PageStock() {
             idMagasin={idMagasin}
             articles={lignes}
             typesSortie={typesSortie}
+            logements={logementsEtat.donnees ?? []}
             onEnregistre={() => stockEtat.recharger()}
           />
         </>

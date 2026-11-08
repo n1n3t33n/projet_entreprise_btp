@@ -49,7 +49,7 @@ export const FAMILLES: FamilleDto[] = [
   { code_categorie: 'OUT', libelle: 'Outillage & EPI', code_parent: null },
 ]
 
-const UNITES: Record<string, UniteMesureDto> = {
+export const UNITES: Record<string, UniteMesureDto> = {
   U: { code_unite: 'U', libelle: 'unité', type_unite: 'unite' },
   SAC: { code_unite: 'SAC', libelle: 'sac', type_unite: 'masse' },
   KG: { code_unite: 'KG', libelle: 'kg', type_unite: 'masse' },
@@ -62,7 +62,7 @@ const UNITES: Record<string, UniteMesureDto> = {
   ROUL: { code_unite: 'ROUL', libelle: 'rouleau', type_unite: 'unite' },
 }
 
-function unite(code: string): UniteMesureDto {
+export function unite(code: string): UniteMesureDto {
   return UNITES[code] ?? UNITES.U!
 }
 
@@ -123,7 +123,7 @@ const CATALOGUE: ReadonlyArray<{ designation: string; famille: string; unite: st
   { designation: 'Montant métallique 48', famille: 'SO-MAC', unite: 'ML' },
   { designation: 'Bloc-porte intérieur 83', famille: 'SO-MEN', unite: 'U' },
   { designation: 'Bloc-porte intérieur 73', famille: 'SO-MEN', unite: 'U' },
-  { designation: "Fenêtre aluminium 120x100", famille: 'SO-MEN', unite: 'U' },
+  { designation: 'Fenêtre aluminium 120x100', famille: 'SO-MEN', unite: 'U' },
   { designation: 'Chevron sapin 63x75', famille: 'SO-MEN', unite: 'ML' },
   { designation: 'Contreplaqué 15 mm', famille: 'SO-MEN', unite: 'M2' },
   { designation: 'Câble U1000 R2V 3G2.5', famille: 'EL', unite: 'ML' },
@@ -179,6 +179,23 @@ function echelle(codeUnite: string): { minimal: number; critique: number } {
   return ECHELLE_SEUIL[codeUnite] ?? ECHELLE_SEUIL.U!
 }
 
+/**
+ * Bande de niveau d'un article selon son rang dans le catalogue.
+ *
+ * Corrigé : l'ancienne règle (`index % 7`) mettait un article sur sept en
+ * stock négatif (8 sur 60) et un sur sept à vide, ce qui contredisait
+ * l'intention annoncée en tête de fichier (« une référence en stock négatif »)
+ * et donnait un magasin peu crédible. Répartition retenue sur 60 références :
+ * 1 négative, 5 vides, ~10 critiques, ~10 au minimum, le reste plein.
+ */
+function bandeNiveau(index: number): number {
+  if (index === 6) return 6 // l'unique anomalie de stock négatif
+  if (index % 12 === 3) return 0 // vide
+  if (index % 6 === 1) return 1 // critique
+  if (index % 6 === 4) return 2 // minimum
+  return 3 + (index % 3) // plein (trois variantes)
+}
+
 /** Quantité initiale choisie pour tomber dans un niveau donné (bande 0..6). */
 function quantiteInitiale(minimal: number, critique: number, bande: number): number {
   switch (bande) {
@@ -232,7 +249,7 @@ const stockParArticle = new Map<string, EnregistrementStock>(
     const numero = String(index + 1).padStart(4, '0')
     const idArticle = `ART-${numero}`
     const { minimal, critique } = echelle(entree.unite)
-    const bande = index % 7
+    const bande = bandeNiveau(index)
     return [
       idArticle,
       {

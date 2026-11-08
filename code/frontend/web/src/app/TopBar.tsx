@@ -1,12 +1,15 @@
-import { Bell, CaretDown, MagnifyingGlass, MapPin, Question } from '@phosphor-icons/react'
+import { Bell, MagnifyingGlass, MapPin, Question } from '@phosphor-icons/react'
 import { useLocation } from 'react-router-dom'
 import { ROLES, useRole, type Role } from '@/app/role-context'
-import { navigation } from '@/config/navigation'
+import { ECRANS } from '@/config/navigation'
+
+/** Chantier unique du pilote (hypothèse H2 du cahier des charges). */
+const CHANTIER_PILOTE = 'Chantier de Grand-Bassam'
 
 export function TopBar() {
   const { role, definirRole } = useRole()
   const location = useLocation()
-  const entreeCourante = navigation.find((entree) => entree.chemin === location.pathname)
+  const entreeCourante = ECRANS.find((entree) => entree.chemin === location.pathname)
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-4 border-b border-bordure bg-surface px-6">
@@ -21,9 +24,11 @@ export function TopBar() {
         />
         <input
           type="search"
-          placeholder="Rechercher un lot, un rapport, un jalon…"
-          aria-label="Rechercher"
-          className="w-full rounded-controle border border-bordure bg-fond py-2 pl-10 pr-3 text-sm text-texte placeholder:text-texte-attenue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
+          placeholder="Recherche globale — bientôt disponible"
+          aria-label="Recherche globale (bientôt disponible)"
+          disabled
+          title="La recherche globale n'est pas encore disponible."
+          className="w-full rounded-controle border border-bordure bg-fond py-2 pl-10 pr-3 text-sm text-texte placeholder:text-texte-attenue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle disabled:cursor-not-allowed disabled:opacity-60"
         />
       </div>
 
@@ -44,28 +49,32 @@ export function TopBar() {
           </select>
         </label>
 
-        <button
-          type="button"
-          aria-label="Sélectionner un chantier"
-          className="flex items-center gap-2 rounded-controle border border-bordure px-3 py-2 text-sm font-medium text-texte transition-colors duration-150 hover:bg-fond focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
+        {/* Le pilote porte un seul chantier (cahier des charges, hypothèse H2) :
+            une étiquette fixe plutôt qu'un menu qui ne proposerait rien. */}
+        <span
+          className="flex items-center gap-2 rounded-controle border border-bordure px-3 py-2 text-sm font-medium text-texte"
+          title="Chantier pilote"
         >
           <MapPin size={18} weight="regular" aria-hidden className="text-sarcelle" />
-          <span>Chantier</span>
-          <CaretDown size={14} weight="regular" aria-hidden className="text-texte-secondaire" />
-        </button>
+          <span>{CHANTIER_PILOTE}</span>
+        </span>
 
         <button
           type="button"
-          aria-label="Notifications"
-          className="rounded-controle p-2 text-texte-secondaire transition-colors duration-150 hover:bg-fond focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
+          aria-label="Notifications (bientôt disponible)"
+          title="Notifications : bientôt disponible"
+          disabled
+          className="rounded-controle p-2 disabled:cursor-not-allowed disabled:opacity-50 text-texte-secondaire transition-colors duration-150 hover:bg-fond focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
         >
           <Bell size={20} weight="regular" aria-hidden />
         </button>
 
         <button
           type="button"
-          aria-label="Aide"
-          className="rounded-controle p-2 text-texte-secondaire transition-colors duration-150 hover:bg-fond focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
+          aria-label="Aide (bientôt disponible)"
+          title="Aide : bientôt disponible"
+          disabled
+          className="rounded-controle p-2 disabled:cursor-not-allowed disabled:opacity-50 text-texte-secondaire transition-colors duration-150 hover:bg-fond focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
         >
           <Question size={20} weight="regular" aria-hidden />
         </button>

@@ -1,8 +1,15 @@
 /**
  * Niveau de remplissage d'un stock par rapport à ses seuils.
  *
- * Quatre niveaux, du plus bas au plus confortable. Un stock ne peut pas être
- * négatif : une quantité inférieure ou égale à zéro est un stock vide.
+ * Quatre niveaux, du plus bas au plus confortable.
+ *
+ * Une quantité inférieure ou égale à zéro est classée « vide » : ces quatre
+ * niveaux correspondent à `stock_courant.niveau_alerte` du MPD-4, qui ne
+ * distingue pas le stock négatif. Un stock négatif EST possible (cahier des
+ * charges : « un stock négatif est autorisé et signalé comme anomalie à
+ * corriger ») ; il est porté par un type d'alerte distinct, `STOCK_NEGATIF`
+ * (MPD-4 `ck_alerte_type_alerte`), et signalé par `estStockNegatif` plutôt que
+ * par un cinquième niveau qui n'existe pas en base.
  */
 export type NiveauSeuil = 'vide' | 'critique' | 'mini' | 'plein'
 
@@ -53,6 +60,17 @@ export function calculerNiveauSeuil({
     return 'critique'
   }
   return valeur < seuilConfort ? 'mini' : 'plein'
+}
+
+/**
+ * Vrai si la quantité est négative : anomalie à corriger, non bloquante.
+ *
+ * Signalée explicitement à l'écran, comme l'exige la charte (« représentation
+ * explicite du stock négatif »). Elle se superpose au niveau « vide » : un
+ * stock à zéro et un stock négatif ne doivent pas se ressembler.
+ */
+export function estStockNegatif(valeur: number): boolean {
+  return valeur < 0
 }
 
 /**

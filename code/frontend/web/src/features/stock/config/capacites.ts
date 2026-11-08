@@ -1,6 +1,10 @@
 /*
   Capacités du module stock par rôle — filtrage des actions d'écriture.
 
+  L'accès à l'écran lui-même est décidé par la matrice unique de
+  `config/navigation` ; ce fichier ne règle que les actions. Les valeurs
+  suivent le tableau des profils du cahier des charges.
+
   La modélisation décrit des acteurs de terrain (Magasinier, Gestionnaire de
   stock, Chef de chantier) qui n'existent pas dans le jeu de rôles du poste de
   pilotage web (`Role`). Sur le web, l'écriture est donc portée par les rôles
@@ -39,15 +43,8 @@ const AUCUNE: CapacitesStock = {
 }
 
 const CAPACITES_STOCK_PAR_ROLE: Record<Role, CapacitesStock> = {
-  // Saisie + validation + seuils + inventaire : tiennent lieu de gestionnaire
-  // de stock sur le poste de pilotage.
-  administrateur: {
-    peutConsulter: true,
-    peutSaisir: true,
-    peutValider: true,
-    peutDefinirSeuils: true,
-    peutInventaire: true,
-  },
+  // Saisie + validation + seuils + inventaire : tient lieu de gestionnaire de
+  // stock sur le poste de pilotage (le gestionnaire n'est pas un rôle bureau).
   responsable_technique: {
     peutConsulter: true,
     peutSaisir: true,
@@ -55,24 +52,21 @@ const CAPACITES_STOCK_PAR_ROLE: Record<Role, CapacitesStock> = {
     peutDefinirSeuils: true,
     peutInventaire: true,
   },
-  // Pilotage : consulte et tranche les validations, ne saisit pas.
+  // Cahier des charges : « voir l'avancement et le stock, sans modifier ».
+  // Corrigé : la direction ne valide plus de mouvement (lecture seule stricte).
   direction: {
-    peutConsulter: true,
-    peutSaisir: false,
-    peutValider: true,
-    peutDefinirSeuils: false,
-    peutInventaire: false,
-  },
-  // Pas d'accès au stock sur le web.
-  commercial: AUCUNE,
-  // Consulte sans jamais écrire (lecture seule imposée).
-  acquereur: {
     peutConsulter: true,
     peutSaisir: false,
     peutValider: false,
     peutDefinirSeuils: false,
     peutInventaire: false,
   },
+  // Cahier des charges : « pas d'accès aux données métier ». Corrigé : aucun
+  // accès au stock (il en avait un complet jusqu'ici).
+  administrateur: AUCUNE,
+  commercial: AUCUNE,
+  // Phase 2 : l'acquéreur ne voit que son logement (espace acquéreur).
+  acquereur: AUCUNE,
 }
 
 export function capacitesStockPourRole(role: Role): CapacitesStock {

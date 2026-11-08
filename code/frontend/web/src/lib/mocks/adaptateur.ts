@@ -19,6 +19,8 @@ import {
   type EntreeMouvementMock,
 } from '@/lib/mocks/donnees-grand-bassam'
 import { routerAvancement } from '@/lib/mocks/adaptateur-avancement'
+import { listerLogementsDestination } from '@/lib/mocks/avancement-grand-bassam'
+import { routerDroits } from '@/lib/mocks/adaptateur-droits'
 import { routerReferentiels } from '@/lib/mocks/adaptateur-referentiels'
 
 const LATENCE_MS = 280
@@ -71,6 +73,11 @@ function router(config: InternalAxiosRequestConfig): AxiosResponse<unknown> | un
     return reponse(config, [MAGASIN_PILOTE])
   }
 
+  const logementsMatch = url.match(/^\/chantiers\/([^/]+)\/logements$/)
+  if (methode === 'get' && logementsMatch) {
+    return reponse(config, listerLogementsDestination(logementsMatch[1] ?? ''))
+  }
+
   if (methode === 'get' && url === '/types-mouvement') {
     return reponse(config, TYPES_MOUVEMENT)
   }
@@ -96,12 +103,10 @@ function router(config: InternalAxiosRequestConfig): AxiosResponse<unknown> | un
       magasin_id_magasin: texte(corps.magasin_id_magasin),
       type_mouvement_code_type_mouvement: texte(corps.type_mouvement_code_type_mouvement),
       quantite_saisie: texte(corps.quantite_saisie),
-      logement_id_logement: typeof corps.logement_id_logement === 'string'
-        ? corps.logement_id_logement
-        : null,
-      reference_externe: typeof corps.reference_externe === 'string'
-        ? corps.reference_externe
-        : null,
+      logement_id_logement:
+        typeof corps.logement_id_logement === 'string' ? corps.logement_id_logement : null,
+      reference_externe:
+        typeof corps.reference_externe === 'string' ? corps.reference_externe : null,
       motif: typeof corps.motif === 'string' ? corps.motif : null,
     }
     return reponse(config, appliquerMouvement(entree), 201)
@@ -124,10 +129,11 @@ function router(config: InternalAxiosRequestConfig): AxiosResponse<unknown> | un
 
 export const adaptateurMock: AxiosAdapter = async (config) => {
   await attendre(LATENCE_MS)
-  // On essaie successivement les routes du stock, de l'avancement puis des
-  // référentiels : chaque module apporte sa table de routes, le client reste
-  // unique.
-  const resultat = router(config) ?? routerAvancement(config) ?? routerReferentiels(config)
+  // On essaie successivement les routes du stock, de l'avancement, des
+  // référentiels puis des droits : chaque module apporte sa table de routes,
+  // le client reste unique.
+  const resultat =
+    router(config) ?? routerAvancement(config) ?? routerReferentiels(config) ?? routerDroits(config)
   if (!resultat) {
     throw new Error(`Route non simulée : ${config.method?.toUpperCase()} ${config.url}`)
   }

@@ -15,11 +15,7 @@ import type {
   SaisieSortie,
   TypeMouvement,
 } from '@/features/stock/types'
-import type {
-  LigneStockDto,
-  MouvementStockDto,
-  TypeMouvementDto,
-} from '@/features/stock/api/dto'
+import type { LigneStockDto, MouvementStockDto, TypeMouvementDto } from '@/features/stock/api/dto'
 import {
   mapperLigneStock,
   mapperMouvement,

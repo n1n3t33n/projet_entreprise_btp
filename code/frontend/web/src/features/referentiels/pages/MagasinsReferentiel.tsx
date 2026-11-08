@@ -125,8 +125,18 @@ export function MagasinsReferentiel({ peutEditer }: MagasinsReferentielProps) {
         }
         indicateurs={
           <>
-            <KpiCard libelle="Magasins" valeur={indicateurs.total} icone={Warehouse} accent="marine" />
-            <KpiCard libelle="Actifs" valeur={indicateurs.actifs} icone={Buildings} accent="succes" />
+            <KpiCard
+              libelle="Magasins"
+              valeur={indicateurs.total}
+              icone={Warehouse}
+              accent="marine"
+            />
+            <KpiCard
+              libelle="Actifs"
+              valeur={indicateurs.actifs}
+              icone={Buildings}
+              accent="succes"
+            />
           </>
         }
       >

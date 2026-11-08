@@ -14,16 +14,7 @@ import { useState, type FormEvent } from 'react'
 import { Button, FormField, Input, Modal, Select, useToast } from '@/components/ui'
 import { formatQuantite } from '@/lib/format'
 import { enregistrerSortie } from '@/features/stock/api'
-import type { LigneStock, TypeMouvement } from '@/features/stock/types'
-
-/** Logements de démonstration du chantier pilote (le référentiel logement est hors périmètre). */
-const LOGEMENTS_DEMO: ReadonlyArray<{ id: string; libelle: string }> = [
-  { id: 'LOG-A1', libelle: 'Îlot A · Villa 1' },
-  { id: 'LOG-A2', libelle: 'Îlot A · Villa 2' },
-  { id: 'LOG-B1', libelle: 'Îlot B · Villa 1' },
-  { id: 'LOG-B2', libelle: 'Îlot B · Villa 2' },
-  { id: 'LOG-C1', libelle: 'Îlot C · Duplex 1' },
-]
+import type { LigneStock, LogementDestination, TypeMouvement } from '@/features/stock/types'
 
 export type FormulaireSortieProps = {
   ouvert: boolean
@@ -32,6 +23,8 @@ export type FormulaireSortieProps = {
   articles: LigneStock[]
   /** Types de mouvement de sortie disponibles (sortie logement, perte, casse). */
   typesSortie: TypeMouvement[]
+  /** Logements du chantier, destinations possibles (chargés par l'écran). */
+  logements: LogementDestination[]
   onEnregistre: () => void
 }
 
@@ -41,6 +34,7 @@ export function FormulaireSortie({
   idMagasin,
   articles,
   typesSortie,
+  logements,
   onEnregistre,
 }: FormulaireSortieProps) {
   const { afficherToast } = useToast()
@@ -96,7 +90,8 @@ export function FormulaireSortie({
       )}).`
     }
     if (typeChoisi?.destinationObligatoire && !idLogement) {
-      prochainesErreurs.logement = 'La destination est obligatoire pour une sortie vers un logement.'
+      prochainesErreurs.logement =
+        'La destination est obligatoire pour une sortie vers un logement.'
     }
     if (typeChoisi?.motifObligatoire && motif.trim() === '') {
       prochainesErreurs.motif = 'Le motif est obligatoire pour ce type de sortie.'
@@ -226,8 +221,8 @@ export function FormulaireSortie({
                 onChange={(evenement) => setIdLogement(evenement.target.value)}
               >
                 <option value="">— Choisir un logement —</option>
-                {LOGEMENTS_DEMO.map((logement) => (
-                  <option key={logement.id} value={logement.id}>
+                {logements.map((logement) => (
+                  <option key={logement.idLogement} value={logement.idLogement}>
                     {logement.libelle}
                   </option>
                 ))}

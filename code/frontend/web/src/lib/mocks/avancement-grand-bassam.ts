@@ -44,7 +44,7 @@ export const ZONES: ZoneDto[] = [
   { id_zone: 'ZON-C', code: 'C', nom: 'Îlot C', id_chantier: 'CH-GB' },
 ]
 
-const TYPES_LOGEMENT: Record<string, string> = {
+export const TYPES_LOGEMENT: Record<string, string> = {
   VILLA3: 'Villa 3 pièces',
   VILLA4: 'Villa 4 pièces',
   DUPLEX: 'Duplex',
@@ -70,13 +70,48 @@ type EtapeModeleSeed = {
 /** Gamme de référence : dix étapes types, poids total 100. */
 const ETAPES_MODELE: EtapeModeleSeed[] = [
   { id: 'EM-01', libelle: 'Fondations', ordre: 1, poids: 15, controleRequis: true, corps: 'GO' },
-  { id: 'EM-02', libelle: 'Élévation des murs', ordre: 2, poids: 15, controleRequis: true, corps: 'GO' },
+  {
+    id: 'EM-02',
+    libelle: 'Élévation des murs',
+    ordre: 2,
+    poids: 15,
+    controleRequis: true,
+    corps: 'GO',
+  },
   { id: 'EM-03', libelle: 'Cloisons', ordre: 3, poids: 10, controleRequis: false, corps: 'MAC' },
-  { id: 'EM-04', libelle: 'Pose des gaines', ordre: 4, poids: 8, controleRequis: false, corps: 'ELEC' },
-  { id: 'EM-05', libelle: 'Réseaux plomberie', ordre: 5, poids: 8, controleRequis: false, corps: 'PLOMB' },
+  {
+    id: 'EM-04',
+    libelle: 'Pose des gaines',
+    ordre: 4,
+    poids: 8,
+    controleRequis: false,
+    corps: 'ELEC',
+  },
+  {
+    id: 'EM-05',
+    libelle: 'Réseaux plomberie',
+    ordre: 5,
+    poids: 8,
+    controleRequis: false,
+    corps: 'PLOMB',
+  },
   { id: 'EM-06', libelle: 'Enduits', ordre: 6, poids: 10, controleRequis: false, corps: 'MAC' },
-  { id: 'EM-07', libelle: 'Appareillage électrique', ordre: 7, poids: 8, controleRequis: true, corps: 'ELEC' },
-  { id: 'EM-08', libelle: 'Appareils sanitaires', ordre: 8, poids: 8, controleRequis: false, corps: 'PLOMB' },
+  {
+    id: 'EM-07',
+    libelle: 'Appareillage électrique',
+    ordre: 7,
+    poids: 8,
+    controleRequis: true,
+    corps: 'ELEC',
+  },
+  {
+    id: 'EM-08',
+    libelle: 'Appareils sanitaires',
+    ordre: 8,
+    poids: 8,
+    controleRequis: false,
+    corps: 'PLOMB',
+  },
   { id: 'EM-09', libelle: 'Peinture', ordre: 9, poids: 10, controleRequis: false, corps: 'FIN' },
   { id: 'EM-10', libelle: 'Carrelage', ordre: 10, poids: 8, controleRequis: true, corps: 'FIN' },
 ]
@@ -84,11 +119,31 @@ const ETAPES_MODELE: EtapeModeleSeed[] = [
 const POIDS_TOTAL = ETAPES_MODELE.reduce((somme, etape) => somme + etape.poids, 0)
 
 export const MOTIFS_BLOCAGE: MotifBlocageDto[] = [
-  { code_motif: 'MANQUE_MATERIEL', libelle: 'Manque de matériel', requiert_article: true, actif: true },
-  { code_motif: 'ATTENTE_CLIENT', libelle: "Attente de décision client", requiert_article: false, actif: true },
+  {
+    code_motif: 'MANQUE_MATERIEL',
+    libelle: 'Manque de matériel',
+    requiert_article: true,
+    actif: true,
+  },
+  {
+    code_motif: 'ATTENTE_CLIENT',
+    libelle: 'Attente de décision client',
+    requiert_article: false,
+    actif: true,
+  },
   { code_motif: 'INTEMPERIES', libelle: 'Intempéries', requiert_article: false, actif: true },
-  { code_motif: 'DEFAUT_TECHNIQUE', libelle: 'Défaut technique à reprendre', requiert_article: false, actif: true },
-  { code_motif: 'ACCES_IMPOSSIBLE', libelle: 'Accès au logement impossible', requiert_article: false, actif: true },
+  {
+    code_motif: 'DEFAUT_TECHNIQUE',
+    libelle: 'Défaut technique à reprendre',
+    requiert_article: false,
+    actif: true,
+  },
+  {
+    code_motif: 'ACCES_IMPOSSIBLE',
+    libelle: 'Accès au logement impossible',
+    requiert_article: false,
+    actif: true,
+  },
 ]
 
 const TYPES_PAR_INDEX = ['VILLA3', 'VILLA4', 'DUPLEX']
@@ -115,7 +170,7 @@ type EtapeRecord = {
   nomAuteurDeclaration: string | null
 }
 
-type LogementRecord = {
+export type LogementRecord = {
   idLogement: string
   numero: string
   idZone: string
@@ -123,7 +178,7 @@ type LogementRecord = {
   statut: StatutLogementDb
 }
 
-const logements: LogementRecord[] = []
+export const logements: LogementRecord[] = []
 const etapesParLogement = new Map<string, EtapeRecord[]>()
 const evenements: EvenementExecutionDto[] = []
 let compteurEvenement = 0
@@ -205,9 +260,12 @@ for (let i = 0; i < 12; i += 1) {
       const variante = i % 3
       ajouterEvenement(idEtape, 'A_FAIRE', 'EN_COURS', horodateBase, tech)
       if (variante === 0 && modele.controleRequis) {
-        // Déclarée terminée, en attente de contrôle. Un logement sur deux est
-        // déclaré par l'utilisateur courant, pour illustrer RG-D11.
-        const declarant = i % 2 === 0 ? { id: ID_UTILISATEUR_COURANT, nom: 'Vous' } : tech
+        // Déclarée terminée, en attente de contrôle. Corrigé : seul le premier
+        // logement est déclaré par l'utilisateur courant (illustration de
+        // RG-D11, validation refusée) ; les autres le sont par un technicien et
+        // restent validables. Avant, toutes les étapes à valider étaient
+        // auto-déclarées : aucune validation n'était possible dans la démo.
+        const declarant = i === 0 ? { id: ID_UTILISATEUR_COURANT, nom: 'Vous' } : tech
         const dDecl = ajouterJours(horodateBase, 1)
         base.statut = 'TERMINEE_DECLAREE'
         base.dateFinDeclaree = dateSeule(dDecl)
@@ -234,6 +292,17 @@ for (let i = 0; i < 12; i += 1) {
 
   logements.push({ idLogement, numero, idZone, codeType, statut: statutLogement })
   etapesParLogement.set(idLogement, records)
+}
+
+/**
+ * Ajoute un logement créé depuis le référentiel de structure. Il n'a encore
+ * aucune étape : les étapes naissent de l'application d'une gamme opératoire
+ * (référentiel des gammes, étape ultérieure). Il apparaît donc à 0 % dans le
+ * suivi d'avancement, ce qui est le comportement attendu.
+ */
+export function ajouterLogement(record: LogementRecord): void {
+  logements.push(record)
+  etapesParLogement.set(record.idLogement, [])
 }
 
 function modeleDe(idEtapeModele: string): EtapeModeleSeed {
@@ -285,6 +354,29 @@ function poidsValide(record: EtapeRecord): number {
   return record.statut === 'VALIDEE' ? modele.poids : 0
 }
 
+/**
+ * Logements d'un chantier vus comme destinations de sortie de stock : la même
+ * source que le suivi d'avancement et le référentiel de structure.
+ */
+export function listerLogementsDestination(idChantier: string): {
+  id_logement: string
+  numero: string
+  libelle_zone: string
+  libelle_type: string
+}[] {
+  const zonesDuChantier = new Set(
+    ZONES.filter((zone) => zone.id_chantier === idChantier).map((zone) => zone.id_zone),
+  )
+  return logements
+    .filter((logement) => zonesDuChantier.has(logement.idZone))
+    .map((logement) => ({
+      id_logement: logement.idLogement,
+      numero: logement.numero,
+      libelle_zone: libelleZone(logement.idZone),
+      libelle_type: TYPES_LOGEMENT[logement.codeType] ?? logement.codeType,
+    }))
+}
+
 export function construireLignesLogement(): LigneLogementDto[] {
   return logements.map((logement) => {
     const etapes = etapesParLogement.get(logement.idLogement) ?? []
@@ -317,7 +409,10 @@ function toutesLesEtapes(): EtapeRecord[] {
 
 export function construireEtapesAValider(): LigneEtapeDto[] {
   return toutesLesEtapes()
-    .filter((record) => record.statut === 'TERMINEE_DECLAREE' && modeleDe(record.idEtapeModele).controleRequis)
+    .filter(
+      (record) =>
+        record.statut === 'TERMINEE_DECLAREE' && modeleDe(record.idEtapeModele).controleRequis,
+    )
     .map(versLigneEtape)
 }
 
@@ -387,9 +482,16 @@ export function appliquerBlocage(
   const horodatage = new Date()
   const avant = record.statut
   record.statut = 'BLOQUEE'
-  ajouterEvenement(idEtape, avant, 'BLOQUEE', horodatage, { id: ID_UTILISATEUR_COURANT, nom: 'Vous' }, {
-    motif: codeMotif,
-    commentaire,
-  })
+  ajouterEvenement(
+    idEtape,
+    avant,
+    'BLOQUEE',
+    horodatage,
+    { id: ID_UTILISATEUR_COURANT, nom: 'Vous' },
+    {
+      motif: codeMotif,
+      commentaire,
+    },
+  )
   return listerEvenementsEtape(idEtape)[0] ?? null
 }

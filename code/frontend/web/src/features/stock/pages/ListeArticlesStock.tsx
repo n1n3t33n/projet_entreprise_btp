@@ -42,10 +42,7 @@ export type ListeArticlesStockProps = {
 }
 
 function sansAccents(valeur: string): string {
-  return valeur
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
+  return valeur.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 }
 
 export function ListeArticlesStock({
@@ -179,7 +176,12 @@ export function ListeArticlesStock({
       }
       indicateurs={
         <>
-          <KpiCard libelle="Références suivies" valeur={indicateurs.total} icone={Package} accent="marine" />
+          <KpiCard
+            libelle="Références suivies"
+            valeur={indicateurs.total}
+            icone={Package}
+            accent="marine"
+          />
           <KpiCard
             libelle="À surveiller"
             valeur={indicateurs.aSurveiller}
@@ -215,7 +217,10 @@ export function ListeArticlesStock({
             aria-label="Filtrer par famille"
             value={filtre.codeFamille}
             onChange={(evenement) =>
-              onFiltre({ ...filtre, codeFamille: evenement.target.value as FiltreStock['codeFamille'] })
+              onFiltre({
+                ...filtre,
+                codeFamille: evenement.target.value as FiltreStock['codeFamille'],
+              })
             }
             className="h-10 rounded-controle border border-bordure bg-surface px-3 text-sm text-texte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
           >

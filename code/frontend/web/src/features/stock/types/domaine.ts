@@ -171,3 +171,12 @@ export type LigneInventaire = {
   ecart: number
   statut: StatutLigneInventaire
 }
+
+/**
+ * Logement pouvant recevoir une sortie de stock (CL-2 `Logement`), avec un
+ * libellé prêt à afficher : « Îlot A · A01 · Villa 3 pièces ».
+ */
+export type LogementDestination = {
+  idLogement: string
+  libelle: string
+}

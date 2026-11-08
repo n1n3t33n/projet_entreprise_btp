@@ -53,7 +53,11 @@ export function ArborescenceMagasins() {
       {etat.statut === 'chargement' && !etat.donnees ? (
         <div className="h-48 animate-pulse rounded-controle bg-fond-alt" />
       ) : (
-        <Tree intitule="Magasins et familles d'articles" noeuds={noeuds} ouvertsInitiaux={ouvertsInitiaux} />
+        <Tree
+          intitule="Magasins et familles d'articles"
+          noeuds={noeuds}
+          ouvertsInitiaux={ouvertsInitiaux}
+        />
       )}
     </Card>
   )

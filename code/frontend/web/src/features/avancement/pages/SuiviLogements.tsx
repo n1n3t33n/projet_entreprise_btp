@@ -8,7 +8,15 @@
 */
 
 import { useMemo } from 'react'
-import { Button, Card, type ColonneTable, FilterPill, Input, StatusPill, Table } from '@/components/ui'
+import {
+  Button,
+  Card,
+  type ColonneTable,
+  FilterPill,
+  Input,
+  StatusPill,
+  Table,
+} from '@/components/ui'
 import { BarreAvancement } from '@/features/avancement/components/BarreAvancement'
 import { formatPourcentage } from '@/lib/format'
 import {
@@ -41,7 +49,10 @@ export function SuiviLogements({
   const lignesFiltrees = useMemo(() => {
     const recherche = sansAccents(filtre.recherche.trim())
     return lignes.filter((ligne) => {
-      if (filtre.idZone !== 'toutes' && !ligne.libelleZone.includes(zoneLibelle(zones, filtre.idZone))) {
+      if (
+        filtre.idZone !== 'toutes' &&
+        !ligne.libelleZone.includes(zoneLibelle(zones, filtre.idZone))
+      ) {
         return false
       }
       if (recherche.length > 0) {
@@ -103,7 +114,11 @@ export function SuiviLogements({
       rendu: (ligne) => (
         <div className="flex flex-wrap gap-1">
           {ligne.nombreBloquees > 0 && (
-            <StatusPill taille="sm" ton="danger" libelle={`${ligne.nombreBloquees} bloquée${ligne.nombreBloquees > 1 ? 's' : ''}`} />
+            <StatusPill
+              taille="sm"
+              ton="danger"
+              libelle={`${ligne.nombreBloquees} bloquée${ligne.nombreBloquees > 1 ? 's' : ''}`}
+            />
           )}
           {ligne.nombreEnRetard > 0 && (
             <StatusPill taille="sm" ton="alerte" libelle={`${ligne.nombreEnRetard} en retard`} />

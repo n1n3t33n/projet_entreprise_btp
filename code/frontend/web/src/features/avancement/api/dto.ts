@@ -4,12 +4,7 @@
   sortent pas de la couche api.
 */
 
-export type StatutEtapeDb =
-  | 'A_FAIRE'
-  | 'EN_COURS'
-  | 'TERMINEE_DECLAREE'
-  | 'VALIDEE'
-  | 'BLOQUEE'
+export type StatutEtapeDb = 'A_FAIRE' | 'EN_COURS' | 'TERMINEE_DECLAREE' | 'VALIDEE' | 'BLOQUEE'
 
 export type StatutLogementDb = 'A_VENIR' | 'EN_COURS' | 'LIVRE'
 
