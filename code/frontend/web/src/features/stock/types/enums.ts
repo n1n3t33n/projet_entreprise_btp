@@ -50,8 +50,15 @@ export type StatutInventaire = 'ouvert' | 'en_cours' | 'valide' | 'clos'
 /** Statut d'une ligne d'inventaire (CL-4 `LigneInventaire.statut`). */
 export type StatutLigneInventaire = 'a_compter' | 'comptee' | 'ecart' | 'ajustee'
 
-/** Origine d'un article (CL-3a `Article.origine`). */
-export type OrigineArticle = 'local' | 'import'
+/**
+ * Origine d'un article (CL-3a `Article.origine : Origine`, littéraux du MPD-3
+ * `article.origine ∈ {ACHAT, PRODUCTION_INTERNE, RECUPERATION, …}`).
+ *
+ * Corrigé à l'étape 8 : la version précédente (`'local' | 'import'`) n'avait
+ * aucun fondement dans la modélisation. Les valeurs sont désormais identiques
+ * à celles du module référentiels, qui est le propriétaire du catalogue.
+ */
+export type OrigineArticle = 'achat' | 'production_interne' | 'recuperation'
 
 /** Type d'unité de mesure (CL-3a `UniteMesure.typeUnite`). */
 export type TypeUnite = 'unite' | 'masse' | 'volume' | 'longueur' | 'surface'

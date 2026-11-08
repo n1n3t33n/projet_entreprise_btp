@@ -21,8 +21,8 @@ import {
   useToast,
 } from '@/components/ui'
 import { definirSeuils, listerMouvementsArticle } from '@/features/stock/api'
-import { useRequete } from '@/features/stock/hooks/useRequete'
-import { formatDateHeure, formatQuantite } from '@/features/stock/presentation/format'
+import { useRequete } from '@/lib/hooks/useRequete'
+import { formatDateHeure, formatQuantite } from '@/lib/format'
 import {
   LIBELLE_SENS,
   LIBELLE_STATUT_VALIDATION,

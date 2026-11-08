@@ -12,7 +12,7 @@ import { Button, Card, type ColonneTable, KpiCard, StatusPill, Table } from '@/c
 import { PageListe } from '@/components/templates'
 import { listerChantiers, listerMagasins } from '@/features/referentiels/api'
 import { FormulaireMagasin } from '@/features/referentiels/pages/FormulaireMagasin'
-import { useRequete } from '@/features/referentiels/hooks/useRequete'
+import { useRequete } from '@/lib/hooks/useRequete'
 import { tonActif } from '@/features/referentiels/presentation/libelles'
 import type { MagasinVue } from '@/features/referentiels/types'
 

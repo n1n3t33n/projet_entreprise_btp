@@ -1,10 +1,16 @@
 /*
   Barre d'avancement à deux niveaux : déclaré et validé.
 
-  La bibliothèque partagée ne propose pas d'indicateur de pourcentage
-  (`ThresholdGauge` est spécifique aux seuils de stock). Ce composant est donc
-  local au module ; il est un bon candidat à remonter dans `components/ui` si un
-  besoin d'avancement apparaît ailleurs (à signaler pour une étape ultérieure).
+  DÉCISION (étape 8) : le composant reste local au module avancement.
+  - Ses trois consommateurs sont tous dans ce module ; aucun autre module n'en
+    a besoin aujourd'hui.
+  - Son contrat porte des notions métier propres au suivi des étapes (part
+    « déclarée » et part « validée », issues des états d'étape ET-1 et de
+    l'avancement agrégé CL-5). La bibliothèque `components/ui` n'accueille que
+    des composants sans notion métier.
+  Critère de remontée : si un autre module affiche un jour une progression à
+  deux niveaux, on extraira une jauge générique (`valeur`, `valeurSecondaire`)
+  dans `components/ui`, que ce composant habillera avec ses libellés métier.
 
   La part validée (pleine, couleur succès) se superpose à la part déclarée
   (atténuée) sur une même piste, de sorte que l'écart déclaré / validé se lit
@@ -12,7 +18,7 @@
 */
 
 import { cn } from '@/lib/cn'
-import { formatPourcentage } from '@/features/avancement/presentation/format'
+import { formatPourcentage } from '@/lib/format'
 
 export type BarreAvancementProps = {
   pourcentageDeclare: number

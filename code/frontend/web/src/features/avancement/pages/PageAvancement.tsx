@@ -20,7 +20,7 @@ import {
 } from '@/features/avancement/api'
 import { BarreAvancement } from '@/features/avancement/components/BarreAvancement'
 import { useCapacitesAvancement } from '@/features/avancement/hooks/useCapacitesAvancement'
-import { useRequete } from '@/features/avancement/hooks/useRequete'
+import { useRequete } from '@/lib/hooks/useRequete'
 import { EtapesAValider } from '@/features/avancement/pages/EtapesAValider'
 import {
   FicheLogementTiroir,

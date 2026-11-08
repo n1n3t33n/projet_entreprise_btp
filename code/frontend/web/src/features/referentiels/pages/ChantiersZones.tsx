@@ -22,8 +22,8 @@ import { chargerArborescence, listerChantiers, listerTypesLogement } from '@/fea
 import { FormulaireChantier } from '@/features/referentiels/pages/FormulaireChantier'
 import { FormulaireLogement } from '@/features/referentiels/pages/FormulaireLogement'
 import { FormulaireZone } from '@/features/referentiels/pages/FormulaireZone'
-import { useRequete } from '@/features/referentiels/hooks/useRequete'
-import { formatDate, formatSurface } from '@/features/referentiels/presentation/format'
+import { useRequete } from '@/lib/hooks/useRequete'
+import { formatDate, formatSurface } from '@/lib/format'
 import { libelleStatut, libelleTypeZone, tonStatut } from '@/features/referentiels/presentation/libelles'
 import type {
   Chantier,

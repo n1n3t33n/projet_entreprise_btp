@@ -22,7 +22,7 @@ import {
 import { PageListe } from '@/components/templates'
 import { listerArticles, listerCategories, listerUnites } from '@/features/referentiels/api'
 import { FormulaireArticle } from '@/features/referentiels/pages/FormulaireArticle'
-import { useRequete } from '@/features/referentiels/hooks/useRequete'
+import { useRequete } from '@/lib/hooks/useRequete'
 import { libelleOrigine, libelleTypeUnite, tonActif } from '@/features/referentiels/presentation/libelles'
 import type { ArticleVue } from '@/features/referentiels/types'
 

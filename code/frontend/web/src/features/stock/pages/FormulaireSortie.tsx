@@ -12,7 +12,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { Button, FormField, Input, Modal, Select, useToast } from '@/components/ui'
-import { formatQuantite } from '@/features/stock/presentation/format'
+import { formatQuantite } from '@/lib/format'
 import { enregistrerSortie } from '@/features/stock/api'
 import type { LigneStock, TypeMouvement } from '@/features/stock/types'
 

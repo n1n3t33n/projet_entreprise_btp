@@ -10,7 +10,7 @@
 import { useMemo } from 'react'
 import { Button, Card, type ColonneTable, FilterPill, Input, StatusPill, Table } from '@/components/ui'
 import { BarreAvancement } from '@/features/avancement/components/BarreAvancement'
-import { formatPourcentage } from '@/features/avancement/presentation/format'
+import { formatPourcentage } from '@/lib/format'
 import {
   LIBELLE_STATUT_LOGEMENT,
   TON_STATUT_LOGEMENT,
