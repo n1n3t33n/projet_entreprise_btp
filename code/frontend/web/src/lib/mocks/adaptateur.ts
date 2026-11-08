@@ -19,6 +19,7 @@ import {
   type EntreeMouvementMock,
 } from '@/lib/mocks/donnees-grand-bassam'
 import { routerAvancement } from '@/lib/mocks/adaptateur-avancement'
+import { routerReferentiels } from '@/lib/mocks/adaptateur-referentiels'
 
 const LATENCE_MS = 280
 
@@ -123,9 +124,10 @@ function router(config: InternalAxiosRequestConfig): AxiosResponse<unknown> | un
 
 export const adaptateurMock: AxiosAdapter = async (config) => {
   await attendre(LATENCE_MS)
-  // On essaie d'abord les routes du stock, puis celles de l'avancement : chaque
-  // module apporte sa table de routes, le client reste unique.
-  const resultat = router(config) ?? routerAvancement(config)
+  // On essaie successivement les routes du stock, de l'avancement puis des
+  // référentiels : chaque module apporte sa table de routes, le client reste
+  // unique.
+  const resultat = router(config) ?? routerAvancement(config) ?? routerReferentiels(config)
   if (!resultat) {
     throw new Error(`Route non simulée : ${config.method?.toUpperCase()} ${config.url}`)
   }
