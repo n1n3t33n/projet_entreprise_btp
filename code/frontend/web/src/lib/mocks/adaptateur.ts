@@ -24,6 +24,8 @@ import { routerAuth } from '@/lib/mocks/adaptateur-auth'
 import { routerDroits } from '@/lib/mocks/adaptateur-droits'
 import { routerPilotage } from '@/lib/mocks/adaptateur-pilotage'
 import { routerReferentiels } from '@/lib/mocks/adaptateur-referentiels'
+import { routerGammes } from '@/lib/mocks/adaptateur-gammes'
+import { routerParametrage } from '@/lib/mocks/adaptateur-parametrage'
 
 const LATENCE_MS = 280
 
@@ -132,13 +134,16 @@ function router(config: InternalAxiosRequestConfig): AxiosResponse<unknown> | un
 export const adaptateurMock: AxiosAdapter = async (config) => {
   await attendre(LATENCE_MS)
   // On essaie successivement les routes du stock, de l'avancement, du
-  // pilotage, des référentiels, des droits puis de l'authentification :
-  // chaque module apporte sa table de routes, le client reste unique.
+  // pilotage, des référentiels, des gammes, du paramétrage, des droits puis
+  // de l'authentification : chaque module apporte sa table de routes, le
+  // client reste unique.
   const resultat =
     router(config) ??
     routerAvancement(config) ??
     routerPilotage(config) ??
     routerReferentiels(config) ??
+    routerGammes(config) ??
+    routerParametrage(config) ??
     routerDroits(config) ??
     routerAuth(config)
   if (!resultat) {

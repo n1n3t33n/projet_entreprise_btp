@@ -33,6 +33,12 @@ const PageStock = lazy(() =>
 const PageReferentiels = lazy(() =>
   import('@/features/referentiels').then((module) => ({ default: module.PageReferentiels })),
 )
+const PageGammes = lazy(() =>
+  import('@/features/gammes').then((module) => ({ default: module.PageGammes })),
+)
+const PageParametrage = lazy(() =>
+  import('@/features/parametrage').then((module) => ({ default: module.PageParametrage })),
+)
 const PageConnexion = lazy(() =>
   import('@/features/auth').then((module) => ({ default: module.PageConnexion })),
 )
@@ -76,6 +82,8 @@ export const router = createBrowserRouter([
           { path: '/journal', element: ecran('journal', <PageJournalExecution />) },
           { path: '/stock', element: ecran('stock', <PageStock />) },
           { path: '/referentiels', element: ecran('referentiels', <PageReferentiels />) },
+          { path: '/gammes', element: ecran('gammes', <PageGammes />) },
+          { path: '/parametrage', element: ecran('parametrage', <PageParametrage />) },
           {
             path: '/administration',
             element: ecran('administration', <PageAdministration />),

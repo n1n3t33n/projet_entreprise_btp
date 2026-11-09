@@ -15,6 +15,11 @@
 */
 
 import { ID_UTILISATEUR_COURANT } from '@/features/avancement/config/capacites'
+import {
+  corpsEtatDemo,
+  etapesModeleDemo,
+  type EtapeModeleSeed,
+} from '@/lib/mocks/gammes-grand-bassam'
 import type {
   EvenementExecutionDto,
   LigneEtapeDto,
@@ -57,71 +62,18 @@ export const TYPES_LOGEMENT: Record<string, string> = {
   DUPLEX: 'Duplex',
 }
 
-const CORPS_ETAT: Record<string, { libelle: string; couleur: string }> = {
-  GO: { libelle: 'Gros œuvre', couleur: '#6c8ebf' },
-  MAC: { libelle: 'Maçonnerie', couleur: '#b8954a' },
-  ELEC: { libelle: 'Électricité', couleur: '#9673a6' },
-  PLOMB: { libelle: 'Plomberie', couleur: '#3f8f7a' },
-  FIN: { libelle: 'Finitions', couleur: '#b85450' },
-}
+/*
+  Corps d'état et gamme de référence proviennent désormais du référentiel géré
+  (`gammes-grand-bassam`), source unique depuis l'étape 11. Le contenu est
+  identique à ce qui était codé ici : dix étapes types, poids total 100, mêmes
+  codes et mêmes corps d'état, de sorte que l'instanciation des logements et les
+  identifiants d'événements restent inchangés. Ces listes sont un instantané
+  figé à l'instanciation : publier une nouvelle version de gamme à l'écran ne
+  réécrit pas les étapes des logements déjà en cours.
+*/
+const CORPS_ETAT = corpsEtatDemo()
 
-type EtapeModeleSeed = {
-  id: string
-  libelle: string
-  ordre: number
-  poids: number
-  controleRequis: boolean
-  corps: string
-}
-
-/** Gamme de référence : dix étapes types, poids total 100. */
-const ETAPES_MODELE: EtapeModeleSeed[] = [
-  { id: 'EM-01', libelle: 'Fondations', ordre: 1, poids: 15, controleRequis: true, corps: 'GO' },
-  {
-    id: 'EM-02',
-    libelle: 'Élévation des murs',
-    ordre: 2,
-    poids: 15,
-    controleRequis: true,
-    corps: 'GO',
-  },
-  { id: 'EM-03', libelle: 'Cloisons', ordre: 3, poids: 10, controleRequis: false, corps: 'MAC' },
-  {
-    id: 'EM-04',
-    libelle: 'Pose des gaines',
-    ordre: 4,
-    poids: 8,
-    controleRequis: false,
-    corps: 'ELEC',
-  },
-  {
-    id: 'EM-05',
-    libelle: 'Réseaux plomberie',
-    ordre: 5,
-    poids: 8,
-    controleRequis: false,
-    corps: 'PLOMB',
-  },
-  { id: 'EM-06', libelle: 'Enduits', ordre: 6, poids: 10, controleRequis: false, corps: 'MAC' },
-  {
-    id: 'EM-07',
-    libelle: 'Appareillage électrique',
-    ordre: 7,
-    poids: 8,
-    controleRequis: true,
-    corps: 'ELEC',
-  },
-  {
-    id: 'EM-08',
-    libelle: 'Appareils sanitaires',
-    ordre: 8,
-    poids: 8,
-    controleRequis: false,
-    corps: 'PLOMB',
-  },
-  { id: 'EM-09', libelle: 'Peinture', ordre: 9, poids: 10, controleRequis: false, corps: 'FIN' },
-  { id: 'EM-10', libelle: 'Carrelage', ordre: 10, poids: 8, controleRequis: true, corps: 'FIN' },
-]
+const ETAPES_MODELE: EtapeModeleSeed[] = etapesModeleDemo()
 
 const POIDS_TOTAL = ETAPES_MODELE.reduce((somme, etape) => somme + etape.poids, 0)
 
