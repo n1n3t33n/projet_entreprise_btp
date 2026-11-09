@@ -14,18 +14,25 @@
   code" ». La matrice des accès est donc une DONNÉE, chargée depuis l'API et
   modifiable par l'administrateur, et non une table figée dans le code.
 
-  INFORMATION MANQUANTE SIGNALÉE : les dossiers de modélisation fournis ne
-  contiennent pas de MPD du domaine « accès et droits » (seuls MPD-2 à MPD-5
-  sont présents ; le README cite un `MPD_postgresql.drawio` d'ensemble absent
-  des fichiers). Les littéraux de `Action` et de `Portee` ne sont donc fondés
-  sur aucune source : les valeurs ci-dessous sont les seules employées par
-  l'écran, et devront être confrontées au MPD complet.
+  Littéral de `Action` aligné sur le modèle : MPD-1 (domaine « identité,
+  comptes et droits ») contraint `permission.action ∈ {LIRE, CREER, MODIFIER,
+  …}` et CL-1 type l'attribut comme une énumération `Action`. L'application lit
+  donc `LIRE` (et non plus `CONSULTER`) pour la permission d'accès à un écran.
+  `Portee` reste `{GLOBALE, PERIMETRE}` : les littéraux de `droit_accorde.portee`
+  ne sont pas figés par le MPD (CHECK générique terminé par « … »), ce sont les
+  seuls employés par l'écran et ils devront être confirmés avec le cahier.
 */
 
 import type { IdEcran } from '@/config/navigation'
 
-/** Action portée par une permission (CL-1 `Permission.action : Action`). */
-export type ActionPermission = 'consulter' | 'creer' | 'modifier' | 'valider'
+/**
+ * Action portée par une permission (CL-1 `Permission.action : Action`).
+ *
+ * Littéraux du modèle (MPD-1 CHECK `ck_permission_action`), en forme domaine :
+ * `lire` ← `LIRE`, `creer` ← `CREER`, `modifier` ← `MODIFIER`, `valider` est
+ * ajouté pour les futures permissions d'action du suivi d'avancement.
+ */
+export type ActionPermission = 'lire' | 'creer' | 'modifier' | 'valider'
 
 /** Portée d'un droit accordé (CL-1 `DroitAccorde.portee : Portee`). */
 export type PorteeDroit = 'globale' | 'perimetre'
@@ -44,9 +51,9 @@ export type RoleDroit = {
  * Permission d'accès à un écran du poste de pilotage (CL-1 `Permission`).
  *
  * Pour un écran, le triplet du modèle vaut : `module = 'ecran'`,
- * `ressource = <identifiant de l'écran>`, `action = 'consulter'`. La même
- * structure accueillera plus tard les permissions d'action (créer, valider…)
- * sans changer de forme.
+ * `ressource = <identifiant de l'écran>`, `action = 'lire'`. La même structure
+ * accueillera plus tard les permissions d'action (créer, valider…) sans changer
+ * de forme.
  */
 export type PermissionEcran = {
   code: string

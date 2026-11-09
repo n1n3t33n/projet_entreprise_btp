@@ -33,11 +33,11 @@ export function MatriceDroits({ etat, peutModifier }: MatriceDroitsProps) {
   const { afficherToast } = useToast()
   const { recharger } = useDroits()
 
-  /** Permission de consultation associée à chaque écran. */
+  /** Permission de lecture associée à chaque écran (MPD-1 : `action = 'lire'`). */
   const permissionParEcran = useMemo(() => {
     const index = new Map<IdEcran, string>()
     for (const permission of etat.permissions) {
-      if (permission.action === 'consulter') {
+      if (permission.action === 'lire') {
         index.set(permission.idEcran, permission.code)
       }
     }

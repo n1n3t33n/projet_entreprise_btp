@@ -45,6 +45,12 @@ const PageConnexion = lazy(() =>
 const PageAdministration = lazy(() =>
   import('@/features/admin').then((module) => ({ default: module.PageAdministration })),
 )
+const PageEquipes = lazy(() =>
+  import('@/features/equipes').then((module) => ({ default: module.PageEquipes })),
+)
+const PageEspaceAcquereur = lazy(() =>
+  import('@/features/acquereur').then((module) => ({ default: module.PageEspaceAcquereur })),
+)
 const DesignSystemPage = lazy(() =>
   import('@/theme/DesignSystemPage').then((module) => ({ default: module.DesignSystemPage })),
 )
@@ -83,6 +89,7 @@ export const router = createBrowserRouter([
           { path: '/stock', element: ecran('stock', <PageStock />) },
           { path: '/referentiels', element: ecran('referentiels', <PageReferentiels />) },
           { path: '/gammes', element: ecran('gammes', <PageGammes />) },
+          { path: '/equipes', element: ecran('equipes', <PageEquipes />) },
           { path: '/parametrage', element: ecran('parametrage', <PageParametrage />) },
           {
             path: '/administration',
@@ -94,7 +101,7 @@ export const router = createBrowserRouter([
           },
           {
             path: '/espace-acquereur',
-            element: ecran('espace-acquereur', <PageEnPreparation titre="Espace acquéreur" />),
+            element: ecran('espace-acquereur', <PageEspaceAcquereur />),
           },
           // Toute adresse inconnue ramène à l'accueil du rôle plutôt qu'à une page vide.
           { path: '*', element: <RedirectionAccueil /> },

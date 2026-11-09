@@ -17,8 +17,9 @@
     avancement, stock, journal d'exécution (EF-DSH-03 cite DIR parmi les
     profils, et le journal est en lecture seule par nature : RG-A5).
   - RTC « Définir les gammes, affecter, valider, suivre les retards » → les
-    écrans de pilotage, les référentiels, les gammes (EF-REF-05/09, RTC seul)
-    et le paramétrage (EF-REF-07/08, partagé avec l'administrateur).
+    écrans de pilotage, les référentiels, les gammes (EF-REF-05/09, RTC seul),
+    les équipes et l'affectation (EF-REF-06 : « affecter ») et le paramétrage
+    (EF-REF-07/08, partagé avec l'administrateur).
   - ADM « paramétrer le chantier, définir les règles de validation » → le
     paramétrage (EF-REF-07/08), en plus de l'administration et des
     référentiels. Pas les gammes, qui relèvent du seul responsable technique.
@@ -43,12 +44,14 @@ const ROLES: RoleDto[] = [
   { code_role: 'acquereur', libelle: 'Acquéreur', systeme: false, actif: true },
 ]
 
-/** Une permission de consultation par écran : `ecran.<id>.consulter`. */
+/** Une permission de lecture par écran : `ecran.<id>.lire`. */
 const PERMISSIONS: PermissionDto[] = ECRANS.map((ecran) => ({
-  code_permission: `ecran.${ecran.id}.consulter`,
+  code_permission: `ecran.${ecran.id}.lire`,
   module: 'ecran',
   ressource: ecran.id,
-  action: 'CONSULTER',
+  // Littéral du modèle : MPD-1 contraint `permission.action ∈ {LIRE, CREER,
+  // MODIFIER, …}` et CL-1 type l'attribut comme une énumération `Action`.
+  action: 'LIRE',
   libelle: `Consulter l'écran « ${ecran.libelle} »`,
 }))
 
@@ -63,6 +66,7 @@ const MATRICE_INITIALE: Record<string, string[]> = {
     'stock',
     'referentiels',
     'gammes',
+    'equipes',
     'parametrage',
     'synchronisation',
   ],
@@ -73,7 +77,7 @@ const MATRICE_INITIALE: Record<string, string[]> = {
 let droits: DroitAccordeDto[] = Object.entries(MATRICE_INITIALE).flatMap(([codeRole, ecrans]) =>
   ecrans.map((idEcran) => ({
     role_code_role: codeRole,
-    permission_code_permission: `ecran.${idEcran}.consulter`,
+    permission_code_permission: `ecran.${idEcran}.lire`,
     portee: 'GLOBALE',
   })),
 )
@@ -85,7 +89,7 @@ let droits: DroitAccordeDto[] = Object.entries(MATRICE_INITIALE).flatMap(([codeR
  */
 const DROIT_OBLIGATOIRE: DroitAccordeDto = {
   role_code_role: 'administrateur',
-  permission_code_permission: 'ecran.administration.consulter',
+  permission_code_permission: 'ecran.administration.lire',
   portee: 'GLOBALE',
 }
 
