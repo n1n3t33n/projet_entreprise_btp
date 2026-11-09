@@ -20,6 +20,7 @@ import {
 } from '@/lib/mocks/donnees-grand-bassam'
 import { routerAvancement } from '@/lib/mocks/adaptateur-avancement'
 import { listerLogementsDestination } from '@/lib/mocks/avancement-grand-bassam'
+import { routerAuth } from '@/lib/mocks/adaptateur-auth'
 import { routerDroits } from '@/lib/mocks/adaptateur-droits'
 import { routerReferentiels } from '@/lib/mocks/adaptateur-referentiels'
 
@@ -130,10 +131,15 @@ function router(config: InternalAxiosRequestConfig): AxiosResponse<unknown> | un
 export const adaptateurMock: AxiosAdapter = async (config) => {
   await attendre(LATENCE_MS)
   // On essaie successivement les routes du stock, de l'avancement, des
-  // référentiels puis des droits : chaque module apporte sa table de routes,
+  // référentiels, des droits puis de l'authentification : chaque module
+  // apporte sa table de routes,
   // le client reste unique.
   const resultat =
-    router(config) ?? routerAvancement(config) ?? routerReferentiels(config) ?? routerDroits(config)
+    router(config) ??
+    routerAvancement(config) ??
+    routerReferentiels(config) ??
+    routerDroits(config) ??
+    routerAuth(config)
   if (!resultat) {
     throw new Error(`Route non simulée : ${config.method?.toUpperCase()} ${config.url}`)
   }

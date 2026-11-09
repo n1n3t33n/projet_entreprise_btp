@@ -1,13 +1,13 @@
 import { Bell, MagnifyingGlass, MapPin, Question } from '@phosphor-icons/react'
 import { useLocation } from 'react-router-dom'
-import { ROLES, useRole, type Role } from '@/app/role-context'
+import { libelleRole, useRole } from '@/app/role-context'
 import { ECRANS } from '@/config/navigation'
 
 /** Chantier unique du pilote (hypothèse H2 du cahier des charges). */
 const CHANTIER_PILOTE = 'Chantier de Grand-Bassam'
 
 export function TopBar() {
-  const { role, definirRole } = useRole()
+  const { role } = useRole()
   const location = useLocation()
   const entreeCourante = ECRANS.find((entree) => entree.chemin === location.pathname)
 
@@ -33,21 +33,10 @@ export function TopBar() {
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        <label className="flex items-center gap-2 rounded-controle border border-bordure px-2.5 py-1.5">
+        <span className="flex items-center gap-2 rounded-controle border border-bordure px-3 py-1.5">
           <span className="text-xs text-texte-secondaire">Rôle</span>
-          <select
-            value={role}
-            onChange={(event) => definirRole(event.target.value as Role)}
-            aria-label="Aperçu par rôle"
-            className="bg-transparent text-sm font-medium text-texte focus-visible:outline-none"
-          >
-            {ROLES.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.libelle}
-              </option>
-            ))}
-          </select>
-        </label>
+          <span className="text-sm font-medium text-texte">{libelleRole(role)}</span>
+        </span>
 
         {/* Le pilote porte un seul chantier (cahier des charges, hypothèse H2) :
             une étiquette fixe plutôt qu'un menu qui ne proposerait rien. */}

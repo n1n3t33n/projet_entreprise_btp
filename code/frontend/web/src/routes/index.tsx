@@ -12,6 +12,7 @@
 import { lazy, Suspense, type ReactNode } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import { App } from '@/app/App'
+import { Racine } from '@/app/Racine'
 import { ChargementModule } from '@/app/ChargementModule'
 import { EcranProtege, RedirectionAccueil } from '@/app/EcranProtege'
 import { PageEnPreparation } from '@/components/ui/PageEnPreparation'
@@ -25,6 +26,9 @@ const PageStock = lazy(() =>
 )
 const PageReferentiels = lazy(() =>
   import('@/features/referentiels').then((module) => ({ default: module.PageReferentiels })),
+)
+const PageConnexion = lazy(() =>
+  import('@/features/auth').then((module) => ({ default: module.PageConnexion })),
 )
 const PageAdministration = lazy(() =>
   import('@/features/admin').then((module) => ({ default: module.PageAdministration })),
@@ -47,30 +51,43 @@ function ecran(id: IdEcran, contenu: ReactNode) {
 
 export const router = createBrowserRouter([
   {
-    element: <App />,
+    element: <Racine />,
     children: [
-      { index: true, element: <RedirectionAccueil /> },
       {
-        path: '/tableau-de-bord',
-        element: ecran('tableau-de-bord', <PageEnPreparation titre="Tableau de bord" />),
-      },
-      { path: '/avancement', element: ecran('avancement', <PageAvancement />) },
-      { path: '/stock', element: ecran('stock', <PageStock />) },
-      { path: '/referentiels', element: ecran('referentiels', <PageReferentiels />) },
-      {
-        path: '/administration',
-        element: ecran('administration', <PageAdministration />),
+        path: '/connexion',
+        element: (
+          <Suspense fallback={<ChargementModule />}>
+            <PageConnexion />
+          </Suspense>
+        ),
       },
       {
-        path: '/synchronisation',
-        element: ecran('synchronisation', <PageEnPreparation titre="Synchronisation" />),
+        element: <App />,
+        children: [
+          { index: true, element: <RedirectionAccueil /> },
+          {
+            path: '/tableau-de-bord',
+            element: ecran('tableau-de-bord', <PageEnPreparation titre="Tableau de bord" />),
+          },
+          { path: '/avancement', element: ecran('avancement', <PageAvancement />) },
+          { path: '/stock', element: ecran('stock', <PageStock />) },
+          { path: '/referentiels', element: ecran('referentiels', <PageReferentiels />) },
+          {
+            path: '/administration',
+            element: ecran('administration', <PageAdministration />),
+          },
+          {
+            path: '/synchronisation',
+            element: ecran('synchronisation', <PageEnPreparation titre="Synchronisation" />),
+          },
+          {
+            path: '/espace-acquereur',
+            element: ecran('espace-acquereur', <PageEnPreparation titre="Espace acquéreur" />),
+          },
+          // Toute adresse inconnue ramène à l'accueil du rôle plutôt qu'à une page vide.
+          { path: '*', element: <RedirectionAccueil /> },
+        ],
       },
-      {
-        path: '/espace-acquereur',
-        element: ecran('espace-acquereur', <PageEnPreparation titre="Espace acquéreur" />),
-      },
-      // Toute adresse inconnue ramène à l'accueil du rôle plutôt qu'à une page vide.
-      { path: '*', element: <RedirectionAccueil /> },
     ],
   },
   {
