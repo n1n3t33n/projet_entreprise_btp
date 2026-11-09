@@ -17,7 +17,11 @@
     avancement, stock, journal d'exécution (EF-DSH-03 cite DIR parmi les
     profils, et le journal est en lecture seule par nature : RG-A5).
   - RTC « Définir les gammes, affecter, valider, suivre les retards » → les
-    écrans de pilotage et les référentiels.
+    écrans de pilotage, les référentiels, les gammes (EF-REF-05/09, RTC seul)
+    et le paramétrage (EF-REF-07/08, partagé avec l'administrateur).
+  - ADM « paramétrer le chantier, définir les règles de validation » → le
+    paramétrage (EF-REF-07/08), en plus de l'administration et des
+    référentiels. Pas les gammes, qui relèvent du seul responsable technique.
   - COM « Connaître l'avancement simplifié d'un logement » → avancement.
   - ACQ « Phase 2 : voir l'avancement de son logement, en lecture seule » →
     espace acquéreur.
@@ -50,7 +54,7 @@ const PERMISSIONS: PermissionDto[] = ECRANS.map((ecran) => ({
 
 const MATRICE_INITIALE: Record<string, string[]> = {
   direction: ['tableau-de-bord', 'avancement', 'journal', 'stock'],
-  administrateur: ['referentiels', 'administration', 'synchronisation'],
+  administrateur: ['referentiels', 'parametrage', 'administration', 'synchronisation'],
   commercial: ['avancement'],
   responsable_technique: [
     'tableau-de-bord',
@@ -58,6 +62,8 @@ const MATRICE_INITIALE: Record<string, string[]> = {
     'journal',
     'stock',
     'referentiels',
+    'gammes',
+    'parametrage',
     'synchronisation',
   ],
   acquereur: ['espace-acquereur'],

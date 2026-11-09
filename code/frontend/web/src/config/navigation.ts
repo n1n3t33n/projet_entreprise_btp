@@ -20,8 +20,10 @@ import {
   ClockCounterClockwise,
   HouseLine,
   type Icon,
+  ListChecks,
   Package,
   ShieldCheck,
+  SlidersHorizontal,
   SquaresFour,
   Stack,
 } from '@phosphor-icons/react'
@@ -32,6 +34,8 @@ export type IdEcran =
   | 'journal'
   | 'stock'
   | 'referentiels'
+  | 'gammes'
+  | 'parametrage'
   | 'administration'
   | 'synchronisation'
   | 'espace-acquereur'
@@ -60,6 +64,8 @@ export const ECRANS: EntreeNavigation[] = [
   },
   { id: 'stock', libelle: 'Stock', icone: Package, chemin: '/stock' },
   { id: 'referentiels', libelle: 'Référentiels', icone: Stack, chemin: '/referentiels' },
+  { id: 'gammes', libelle: 'Gammes', icone: ListChecks, chemin: '/gammes' },
+  { id: 'parametrage', libelle: 'Paramétrage', icone: SlidersHorizontal, chemin: '/parametrage' },
   {
     id: 'administration',
     libelle: 'Administration',
