@@ -54,6 +54,9 @@ export type EvenementExecutionDto = {
   etape_travaux_id_etape: string
   statut_avant: StatutEtapeDb | null
   statut_apres: StatutEtapeDb
+  /** Instant saisi sur le terminal mobile (CL-5 `horodatageAppareil`). */
+  horodatage_appareil: string
+  /** Instant d'enregistrement par le serveur (CL-5 `horodatageServeur`). */
   horodatage_serveur: string
   commentaire: string | null
   utilisateur_id_utilisateur: string

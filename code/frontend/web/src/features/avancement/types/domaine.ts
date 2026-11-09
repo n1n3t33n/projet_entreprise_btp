@@ -97,6 +97,11 @@ export type EvenementExecution = {
   idEtape: string
   statutAvant: StatutEtape | null
   statutApres: StatutEtape
+  /**
+   * Instant saisi sur l'appareil. RG-A5 exige que l'événement porte les deux
+   * horodatages : l'écart appareil / serveur est la trace du différé.
+   */
+  horodatageAppareil: string
   horodatageServeur: string
   commentaire: string | null
   idAuteur: string

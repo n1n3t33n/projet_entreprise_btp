@@ -17,6 +17,7 @@
 import {
   ArrowsClockwise,
   ChartLineUp,
+  ClockCounterClockwise,
   HouseLine,
   type Icon,
   Package,
@@ -28,6 +29,7 @@ import {
 export type IdEcran =
   | 'tableau-de-bord'
   | 'avancement'
+  | 'journal'
   | 'stock'
   | 'referentiels'
   | 'administration'
@@ -50,6 +52,12 @@ export const ECRANS: EntreeNavigation[] = [
     chemin: '/tableau-de-bord',
   },
   { id: 'avancement', libelle: 'Avancement', icone: ChartLineUp, chemin: '/avancement' },
+  {
+    id: 'journal',
+    libelle: "Journal d'exécution",
+    icone: ClockCounterClockwise,
+    chemin: '/journal',
+  },
   { id: 'stock', libelle: 'Stock', icone: Package, chemin: '/stock' },
   { id: 'referentiels', libelle: 'Référentiels', icone: Stack, chemin: '/referentiels' },
   {

@@ -325,6 +325,17 @@ export function listerMouvementsArticle(idArticle: string): MouvementStockDto[] 
   return mouvements.filter((mouvement) => mouvement.article_id_article === idArticle)
 }
 
+/**
+ * Derniers mouvements enregistrés, tous articles confondus, du plus récent au
+ * plus ancien. Sert la vue de pilotage du stock (EF-DSH-04) : le tableau de
+ * bord montre l'activité du magasin, pas l'historique d'un seul article.
+ */
+export function listerMouvementsRecents(limite: number): MouvementStockDto[] {
+  return [...mouvements]
+    .sort((a, b) => b.date_operation.localeCompare(a.date_operation))
+    .slice(0, Math.max(0, limite))
+}
+
 export type EntreeMouvementMock = {
   article_id_article: string
   magasin_id_magasin: string

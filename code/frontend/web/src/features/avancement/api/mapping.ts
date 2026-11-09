@@ -95,6 +95,7 @@ export function mapperEvenement(dto: EvenementExecutionDto): EvenementExecution 
     idEtape: dto.etape_travaux_id_etape,
     statutAvant: dto.statut_avant ? statutEtapeDepuisDb(dto.statut_avant) : null,
     statutApres: statutEtapeDepuisDb(dto.statut_apres),
+    horodatageAppareil: dto.horodatage_appareil,
     horodatageServeur: dto.horodatage_serveur,
     commentaire: dto.commentaire,
     idAuteur: dto.utilisateur_id_utilisateur,
