@@ -18,6 +18,12 @@ import { EcranProtege, RedirectionAccueil } from '@/app/EcranProtege'
 import { PageEnPreparation } from '@/components/ui/PageEnPreparation'
 import type { IdEcran } from '@/config/navigation'
 
+const PageTableauDeBord = lazy(() =>
+  import('@/features/pilotage').then((module) => ({ default: module.PageTableauDeBord })),
+)
+const PageJournalExecution = lazy(() =>
+  import('@/features/pilotage').then((module) => ({ default: module.PageJournalExecution })),
+)
 const PageAvancement = lazy(() =>
   import('@/features/avancement').then((module) => ({ default: module.PageAvancement })),
 )
@@ -65,11 +71,9 @@ export const router = createBrowserRouter([
         element: <App />,
         children: [
           { index: true, element: <RedirectionAccueil /> },
-          {
-            path: '/tableau-de-bord',
-            element: ecran('tableau-de-bord', <PageEnPreparation titre="Tableau de bord" />),
-          },
+          { path: '/tableau-de-bord', element: ecran('tableau-de-bord', <PageTableauDeBord />) },
           { path: '/avancement', element: ecran('avancement', <PageAvancement />) },
+          { path: '/journal', element: ecran('journal', <PageJournalExecution />) },
           { path: '/stock', element: ecran('stock', <PageStock />) },
           { path: '/referentiels', element: ecran('referentiels', <PageReferentiels />) },
           {

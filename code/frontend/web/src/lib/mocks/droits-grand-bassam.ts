@@ -14,7 +14,8 @@
     métier » → administration, référentiels (administrateur fonctionnel au sens
     d'UC-3) et synchronisation.
   - DIR « Voir l'avancement et le stock, sans modifier » → tableau de bord,
-    avancement, stock.
+    avancement, stock, journal d'exécution (EF-DSH-03 cite DIR parmi les
+    profils, et le journal est en lecture seule par nature : RG-A5).
   - RTC « Définir les gammes, affecter, valider, suivre les retards » → les
     écrans de pilotage et les référentiels.
   - COM « Connaître l'avancement simplifié d'un logement » → avancement.
@@ -48,12 +49,13 @@ const PERMISSIONS: PermissionDto[] = ECRANS.map((ecran) => ({
 }))
 
 const MATRICE_INITIALE: Record<string, string[]> = {
-  direction: ['tableau-de-bord', 'avancement', 'stock'],
+  direction: ['tableau-de-bord', 'avancement', 'journal', 'stock'],
   administrateur: ['referentiels', 'administration', 'synchronisation'],
   commercial: ['avancement'],
   responsable_technique: [
     'tableau-de-bord',
     'avancement',
+    'journal',
     'stock',
     'referentiels',
     'synchronisation',

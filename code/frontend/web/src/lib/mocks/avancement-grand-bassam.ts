@@ -26,7 +26,14 @@ import type {
   ZoneDto,
 } from '@/features/avancement/api/dto'
 
+/**
+ * Horloge de la démonstration. Toutes les dates simulées sont calculées par
+ * rapport à cet instant, pour que les écrans soient reproductibles. Exportée
+ * sous le nom `DATE_REFERENCE` afin que les autres jeux de données simulées
+ * (pilotage) calculent leurs retards sur la même référence.
+ */
 const MAINTENANT = new Date('2026-11-08T08:00:00.000Z')
+export const DATE_REFERENCE = MAINTENANT
 
 function ajouterJours(base: Date, jours: number): Date {
   const copie = new Date(base)
@@ -189,15 +196,33 @@ function ajouterEvenement(
   apres: StatutEtapeDb,
   horodatage: Date,
   auteur: { id: string; nom: string },
-  options: { commentaire?: string | null; motif?: string | null; delegation?: boolean } = {},
+  options: {
+    commentaire?: string | null
+    motif?: string | null
+    delegation?: boolean
+    /**
+     * Minutes écoulées entre la saisie sur l'appareil et la réception par le
+     * serveur. Zéro pour une action faite depuis le poste de pilotage ; une
+     * valeur positive simule une saisie mobile remontée en différé (RG-Y3).
+     */
+    delaiSynchroMinutes?: number
+  } = {},
 ): void {
   compteurEvenement += 1
+  // Un journal d'exécution ne peut pas contenir d'événement futur : il
+  // enregistre ce qui s'est produit. Les dates du jeu de démonstration étant
+  // calculées à partir de l'ordre des étapes, certaines tombaient après
+  // l'horloge de référence ; on les y ramène.
+  const instant = horodatage.getTime() > MAINTENANT.getTime() ? MAINTENANT : horodatage
+  const delai = options.delaiSynchroMinutes ?? 0
+  const horodatageAppareil = new Date(instant.getTime() - delai * 60_000)
   evenements.push({
     uuid: `EVX-${String(compteurEvenement).padStart(5, '0')}`,
     etape_travaux_id_etape: idEtape,
     statut_avant: avant,
     statut_apres: apres,
-    horodatage_serveur: horodatage.toISOString(),
+    horodatage_appareil: horodatageAppareil.toISOString(),
+    horodatage_serveur: instant.toISOString(),
     commentaire: options.commentaire ?? null,
     utilisateur_id_utilisateur: auteur.id,
     nom_auteur: auteur.nom,
@@ -234,7 +259,10 @@ for (let i = 0; i < 12; i += 1) {
     }
 
     const horodateBase = ajouterJours(debut, (modele.ordre - 1) * 4)
-    ajouterEvenement(idEtape, null, 'A_FAIRE', horodateBase, { id: 'U-SYS', nom: 'Système' })
+    // La gamme est affectée au logement en une fois : toutes les étapes sont
+    // créées au même instant, à l'ouverture du logement. Les dater au début
+    // prévu de chaque étape donnait des créations futures dans le journal.
+    ajouterEvenement(idEtape, null, 'A_FAIRE', debut, { id: 'U-SYS', nom: 'Système' })
 
     if (modele.ordre <= nbValide) {
       // Étape pleinement avancée : déclarée puis validée (implicite si sans contrôle).
@@ -244,8 +272,12 @@ for (let i = 0; i < 12; i += 1) {
       base.dateFinDeclaree = dateSeule(dDecl)
       base.idAuteurDeclaration = declarant.id
       base.nomAuteurDeclaration = declarant.nom
-      ajouterEvenement(idEtape, 'A_FAIRE', 'EN_COURS', horodateBase, declarant)
-      ajouterEvenement(idEtape, 'EN_COURS', 'TERMINEE_DECLAREE', dDecl, declarant)
+      ajouterEvenement(idEtape, 'A_FAIRE', 'EN_COURS', horodateBase, declarant, {
+        delaiSynchroMinutes: 35,
+      })
+      ajouterEvenement(idEtape, 'EN_COURS', 'TERMINEE_DECLAREE', dDecl, declarant, {
+        delaiSynchroMinutes: 95,
+      })
       const dVal = ajouterJours(dDecl, 1)
       base.dateValidation = dVal.toISOString()
       ajouterEvenement(idEtape, 'TERMINEE_DECLAREE', 'VALIDEE', dVal, {
@@ -258,7 +290,9 @@ for (let i = 0; i < 12; i += 1) {
     if (modele.ordre === nbValide + 1 && nbValide < ETAPES_MODELE.length) {
       // Étape « courante » : à valider, en cours ou bloquée selon le logement.
       const variante = i % 3
-      ajouterEvenement(idEtape, 'A_FAIRE', 'EN_COURS', horodateBase, tech)
+      ajouterEvenement(idEtape, 'A_FAIRE', 'EN_COURS', horodateBase, tech, {
+        delaiSynchroMinutes: 20,
+      })
       if (variante === 0 && modele.controleRequis) {
         // Déclarée terminée, en attente de contrôle. Corrigé : seul le premier
         // logement est déclaré par l'utilisateur courant (illustration de
@@ -271,12 +305,15 @@ for (let i = 0; i < 12; i += 1) {
         base.dateFinDeclaree = dateSeule(dDecl)
         base.idAuteurDeclaration = declarant.id
         base.nomAuteurDeclaration = declarant.nom
-        ajouterEvenement(idEtape, 'EN_COURS', 'TERMINEE_DECLAREE', dDecl, declarant)
+        ajouterEvenement(idEtape, 'EN_COURS', 'TERMINEE_DECLAREE', dDecl, declarant, {
+          delaiSynchroMinutes: 150,
+        })
       } else if (variante === 2) {
         base.statut = 'BLOQUEE'
         ajouterEvenement(idEtape, 'EN_COURS', 'BLOQUEE', ajouterJours(horodateBase, 1), tech, {
           motif: 'MANQUE_MATERIEL',
           commentaire: 'En attente de livraison du ciment.',
+          delaiSynchroMinutes: 240,
         })
       } else {
         base.statut = 'EN_COURS'
