@@ -1,14 +1,16 @@
 import { SignOut, UserCircle } from '@phosphor-icons/react'
 import { NavLink } from 'react-router-dom'
-import { ROLES, useRole } from '@/app/role-context'
+import { libelleRole, useRole } from '@/app/role-context'
+import { useSession } from '@/app/session-context'
 import { Logo } from '@/components/ui/Logo'
 import { useDroits } from '@/app/droits-context'
 
 export function Sidebar() {
   const { role } = useRole()
   const { ecransAutorises } = useDroits()
+  const { session, fermerSession } = useSession()
   const entrees = ecransAutorises(role)
-  const roleCourant = ROLES.find((item) => item.value === role)
+  const utilisateur = session?.utilisateur
 
   return (
     <aside className="flex h-dvh w-64 shrink-0 flex-col bg-marine text-white">
@@ -45,15 +47,19 @@ export function Sidebar() {
         <div className="flex items-center gap-3">
           <UserCircle size={32} weight="regular" aria-hidden className="text-white/85" />
           <div className="min-w-0">
-            <p className="text-sm font-semibold">Utilisateur</p>
-            <p className="text-xs text-white/70">{roleCourant?.libelle}</p>
+            <p className="truncate text-sm font-semibold">
+              {utilisateur ? `${utilisateur.prenom} ${utilisateur.nom}` : 'Utilisateur'}
+            </p>
+            <p className="truncate text-xs text-white/70">{libelleRole(role)}</p>
+            {utilisateur && (
+              <p className="truncate text-xs text-white/50">{utilisateur.libellePerimetre}</p>
+            )}
           </div>
         </div>
         <button
           type="button"
-          disabled
-          title="La connexion et la déconnexion arrivent avec le module d'authentification."
-          className="mt-3 flex w-full items-center gap-2 rounded-controle px-3 py-2 text-sm font-medium text-white/85 disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          onClick={fermerSession}
+          className="mt-3 flex w-full items-center gap-2 rounded-controle px-3 py-2 text-sm font-medium text-white/85 transition-colors duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
         >
           <SignOut size={18} weight="regular" aria-hidden />
           Se déconnecter
