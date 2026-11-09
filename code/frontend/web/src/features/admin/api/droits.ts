@@ -18,7 +18,7 @@ import type {
 import type { DroitAccordeDto, PermissionDto, RoleDto } from '@/features/admin/api/dto'
 
 const ACTION_DEPUIS_DB: Record<string, ActionPermission> = {
-  CONSULTER: 'consulter',
+  LIRE: 'lire',
   CREER: 'creer',
   MODIFIER: 'modifier',
   VALIDER: 'valider',
@@ -47,7 +47,7 @@ function mapperPermissionEcran(dto: PermissionDto): PermissionEcran | null {
   return {
     code: dto.code_permission,
     idEcran: dto.ressource as IdEcran,
-    action: ACTION_DEPUIS_DB[dto.action] ?? 'consulter',
+    action: ACTION_DEPUIS_DB[dto.action] ?? 'lire',
     libelle: dto.libelle,
   }
 }

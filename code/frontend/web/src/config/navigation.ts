@@ -26,6 +26,7 @@ import {
   SlidersHorizontal,
   SquaresFour,
   Stack,
+  UsersThree,
 } from '@phosphor-icons/react'
 
 export type IdEcran =
@@ -35,6 +36,7 @@ export type IdEcran =
   | 'stock'
   | 'referentiels'
   | 'gammes'
+  | 'equipes'
   | 'parametrage'
   | 'administration'
   | 'synchronisation'
@@ -65,6 +67,7 @@ export const ECRANS: EntreeNavigation[] = [
   { id: 'stock', libelle: 'Stock', icone: Package, chemin: '/stock' },
   { id: 'referentiels', libelle: 'Référentiels', icone: Stack, chemin: '/referentiels' },
   { id: 'gammes', libelle: 'Gammes', icone: ListChecks, chemin: '/gammes' },
+  { id: 'equipes', libelle: 'Équipes', icone: UsersThree, chemin: '/equipes' },
   { id: 'parametrage', libelle: 'Paramétrage', icone: SlidersHorizontal, chemin: '/parametrage' },
   {
     id: 'administration',

@@ -19,10 +19,24 @@ const ROLE_SYSTEME: Role = 'administrateur'
 export type CapacitesAdmin = {
   /** Modifier la matrice des droits et l'enregistrer. */
   peutModifierDroits: boolean
+  /**
+   * Révoquer un appareil (EF-AUT-06). Réservé au rôle système, pour la même
+   * raison que la modification des droits : couper l'accès d'un terminal ne
+   * doit pas dépendre du seul fait qu'un rôle a reçu l'accès en lecture à
+   * l'écran d'administration.
+   */
+  peutRevoquerAppareil: boolean
+  /** Importer des référentiels en CSV (EF-ADM-02). Réservé au rôle système : un import écrit en masse. */
+  peutImporter: boolean
 }
 
 export function capacitesAdminPourRole(role: Role): CapacitesAdmin {
-  return { peutModifierDroits: role === ROLE_SYSTEME }
+  const estSysteme = role === ROLE_SYSTEME
+  return {
+    peutModifierDroits: estSysteme,
+    peutRevoquerAppareil: estSysteme,
+    peutImporter: estSysteme,
+  }
 }
 
 /**

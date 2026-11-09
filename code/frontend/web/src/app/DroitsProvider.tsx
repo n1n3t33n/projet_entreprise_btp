@@ -21,8 +21,9 @@ export function DroitsProvider({ children }: { children: ReactNode }) {
   /*
     Index « rôle → écrans autorisés », reconstruit à chaque changement de
     l'état. Un droit accordé ne compte que s'il porte sur une permission de
-    consultation d'écran : les futures permissions d'action (créer, valider…)
-    n'ouvriront pas un écran à elles seules.
+    lecture d'écran (`action = 'lire'`, littéral du modèle MPD-1) : les futures
+    permissions d'action (créer, valider…) n'ouvriront pas un écran à elles
+    seules.
   */
   const parRole = useMemo(() => {
     const index = new Map<string, Set<IdEcran>>()
@@ -32,7 +33,7 @@ export function DroitsProvider({ children }: { children: ReactNode }) {
 
     const ecranParPermission = new Map(
       etat.permissions
-        .filter((permission) => permission.action === 'consulter')
+        .filter((permission) => permission.action === 'lire')
         .map((permission) => [permission.code, permission.idEcran]),
     )
 

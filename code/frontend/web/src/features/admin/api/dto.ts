@@ -19,7 +19,7 @@ export type PermissionDto = {
   module: string
   /** Identifiant de l'écran visé. */
   ressource: string
-  /** `UPPER_SNAKE` : CONSULTER, CREER, MODIFIER, VALIDER. */
+  /** `UPPER_SNAKE`, littéral du modèle (MPD-1) : LIRE, CREER, MODIFIER, VALIDER. */
   action: string
   libelle: string
 }
