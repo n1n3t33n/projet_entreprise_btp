@@ -21,6 +21,8 @@ Future<void> main() async {
     await coffre.ecrireCleBase(cle);
   }
 
+  // Enregistre SQLCipher sur l'isolate principal avant toute ouverture.
+  await preparerSqlCipher();
   final base = BaseLocale(ouvrirBaseChiffree(cle));
 
   runApp(

@@ -19,16 +19,26 @@ class ControleurAuth extends Notifier<EtatAuth> {
       "Ce compte n'a pas d'accès terrain sur l'application mobile.";
 
   /// Décide de l'état de départ selon la session locale et le verrou 14 jours.
+  ///
+  /// Toute erreur d'ouverture des données est surfacée (jamais avalée) : on
+  /// bascule sur l'écran de connexion avec un message, plutôt que de laisser
+  /// l'application bloquée sur l'écran de chargement.
   Future<void> initialiser() async {
-    final session = await ref.read(depotSessionProvider).lire();
-    if (session == null) {
-      state = const AuthNonConnecte();
-      return;
-    }
-    if (verrouExpire(session.derniereConnexionEnLigne, DateTime.now())) {
-      state = AuthVerrouExpire(session.identifiant);
-    } else {
-      state = AuthVerrouille(session.identifiant);
+    try {
+      final session = await ref.read(depotSessionProvider).lire();
+      if (session == null) {
+        state = const AuthNonConnecte();
+        return;
+      }
+      if (verrouExpire(session.derniereConnexionEnLigne, DateTime.now())) {
+        state = AuthVerrouExpire(session.identifiant);
+      } else {
+        state = AuthVerrouille(session.identifiant);
+      }
+    } on Object catch (_) {
+      state = const AuthNonConnecte(
+        message: "Impossible d'ouvrir les données de l'appareil.",
+      );
     }
   }
 

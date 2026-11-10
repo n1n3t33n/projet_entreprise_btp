@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "ci.schiavone.chantiersync_mobile"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Version NDK exigée par les plugins natifs (SQLCipher, secure storage…).
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
