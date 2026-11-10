@@ -61,7 +61,10 @@ class _PorteEntreeState extends ConsumerState<PorteEntree> {
       AuthVerrouille(:final identifiant) => EcranDeverrouillage(
         identifiant: identifiant,
       ),
-      AuthDeverrouille(:final role) => Coquille(role: role),
+      AuthDeverrouille(:final identifiant, :final role) => Coquille(
+        role: role,
+        identifiant: identifiant,
+      ),
     };
   }
 }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/providers.dart';
+import '../../../theme/animations.dart';
 import '../../../theme/jetons.dart';
 import '../domain/etat_auth.dart';
 
 /// Écran de connexion en ligne (première connexion ou reconnexion après
-/// expiration du verrou de 14 jours).
+/// expiration du verrou de 14 jours). Reprend l'esthétique marine de la charte.
 class EcranConnexion extends ConsumerStatefulWidget {
   const EcranConnexion({super.key});
 
@@ -45,62 +47,216 @@ class _EcranConnexionState extends ConsumerState<EcranConnexion> {
     };
 
     return Scaffold(
-      body: SafeArea(
+      backgroundColor: Jetons.fond,
+      body: Column(
+        children: [
+          const _BanniereConnexion(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(Jetons.margeMobile),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: Jetons.espace4),
+                  const Apparition(child: _CarteMarque()),
+                  const SizedBox(height: Jetons.espace4),
+                  Apparition(
+                    delai: const Duration(milliseconds: 80),
+                    child: _CarteIdentifiants(
+                      identifiant: _identifiant,
+                      motDePasse: _motDePasse,
+                      onValider: _connecter,
+                    ),
+                  ),
+                  if (message != null) ...[
+                    const SizedBox(height: Jetons.espace3),
+                    _Message(message),
+                  ],
+                  const SizedBox(height: Jetons.espace4),
+                  Apparition(
+                    delai: const Duration(milliseconds: 140),
+                    child: FilledButton(
+                      onPressed: _enCours ? null : _connecter,
+                      child: _enCours
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('SE CONNECTER'),
+                                SizedBox(width: Jetons.espace2),
+                                Icon(PhosphorIconsRegular.arrowRight, size: 18),
+                              ],
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: Jetons.espace3),
+                  const Center(
+                    child: Text(
+                      'Connexion requise une fois, puis accès par code PIN.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Jetons.texteAttenue,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BanniereConnexion extends StatelessWidget {
+  const _BanniereConnexion();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Material(
+      color: Jetons.marine,
+      child: SafeArea(
+        bottom: false,
         child: Padding(
-          padding: const EdgeInsets.all(Jetons.espace4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
+          padding: EdgeInsets.symmetric(
+            horizontal: Jetons.espace3,
+            vertical: Jetons.espace2,
+          ),
+          child: Row(
             children: [
+              Icon(
+                PhosphorIconsRegular.shieldCheck,
+                color: Colors.white,
+                size: 18,
+              ),
+              SizedBox(width: Jetons.espace2),
               Text(
-                'ChantierSync',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Jetons.marine,
+                'CONNEXION SÉCURISÉE',
+                style: TextStyle(
+                  color: Colors.white,
                   fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: Jetons.espace2),
-              const Text(
-                'Connexion sécurisée',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Jetons.texteSecondaire),
-              ),
-              const SizedBox(height: Jetons.espace5),
-              TextField(
-                controller: _identifiant,
-                decoration: const InputDecoration(labelText: 'Identifiant'),
-                textInputAction: TextInputAction.next,
-              ),
-              const SizedBox(height: Jetons.espace3),
-              TextField(
-                controller: _motDePasse,
-                decoration: const InputDecoration(labelText: 'Mot de passe'),
-                obscureText: true,
-                onSubmitted: (_) => _connecter(),
-              ),
-              if (message != null) ...[
-                const SizedBox(height: Jetons.espace3),
-                Text(
-                  message,
-                  style: const TextStyle(color: Jetons.danger),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-              const SizedBox(height: Jetons.espace4),
-              FilledButton(
-                onPressed: _enCours ? null : _connecter,
-                child: _enCours
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Se connecter'),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _CarteMarque extends StatelessWidget {
+  const _CarteMarque();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Jetons.marine,
+            borderRadius: BorderRadius.circular(Jetons.rayonCarte),
+          ),
+          child: const Icon(
+            PhosphorIconsRegular.buildings,
+            color: Colors.white,
+            size: 28,
+          ),
+        ),
+        const SizedBox(height: Jetons.espace3),
+        Text(
+          'ChantierSync',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            color: Jetons.marine,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 2),
+        const Text(
+          'Schiavone Group · Italia Construction',
+          style: TextStyle(color: Jetons.texteSecondaire),
+        ),
+      ],
+    );
+  }
+}
+
+class _CarteIdentifiants extends StatelessWidget {
+  const _CarteIdentifiants({
+    required this.identifiant,
+    required this.motDePasse,
+    required this.onValider,
+  });
+
+  final TextEditingController identifiant;
+  final TextEditingController motDePasse;
+  final VoidCallback onValider;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(Jetons.espace3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: identifiant,
+              decoration: const InputDecoration(
+                labelText: 'Identifiant',
+                prefixIcon: Icon(PhosphorIconsRegular.user),
+              ),
+              textInputAction: TextInputAction.next,
+            ),
+            const SizedBox(height: Jetons.espace3),
+            TextField(
+              controller: motDePasse,
+              decoration: const InputDecoration(
+                labelText: 'Mot de passe',
+                prefixIcon: Icon(PhosphorIconsRegular.lockKey),
+              ),
+              obscureText: true,
+              onSubmitted: (_) => onValider(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Message extends StatelessWidget {
+  const _Message(this.texte);
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(Jetons.espace3),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFBEAE8),
+        borderRadius: BorderRadius.circular(Jetons.rayonChamp),
+        border: Border.all(color: const Color(0xFFE6B8B3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(PhosphorIconsRegular.warning, color: Jetons.danger),
+          const SizedBox(width: Jetons.espace2),
+          Expanded(
+            child: Text(texte, style: const TextStyle(color: Jetons.danger)),
+          ),
+        ],
       ),
     );
   }
