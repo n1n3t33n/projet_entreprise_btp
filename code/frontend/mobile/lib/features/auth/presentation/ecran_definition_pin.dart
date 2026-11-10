@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
+import '../../../theme/animations.dart';
 import '../../../theme/jetons.dart';
+import 'widgets/clavier_pin.dart';
 
 /// Définition du PIN local après une connexion en ligne réussie (EF-AUT-03).
+/// Deux temps : saisie puis confirmation, au clavier numérique.
 class EcranDefinitionPin extends ConsumerStatefulWidget {
   const EcranDefinitionPin({super.key});
 
@@ -13,92 +15,121 @@ class EcranDefinitionPin extends ConsumerStatefulWidget {
   ConsumerState<EcranDefinitionPin> createState() => _EcranDefinitionPinState();
 }
 
+enum _Phase { saisie, confirmation }
+
 class _EcranDefinitionPinState extends ConsumerState<EcranDefinitionPin> {
-  final _pin = TextEditingController();
-  final _confirmation = TextEditingController();
+  static const _longueur = 6;
+  _Phase _phase = _Phase.saisie;
+  String _premier = '';
+  String _courant = '';
   String? _erreur;
-  bool _enCours = false;
 
-  static const _longueurMin = 4;
-
-  @override
-  void dispose() {
-    _pin.dispose();
-    _confirmation.dispose();
-    super.dispose();
-  }
-
-  Future<void> _valider() async {
-    if (_pin.text.length < _longueurMin) {
-      setState(() => _erreur = 'Le code doit comporter au moins 4 chiffres.');
-      return;
-    }
-    if (_pin.text != _confirmation.text) {
-      setState(() => _erreur = 'Les deux codes ne correspondent pas.');
-      return;
-    }
+  Future<void> _ajouter(String chiffre) async {
+    if (_courant.length >= _longueur) return;
     setState(() {
+      _courant += chiffre;
       _erreur = null;
-      _enCours = true;
     });
-    await ref.read(controleurAuthProvider.notifier).definirPin(_pin.text);
+    if (_courant.length == _longueur) await _etapeComplete();
   }
+
+  Future<void> _etapeComplete() async {
+    if (_phase == _Phase.saisie) {
+      setState(() {
+        _premier = _courant;
+        _courant = '';
+        _phase = _Phase.confirmation;
+      });
+      return;
+    }
+    if (_courant != _premier) {
+      setState(() {
+        _erreur = 'Les deux codes ne correspondent pas.';
+        _premier = '';
+        _courant = '';
+        _phase = _Phase.saisie;
+      });
+      return;
+    }
+    await ref.read(controleurAuthProvider.notifier).definirPin(_premier);
+  }
+
+  void _effacer() {
+    if (_courant.isEmpty) return;
+    setState(() => _courant = _courant.substring(0, _courant.length - 1));
+  }
+
+  void _raz() => setState(() => _courant = '');
 
   @override
   Widget build(BuildContext context) {
+    final titre = _phase == _Phase.saisie
+        ? 'Choisissez un code'
+        : 'Confirmez le code';
+    final sousTitre = _phase == _Phase.saisie
+        ? 'Un code à 6 chiffres pour ouvrir l\'application sans réseau.'
+        : 'Saisissez à nouveau le même code.';
+
     return Scaffold(
+      backgroundColor: Jetons.fond,
       appBar: AppBar(title: const Text('Définir mon code')),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Jetons.espace4),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(Jetons.margeMobile),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Choisissez un code pour ouvrir l\'application sans réseau.',
-                style: TextStyle(color: Jetons.texteSecondaire),
-              ),
-              const SizedBox(height: Jetons.espace4),
-              _ChampPin(controleur: _pin, libelle: 'Nouveau code'),
-              const SizedBox(height: Jetons.espace3),
-              _ChampPin(
-                controleur: _confirmation,
-                libelle: 'Confirmer le code',
+              Apparition(
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Jetons.espace3,
+                      vertical: Jetons.espace4,
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          titre,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: Jetons.marine,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(height: Jetons.espace2),
+                        Text(
+                          sousTitre,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Jetons.texteSecondaire),
+                        ),
+                        const SizedBox(height: Jetons.espace4),
+                        PointsPin(remplis: _courant.length, total: _longueur),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               if (_erreur != null) ...[
                 const SizedBox(height: Jetons.espace3),
-                Text(_erreur!, style: const TextStyle(color: Jetons.danger)),
+                Text(
+                  _erreur!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Jetons.danger),
+                ),
               ],
-              const SizedBox(height: Jetons.espace4),
-              FilledButton(
-                onPressed: _enCours ? null : _valider,
-                child: const Text('Valider'),
+              const SizedBox(height: Jetons.espace3),
+              Apparition(
+                delai: const Duration(milliseconds: 120),
+                child: ClavierPin(
+                  onChiffre: _ajouter,
+                  onEffacer: _effacer,
+                  onRaz: _raz,
+                ),
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ChampPin extends StatelessWidget {
-  const _ChampPin({required this.controleur, required this.libelle});
-
-  final TextEditingController controleur;
-  final String libelle;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controleur,
-      decoration: InputDecoration(labelText: libelle),
-      obscureText: true,
-      keyboardType: TextInputType.number,
-      inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(8),
-      ],
     );
   }
 }
