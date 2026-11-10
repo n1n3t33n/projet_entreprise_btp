@@ -1,0 +1,55 @@
+name: chantiersync_mobile
+description: "ChantierSync - application mobile de chantier (hors-ligne d'abord)"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # État et navigation.
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.6.2
+
+  # Accès réseau (même contrat d'API que le web).
+  dio: ^5.7.0
+
+  # Base locale chiffrée (CL-6 / MPD-6).
+  drift: ^2.21.0
+  sqlcipher_flutter_libs: ^0.6.4
+  sqlite3: ^2.4.6
+  path_provider: ^2.1.5
+  path: ^1.9.0
+
+  # Secrets d'appareil : clé de la base, jeton.
+  flutter_secure_storage: ^9.2.2
+
+  # Dérivation de clé / empreinte du PIN.
+  cryptography: ^2.7.0
+
+  # Identité visuelle (charte Schiavone).
+  google_fonts: ^6.2.1
+  phosphor_flutter: ^2.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+  # Génération de code (drift).
+  drift_dev: ^2.21.0
+  build_runner: ^2.4.13
+
+  # Tests.
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true

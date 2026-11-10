@@ -1,0 +1,23 @@
+import 'package:chantiersync_mobile/core/roles/role_terrain.dart';
+import 'package:chantiersync_mobile/features/shell/presentation/coquille.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  testWidgets('la coquille n\'expose que les écrans du rôle', (tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(home: Coquille(role: RoleTerrain.magasinier)),
+      ),
+    );
+    await tester.pump();
+
+    // Magasinier : Accueil, Stock, Mouvements, Synchronisation.
+    expect(find.byType(NavigationDestination), findsNWidgets(4));
+    expect(find.text('Stock'), findsWidgets);
+    expect(find.text('Mouvements'), findsWidgets);
+    // Aucune fonction d'un autre rôle n'apparaît.
+    expect(find.text('Validation'), findsNothing);
+  });
+}
