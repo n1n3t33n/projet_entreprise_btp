@@ -2,38 +2,28 @@ import 'package:flutter/material.dart';
 
 /// Jetons de la charte graphique Schiavone (source : cadrage/wireframes/charte.md).
 ///
-/// Source unique de vérité du style côté mobile : couleurs, typographie,
-/// rayons, espacements et durées. Aucune valeur n'est réécrite en dur ailleurs
-/// dans l'application — tout passe par ces constantes, pour rester modulable et
-/// cohérent avec le poste de pilotage web.
+/// Source unique de vérité des valeurs fixes du style : couleurs de marque,
+/// rayons, espacements, durées. Les couleurs qui changent selon le thème
+/// (clair / sombre) ne sont pas ici : elles passent par la `Palette`
+/// (voir `palette.dart`), que les écrans lisent via `context.palette`.
 abstract final class Jetons {
-  // Couleurs de marque.
+  // Couleurs de marque (identiques dans les deux thèmes).
   static const Color marine = Color(0xFF002E5E);
+  static const Color marineProfond = Color(0xFF001F42);
   static const Color sarcelle = Color(0xFF1F7FA8);
   static const Color or = Color(0xFF8A6508);
   static const Color orClair = Color(0xFFFBF1CF);
   static const Color orVif = Color(0xFFF6DF94);
 
-  // Fonds.
-  static const Color fond = Color(0xFFF3F8FC);
-  static const Color fondSection = Color(0xFFEAF6FC);
-  static const Color surface = Color(0xFFFFFFFF);
+  /// Cyan et sable de l'emblème Schiavone : accents réservés aux fonds sombres.
+  static const Color ciel = Color(0xFF4EC9E1);
+  static const Color sable = Color(0xFFF0D98C);
 
-  // Texte.
-  static const Color texte = Color(0xFF2B3A4A);
-  static const Color texteSecondaire = Color(0xFF5A6572);
-  static const Color texteAttenue = Color(0xFF9AA5B1);
-
-  // États.
-  static const Color succes = Color(0xFF2E7D32);
-  static const Color danger = Color(0xFFC0392B);
-
-  // Bordures.
-  static const Color bordure = Color(0xFFE3EDF5);
-
-  // Rayons d'angle.
-  static const double rayonCarte = 16;
-  static const double rayonChamp = 12;
+  // Rayons d'angle : formes généreuses, hiérarchisées (carte > bloc > contrôle).
+  static const double rayonCarte = 24;
+  static const double rayonBloc = 20;
+  static const double rayonChamp = 16;
+  static const double rayonPilule = 999;
 
   // Échelle d'espacement 4 / 8 / 16 / 24 / 32.
   static const double espace1 = 4;
@@ -52,4 +42,13 @@ abstract final class Jetons {
   static const Duration dureeMicro = Duration(milliseconds: 160);
   static const Duration dureeNormale = Duration(milliseconds: 240);
   static const Duration dureeCascade = Duration(milliseconds: 200);
+
+  /// Décalage entre deux éléments d'une révélation en cascade.
+  static const Duration pasCascade = Duration(milliseconds: 50);
+
+  /// Courbe d'entrée commune au web et au mobile : décélère à l'arrivée.
+  static const Curve courbe = Cubic(0.16, 1, 0.3, 1);
+
+  /// Famille de police embarquée (assets/fonts).
+  static const String police = 'PlusJakartaSans';
 }

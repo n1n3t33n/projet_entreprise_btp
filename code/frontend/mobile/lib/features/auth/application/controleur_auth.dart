@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
 import '../../../core/roles/role_terrain.dart';
 import '../../../core/securite/empreinte_pin.dart';
+import '../data/depot_session.dart';
 import '../data/service_auth.dart';
 import '../domain/etat_auth.dart';
+import '../domain/profil_utilisateur.dart';
 import '../domain/verrou_session.dart';
 
 /// Contrôleur d'authentification mobile (EF-AUT-03).
@@ -15,14 +17,10 @@ class ControleurAuth extends Notifier<EtatAuth> {
   @override
   EtatAuth build() => const AuthInitial();
 
-  static const _messageSansAccesTerrain =
-      "Ce compte n'a pas d'accès terrain sur l'application mobile.";
-
   /// Décide de l'état de départ selon la session locale et le verrou 14 jours.
   ///
-  /// Toute erreur d'ouverture des données est surfacée (jamais avalée) : on
-  /// bascule sur l'écran de connexion avec un message, plutôt que de laisser
-  /// l'application bloquée sur l'écran de chargement.
+  /// Une erreur d'ouverture des données n'est jamais avalée : on bascule sur
+  /// l'écran de connexion avec son motif, plutôt que de rester en chargement.
   Future<void> initialiser() async {
     try {
       final session = await ref.read(depotSessionProvider).lire();
@@ -30,16 +28,25 @@ class ControleurAuth extends Notifier<EtatAuth> {
         state = const AuthNonConnecte();
         return;
       }
-      if (verrouExpire(session.derniereConnexionEnLigne, DateTime.now())) {
-        state = AuthVerrouExpire(session.identifiant);
-      } else {
-        state = AuthVerrouille(session.identifiant);
-      }
-    } on Object catch (_) {
-      state = const AuthNonConnecte(
-        message: "Impossible d'ouvrir les données de l'appareil.",
-      );
+      state = _etatVerrouille(session);
+    } on Object {
+      state = const AuthNonConnecte(motif: MotifConnexion.donneesInaccessibles);
     }
+  }
+
+  EtatAuth _etatVerrouille(SessionEnregistree session) {
+    final role = RoleTerrain.parCode(session.roleCode);
+    if (role == null) {
+      return const AuthNonConnecte(motif: MotifConnexion.sansAccesTerrain);
+    }
+    if (verrouExpire(session.derniereConnexionEnLigne, DateTime.now())) {
+      return const AuthNonConnecte(motif: MotifConnexion.sessionExpiree);
+    }
+    return AuthVerrouille(
+      profil: session.profil,
+      role: role,
+      derniereConnexion: session.derniereConnexionEnLigne,
+    );
   }
 
   /// Première connexion (ou reconnexion après expiration), en ligne.
@@ -49,13 +56,21 @@ class ControleurAuth extends Notifier<EtatAuth> {
           .read(serviceAuthProvider)
           .connexion(identifiant, motDePasse);
       if (RoleTerrain.parCode(session.utilisateur.roleCodeRole) == null) {
-        state = const AuthNonConnecte(message: _messageSansAccesTerrain);
+        state = const AuthNonConnecte(motif: MotifConnexion.sansAccesTerrain);
         return;
       }
       state = AuthEnrolementPin(session);
     } on EchecConnexionException catch (e) {
-      state = AuthNonConnecte(message: e.echec.message);
+      state = AuthNonConnecte(
+        motif: MotifConnexion.depuisServeur(e.echec.motif),
+        secondesRestantes: e.echec.secondesRestantes,
+      );
     }
+  }
+
+  /// Abandonne l'enrôlement et revient à l'écran de connexion.
+  void annulerEnrolement() {
+    if (state is AuthEnrolementPin) state = const AuthNonConnecte();
   }
 
   /// Définit le PIN local après une connexion en ligne réussie.
@@ -63,31 +78,46 @@ class ControleurAuth extends Notifier<EtatAuth> {
     final courant = state;
     if (courant is! AuthEnrolementPin) return;
 
-    final session = courant.session;
-    final role = RoleTerrain.parCode(session.utilisateur.roleCodeRole);
+    final utilisateur = courant.session.utilisateur;
+    final role = RoleTerrain.parCode(utilisateur.roleCodeRole);
     if (role == null) {
-      state = const AuthNonConnecte(message: _messageSansAccesTerrain);
+      state = const AuthNonConnecte(motif: MotifConnexion.sansAccesTerrain);
       return;
     }
 
     final sel = EmpreintePin.genererSel();
     final empreinte = await EmpreintePin.hacher(pin, sel);
+    final profil = ProfilUtilisateur(
+      idUtilisateur: utilisateur.idUtilisateur,
+      identifiant: utilisateur.identifiant,
+      prenom: utilisateur.prenom,
+      nom: utilisateur.nom,
+      fonction: utilisateur.fonction,
+      perimetre: utilisateur.libellePerimetre,
+    );
 
-    await ref.read(coffreProvider).ecrireJeton(session.jeton);
+    await ref.read(coffreProvider).ecrireJeton(courant.session.jeton);
     await ref
         .read(depotSessionProvider)
         .enregistrer(
-          identifiant: session.utilisateur.identifiant,
-          roleCode: role.code,
-          pinHashLocal: empreinte,
-          pinSel: sel,
-          derniereConnexion: DateTime.now(),
+          SessionEnregistree(
+            profil: profil,
+            roleCode: role.code,
+            pinHashLocal: empreinte,
+            pinSel: sel,
+            derniereConnexionEnLigne: DateTime.now(),
+          ),
         );
 
-    state = AuthDeverrouille(
-      identifiant: session.utilisateur.identifiant,
-      role: role,
-    );
+    state = AuthDeverrouille(profil: profil, role: role);
+  }
+
+  /// Vérifie un PIN sans changer l'état : sert à signer une validation
+  /// (approbation d'une sortie, visa d'une étape).
+  Future<bool> verifierPin(String pin) async {
+    final session = await ref.read(depotSessionProvider).lire();
+    if (session == null) return false;
+    return EmpreintePin.verifier(pin, session.pinSel, session.pinHashLocal);
   }
 
   /// Déverrouille hors-ligne par PIN. Renvoie `false` si le PIN est faux
@@ -106,35 +136,34 @@ class ControleurAuth extends Notifier<EtatAuth> {
     );
     if (!correct) return false;
 
-    if (verrouExpire(session.derniereConnexionEnLigne, DateTime.now())) {
-      state = AuthVerrouExpire(session.identifiant);
+    final suivant = _etatVerrouille(session);
+    if (suivant is! AuthVerrouille) {
+      state = suivant;
       return false;
     }
-
-    final role = RoleTerrain.parCode(session.roleCode);
-    if (role == null) {
-      state = const AuthNonConnecte(message: _messageSansAccesTerrain);
-      return false;
-    }
-
-    state = AuthDeverrouille(identifiant: session.identifiant, role: role);
+    state = AuthDeverrouille(profil: suivant.profil, role: suivant.role);
     return true;
   }
 
   /// Verrouille sans déconnecter (retour à l'écran PIN).
-  void verrouiller() {
+  Future<void> verrouiller() async {
     final courant = state;
-    if (courant is AuthDeverrouille) {
-      state = AuthVerrouille(courant.identifiant);
-    }
+    if (courant is! AuthDeverrouille) return;
+    final session = await ref.read(depotSessionProvider).lire();
+    state = AuthVerrouille(
+      profil: courant.profil,
+      role: courant.role,
+      derniereConnexion: session?.derniereConnexionEnLigne,
+    );
   }
 
-  /// Révoque la session sur cet appareil : efface la base et le coffre (SQ-5).
+  /// Retire le compte de cet appareil : efface les données locales et le jeton
+  /// (SQ-5). La clé de la base est conservée : elle protège un fichier
+  /// désormais vide et reste nécessaire pour le rouvrir.
   Future<void> revoquer() async {
-    await ref.read(depotSessionProvider).effacer();
-    await ref.read(coffreProvider).vider();
-    state = const AuthNonConnecte(
-      message: 'Session révoquée sur cet appareil.',
-    );
+    await ref.read(depotSessionProvider).effacerTout();
+    await ref.read(coffreProvider).effacerJeton();
+    ref.invalidate(fileEnvoiProvider);
+    state = const AuthNonConnecte(motif: MotifConnexion.sessionRevoquee);
   }
 }

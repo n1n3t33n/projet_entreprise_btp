@@ -1,243 +1,115 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../core/navigation/acces_par_role.dart';
-import '../../../core/navigation/ecran_mobile.dart';
-import '../../../core/providers.dart';
+import '../../../core/navigation/onglet_role.dart';
 import '../../../core/roles/role_terrain.dart';
 import '../../../theme/jetons.dart';
-import '../../sync/presentation/ecran_synchronisation.dart';
-import 'accueil_role.dart';
-import 'ecran_reserve.dart';
+import '../../../theme/palette.dart';
+import '../../auth/domain/profil_utilisateur.dart';
+import 'barre_navigation.dart';
+import 'racines.dart';
+
+/// Accès à la navigation par onglets depuis n'importe quel écran d'un onglet
+/// (ex. le bandeau de synchronisation qui ouvre le centre de synchro).
+class NavigationOnglets extends InheritedWidget {
+  const NavigationOnglets({
+    required this.onglets,
+    required this.allerVers,
+    required super.child,
+    super.key,
+  });
+
+  final List<OngletRole> onglets;
+
+  /// Affiche l'onglet demandé s'il existe pour ce rôle ; renvoie `false` sinon.
+  final bool Function(OngletRole onglet) allerVers;
+
+  static NavigationOnglets of(BuildContext context) {
+    final trouve = context
+        .dependOnInheritedWidgetOfExactType<NavigationOnglets>();
+    assert(trouve != null, 'NavigationOnglets absent du contexte.');
+    return trouve!;
+  }
+
+  @override
+  bool updateShouldNotify(NavigationOnglets ancien) =>
+      ancien.onglets != onglets;
+}
 
 /// Coquille de navigation unique, filtrée selon le rôle connecté.
 ///
 /// Une action n'apparaît jamais pour un rôle qui n'y a pas droit (charte § 9.3).
-/// L'en-tête marine et la barre basse reprennent les wireframes (A1–A5).
 class Coquille extends ConsumerStatefulWidget {
-  const Coquille({required this.role, required this.identifiant, super.key});
+  const Coquille({required this.profil, required this.role, super.key});
 
+  final ProfilUtilisateur profil;
   final RoleTerrain role;
-  final String identifiant;
 
   @override
   ConsumerState<Coquille> createState() => _CoquilleState();
 }
 
 class _CoquilleState extends ConsumerState<Coquille> {
-  int _index = 0;
+  late OngletRole _courant = ongletsPour(widget.role).first;
 
-  /// Bascule sur l'onglet correspondant à [ecran] s'il est autorisé au rôle.
-  void _allerVers(EcranMobile ecran) {
-    final ecrans = AccesParRole.ecransAutorises(widget.role);
-    final cible = ecrans.indexOf(ecran);
-    if (cible >= 0) setState(() => _index = cible);
+  bool _allerVers(OngletRole onglet) {
+    if (!ongletsPour(widget.role).contains(onglet)) return false;
+    setState(() => _courant = onglet);
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    final ecrans = AccesParRole.ecransAutorises(widget.role);
-    final indexSur = _index.clamp(0, ecrans.length - 1);
-    final courant = ecrans[indexSur];
+    final onglets = ongletsPour(widget.role);
+    final courant = onglets.contains(_courant) ? _courant : onglets.first;
 
-    return Scaffold(
-      backgroundColor: Jetons.fond,
-      body: Column(
-        children: [
-          _EnTeteChantier(
-            role: widget.role,
-            identifiant: widget.identifiant,
-            onVerrouiller: () =>
-                ref.read(controleurAuthProvider.notifier).verrouiller(),
-          ),
-          Expanded(child: _corps(courant)),
-        ],
-      ),
-      bottomNavigationBar: _BarreBasse(
-        ecrans: ecrans,
-        indexCourant: indexSur,
-        onSelection: (i) => setState(() => _index = i),
-      ),
-    );
-  }
-
-  Widget _corps(EcranMobile ecran) {
-    return switch (ecran) {
-      EcranMobile.accueil => AccueilRole(
-        role: widget.role,
-        onNaviguer: _allerVers,
-        onSynchroniser: () => _allerVers(EcranMobile.synchronisation),
-      ),
-      EcranMobile.synchronisation => const EcranSynchronisation(),
-      _ => EcranReserve(libelle: ecran.libelle),
-    };
-  }
-}
-
-/// Bandeau d'en-tête marine : marque Schiavone, chantier, rôle et verrouillage.
-class _EnTeteChantier extends StatelessWidget {
-  const _EnTeteChantier({
-    required this.role,
-    required this.identifiant,
-    required this.onVerrouiller,
-  });
-
-  final RoleTerrain role;
-  final String identifiant;
-  final VoidCallback onVerrouiller;
-
-  @override
-  Widget build(BuildContext context) {
-    final initiales = identifiant.isEmpty
-        ? '?'
-        : identifiant.substring(0, 1).toUpperCase();
-
-    return Material(
-      color: Jetons.marine,
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            Jetons.espace3,
-            Jetons.espace2,
-            Jetons.espace2,
-            Jetons.espace3,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return NavigationOnglets(
+      onglets: onglets,
+      allerVers: _allerVers,
+      child: Scaffold(
+        extendBody: true,
+        body: _Fondu(
+          cle: courant,
+          child: IndexedStack(
+            index: onglets.indexOf(courant),
             children: [
-              Row(
-                children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'SCHIAVONE GROUP',
-                          style: TextStyle(
-                            color: Jetons.orVif,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        SizedBox(height: 2),
-                        Text(
-                          'Chantier Grand-Bassam',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: 'Verrouiller',
-                    onPressed: onVerrouiller,
-                    icon: const Icon(
-                      PhosphorIconsRegular.lock,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: Jetons.espace2),
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: Jetons.orVif,
-                    child: Text(
-                      initiales,
-                      style: const TextStyle(
-                        color: Jetons.marine,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: Jetons.espace2),
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: role.libelle,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          ),
-                          TextSpan(
-                            text: ' · $identifiant',
-                            style: const TextStyle(color: Colors.white70),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              for (final onglet in onglets)
+                racineOnglet(
+                  onglet: onglet,
+                  role: widget.role,
+                  profil: widget.profil,
+                ),
             ],
           ),
         ),
+        bottomNavigationBar: BarreNavigation(
+          onglets: onglets,
+          courant: courant,
+          onSelection: _allerVers,
+          pastilles: pastillesOnglets(ref, widget.role),
+        ),
       ),
     );
   }
 }
 
-/// Barre de navigation basse, filtrée par rôle et stylée à la charte
-/// (actif marine, pastille de fond douce).
-class _BarreBasse extends StatelessWidget {
-  const _BarreBasse({
-    required this.ecrans,
-    required this.indexCourant,
-    required this.onSelection,
-  });
+/// Fondu bref au changement d'onglet (les onglets gardent leur état).
+class _Fondu extends StatelessWidget {
+  const _Fondu({required this.cle, required this.child});
 
-  final List<EcranMobile> ecrans;
-  final int indexCourant;
-  final ValueChanged<int> onSelection;
+  final OngletRole cle;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    Color couleur(Set<WidgetState> etats) =>
-        etats.contains(WidgetState.selected)
-        ? Jetons.marine
-        : Jetons.texteSecondaire;
-
-    return NavigationBarTheme(
-      data: NavigationBarThemeData(
-        backgroundColor: Jetons.surface,
-        indicatorColor: Jetons.fondSection,
-        iconTheme: WidgetStateProperty.resolveWith(
-          (etats) => IconThemeData(color: couleur(etats)),
-        ),
-        labelTextStyle: WidgetStateProperty.resolveWith(
-          (etats) => TextStyle(
-            fontSize: 12,
-            color: couleur(etats),
-            fontWeight: etats.contains(WidgetState.selected)
-                ? FontWeight.w700
-                : FontWeight.w500,
-          ),
-        ),
-      ),
-      child: NavigationBar(
-        selectedIndex: indexCourant,
-        onDestinationSelected: onSelection,
-        destinations: [
-          for (final ecran in ecrans)
-            NavigationDestination(
-              icon: Icon(ecran.icone),
-              label: ecran.libelle,
-            ),
-        ],
-      ),
+    if (context.animationsReduites) return child;
+    return TweenAnimationBuilder<double>(
+      key: ValueKey(cle),
+      tween: Tween<double>(begin: 0.4, end: 1),
+      duration: Jetons.dureeNormale,
+      curve: Jetons.courbe,
+      builder: (_, opacite, enfant) => Opacity(opacity: opacite, child: enfant),
+      child: child,
     );
   }
 }

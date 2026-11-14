@@ -19,7 +19,7 @@ abstract interface class ServiceAuth {
   Future<SessionDto> connexion(String identifiant, String motDePasse);
 }
 
-/// Implémentation HTTP réelle (branchée sur Django REST plus tard).
+/// Implémentation HTTP réelle (branchée sur l'API quand elle sera disponible).
 class ServiceAuthHttp implements ServiceAuth {
   const ServiceAuthHttp(this._dio);
 
@@ -32,33 +32,94 @@ class ServiceAuthHttp implements ServiceAuth {
         '/auth/connexion',
         data: {'identifiant': identifiant, 'mot_de_passe': motDePasse},
       );
-      return SessionDto.fromJson(reponse.data!);
+      final corps = reponse.data;
+      if (corps == null) {
+        throw const EchecConnexionException(
+          EchecConnexionDto(motif: 'RESEAU', message: 'Réponse vide.'),
+        );
+      }
+      return SessionDto.fromJson(corps);
     } on DioException catch (e) {
       final donnees = e.response?.data;
       if (donnees is Map<String, dynamic>) {
         throw EchecConnexionException(EchecConnexionDto.fromJson(donnees));
       }
       throw const EchecConnexionException(
-        EchecConnexionDto(
-          motif: 'IDENTIFIANTS',
-          message: 'Connexion impossible. Vérifiez votre connexion.',
-        ),
+        EchecConnexionDto(motif: 'RESEAU', message: 'Connexion impossible.'),
       );
     }
   }
 }
 
-/// Adaptateur simulé : tant que le serveur Django REST n'est pas disponible,
-/// il rend une session fictive pour les comptes de démonstration du pilote de
-/// Grand-Bassam. Activé par `Env.apiSimulee`.
+/// Compte de démonstration du pilote de Grand-Bassam.
+class CompteDemonstration {
+  const CompteDemonstration({
+    required this.identifiant,
+    required this.roleCode,
+    required this.prenom,
+    required this.nom,
+    required this.fonction,
+  });
+
+  final String identifiant;
+  final String roleCode;
+  final String prenom;
+  final String nom;
+  final String fonction;
+}
+
+/// Adaptateur simulé : tant que le serveur n'est pas disponible, il rend une
+/// session pour les comptes de démonstration (un par rôle de terrain). Activé
+/// par `Env.apiSimulee` ; n'importe quel mot de passe non vide est accepté.
 class ServiceAuthSimule implements ServiceAuth {
   const ServiceAuthSimule();
 
+  static const List<CompteDemonstration> comptes = [
+    CompteDemonstration(
+      identifiant: 'magasinier',
+      roleCode: 'MAGASINIER',
+      prenom: 'Mamadou',
+      nom: 'Koné',
+      fonction: 'Magasinier',
+    ),
+    CompteDemonstration(
+      identifiant: 'technicien',
+      roleCode: 'TECHNICIEN',
+      prenom: 'Kouassi',
+      nom: 'Adama',
+      fonction: "Chef d'équipe maçonnerie",
+    ),
+    CompteDemonstration(
+      identifiant: 'chef',
+      roleCode: 'CHEF_CHANTIER',
+      prenom: 'Mamadou',
+      nom: 'Traoré',
+      fonction: 'Chef de chantier',
+    ),
+    CompteDemonstration(
+      identifiant: 'gestionnaire',
+      roleCode: 'GESTIONNAIRE_STOCK',
+      prenom: 'Idriss',
+      nom: 'Sékou',
+      fonction: 'Gestionnaire de stock',
+    ),
+    CompteDemonstration(
+      identifiant: 'responsable',
+      roleCode: 'RESPONSABLE_TECHNIQUE',
+      prenom: 'Awa',
+      nom: 'Bamba',
+      fonction: 'Responsable technique',
+    ),
+  ];
+
   @override
   Future<SessionDto> connexion(String identifiant, String motDePasse) async {
-    await Future<void>.delayed(const Duration(milliseconds: 300));
+    await Future<void>.delayed(const Duration(milliseconds: 350));
 
-    if (motDePasse.isEmpty) {
+    final compte = comptes
+        .where((c) => c.identifiant == identifiant.toLowerCase())
+        .firstOrNull;
+    if (compte == null || motDePasse.isEmpty) {
       throw const EchecConnexionException(
         EchecConnexionDto(
           motif: 'IDENTIFIANTS',
@@ -67,30 +128,20 @@ class ServiceAuthSimule implements ServiceAuth {
       );
     }
 
-    final role = _rolesDemo[identifiant] ?? 'MAGASINIER';
     return SessionDto(
-      jeton: 'jeton-demo-$identifiant',
+      jeton: 'jeton-demo-${compte.identifiant}',
       utilisateur: UtilisateurDto(
-        idUtilisateur: 'u-$identifiant',
-        identifiant: identifiant,
-        nom: 'Démonstration',
-        prenom: identifiant,
-        fonction: 'Agent de terrain',
+        idUtilisateur: 'u-${compte.identifiant}',
+        identifiant: compte.identifiant,
+        nom: compte.nom,
+        prenom: compte.prenom,
+        fonction: compte.fonction,
         statut: 'ACTIF',
         dateCreation: DateTime(2026).toIso8601String(),
-        roleCodeRole: role,
-        perimetreIdPerimetre: 'perim-bassam',
-        libellePerimetre: 'Chantier Grand-Bassam',
+        roleCodeRole: compte.roleCode,
+        perimetreIdPerimetre: 'CH-GB',
+        libellePerimetre: 'Chantier de Grand-Bassam',
       ),
     );
   }
-
-  /// Comptes de démonstration : un identifiant par rôle terrain.
-  static const Map<String, String> _rolesDemo = {
-    'magasinier': 'MAGASINIER',
-    'technicien': 'TECHNICIEN',
-    'chef': 'CHEF_CHANTIER',
-    'gestionnaire': 'GESTIONNAIRE_STOCK',
-    'responsable': 'RESPONSABLE_TECHNIQUE',
-  };
 }

@@ -1,0 +1,131 @@
+{
+  "@@locale": "fr",
+
+  "ongletStock": "Stock",
+  "ongletFiches": "Fiches",
+  "ongletAValider": "À valider",
+  "ongletHistorique": "Historique",
+  "ongletSynchro": "Synchro",
+  "ongletProfil": "Profil",
+
+  "roleMagasinier": "Magasinier",
+  "roleTechnicien": "Technicien",
+  "roleChefChantier": "Chef de chantier",
+  "roleGestionnaireStock": "Gestionnaire de stock",
+  "roleResponsableTechnique": "Responsable technique",
+
+  "annuler": "Annuler",
+  "changer": "Changer",
+  "seConnecter": "Se connecter",
+  "synchroniser": "Synchroniser",
+  "diminuer": "Diminuer",
+  "augmenter": "Augmenter",
+  "champObligatoire": "Ce champ est obligatoire.",
+
+  "modeHorsLigneSecurise": "MODE HORS-LIGNE SÉCURISÉ",
+  "pinTitre": "CODE PIN CHANTIER",
+  "pinAide": "Saisissez votre code à 6 chiffres",
+  "pinIncorrect": "Code incorrect. Réessayez.",
+  "pinIncomplet": "Le code compte 6 chiffres.",
+  "pinRaz": "Vider",
+  "pinEffacer": "Effacer le dernier chiffre",
+  "pinSaisi": "{remplis} chiffres saisis sur {total}",
+  "@pinSaisi": {
+    "placeholders": {
+      "remplis": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "deverrouillageActif": "Déverrouillage hors-ligne actif",
+  "donneesSurAppareil": "Données sécurisées sur l'appareil",
+  "donneesSynchroniseesLe": "Dernière connexion en ligne : {date}",
+  "@donneesSynchroniseesLe": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "piedHorsLigne": "ChantierSync · Mode hors-ligne",
+  "appareil": "Appareil {id}",
+  "@appareil": {
+    "placeholders": {
+      "id": {"type": "String"}
+    }
+  },
+
+  "retirerCompteTitre": "Retirer ce compte de l'appareil ?",
+  "retirerCompteTexte": "Les données enregistrées sur cet appareil seront effacées. Une connexion en ligne sera nécessaire pour revenir.",
+  "retirerCompteAction": "Retirer le compte",
+  "retirerCompteAlerte": "{n, plural, =1{Attention : 1 saisie n'a pas encore été envoyée et sera perdue.} other{Attention : {n} saisies n'ont pas encore été envoyées et seront perdues.}}",
+  "@retirerCompteAlerte": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+
+  "connexionAccroche": "Le chantier dans la poche, même sans réseau.",
+  "identifiant": "Identifiant",
+  "motDePasse": "Mot de passe",
+  "afficherMotDePasse": "Afficher le mot de passe",
+  "masquerMotDePasse": "Masquer le mot de passe",
+  "connexionAide": "Connexion en ligne requise une seule fois, puis accès par code PIN.",
+  "comptesDemoTitre": "Comptes de démonstration",
+  "comptesDemoAide": "Affichés uniquement parce que les données sont simulées. Touchez un profil pour remplir le formulaire.",
+
+  "erreurIdentifiants": "Identifiant ou mot de passe incorrect.",
+  "erreurCompteInactif": "Ce compte est désactivé. Contactez votre administrateur.",
+  "erreurVerrouille": "{secondes, plural, =0{Compte temporairement verrouillé après plusieurs échecs.} =1{Compte verrouillé. Réessayez dans 1 seconde.} other{Compte verrouillé. Réessayez dans {secondes} secondes.}}",
+  "@erreurVerrouille": {
+    "placeholders": {
+      "secondes": {"type": "int"}
+    }
+  },
+  "erreurSansAccesTerrain": "Ce compte n'a pas d'accès terrain sur l'application mobile.",
+  "infoSessionRevoquee": "Le compte a été retiré de cet appareil.",
+  "infoSessionExpiree": "Plus de 14 jours sans connexion en ligne : reconnectez-vous pour continuer.",
+  "erreurDonneesInaccessibles": "Impossible d'ouvrir les données de l'appareil.",
+  "erreurConnexionImpossible": "Connexion impossible. Vérifiez le réseau puis réessayez.",
+
+  "definirCodeTitre": "Définir mon code",
+  "definirCodeSousTitre": "Pour ouvrir l'application sans réseau",
+  "choisirCode": "Choisissez un code",
+  "choisirCodeAide": "6 chiffres que vous serez seul à connaître.",
+  "confirmerCode": "Confirmez le code",
+  "confirmerCodeAide": "Saisissez à nouveau le même code.",
+  "codesDifferents": "Les deux codes ne correspondent pas. Recommencez.",
+
+  "synchroAJour": "Données à jour",
+  "synchroEnAttente": "{n, plural, =1{1 élément en attente d'envoi} other{{n} éléments en attente d'envoi}}",
+  "@synchroEnAttente": {
+    "placeholders": {
+      "n": {"type": "int"}
+    }
+  },
+  "synchroTitre": "Synchronisation",
+  "synchroExplication": "Vos saisies sont enregistrées sur l'appareil et partent dès que la connexion revient.",
+  "fileAttenteTitre": "File d'attente",
+  "fileVideTitre": "Rien à envoyer",
+  "fileVideTexte": "Les saisies faites sans réseau apparaîtront ici en attendant leur envoi.",
+  "etatEnAttenteEnvoi": "En attente",
+  "etatEnvoye": "Envoyé",
+
+  "signatureTitre": "Signature par code PIN",
+  "signatureAide": "Votre code confirme la décision.",
+
+  "moduleEnPreparation": "Cet espace est en cours d'installation.",
+
+  "profilLangue": "Langue",
+  "profilTheme": "Apparence",
+  "themeSysteme": "Automatique",
+  "themeClair": "Clair",
+  "themeSombre": "Sombre",
+  "profilSynchroAide": "File d'attente et état des envois",
+  "profilVerrouiller": "Verrouiller",
+  "profilVerrouillerAide": "Revenir à l'écran du code PIN",
+  "profilRetirerAide": "Efface les données de cet appareil",
+  "profilAPropos": "Schiavone Group · Italia Construction\nAppareil {appareil} · version 1.0",
+  "@profilAPropos": {
+    "placeholders": {
+      "appareil": {"type": "String"}
+    }
+  }
+}

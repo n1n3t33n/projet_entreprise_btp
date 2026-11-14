@@ -3,43 +3,58 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../theme/animations.dart';
 import '../../../../theme/jetons.dart';
+import '../../../../theme/palette.dart';
 
-/// Points indiquant les chiffres déjà saisis du PIN (charte : marine plein /
-/// contour atténué).
+/// Nombre de chiffres du code PIN de chantier.
+const int longueurPin = 6;
+
+/// Points indiquant les chiffres déjà saisis du PIN. En cas d'erreur, la
+/// rangée se teinte en rouge le temps que l'opérateur ressaisisse.
 class PointsPin extends StatelessWidget {
-  const PointsPin({required this.remplis, this.total = 6, super.key});
+  const PointsPin({required this.remplis, this.erreur = false, super.key});
 
   final int remplis;
-  final int total;
+  final bool erreur;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (var i = 0; i < total; i++)
-          AnimatedContainer(
-            duration: Jetons.dureeMicro,
-            curve: Curves.easeOut,
-            margin: const EdgeInsets.symmetric(horizontal: 6),
-            width: 18,
-            height: 18,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: i < remplis ? Jetons.marine : Colors.transparent,
-              border: Border.all(
-                color: i < remplis ? Jetons.marine : Jetons.texteAttenue,
-                width: 2,
+    final p = context.palette;
+    final plein = erreur ? p.danger : (p.sombre ? p.accent : Jetons.marine);
+    return Semantics(
+      label: context.t.pinSaisi(remplis, longueurPin),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (var i = 0; i < longueurPin; i++)
+            AnimatedContainer(
+              duration: Jetons.dureeMicro,
+              curve: Jetons.courbe,
+              margin: const EdgeInsets.symmetric(horizontal: 7),
+              width: 18,
+              height: 18,
+              transform: Matrix4.diagonal3Values(
+                i < remplis ? 1.0 : 0.82,
+                i < remplis ? 1.0 : 0.82,
+                1,
+              ),
+              transformAlignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: i < remplis ? plein : Colors.transparent,
+                border: Border.all(
+                  color: i < remplis ? plein : p.texteAttenue,
+                  width: 2,
+                ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-/// Clavier numérique du PIN (3×4), cibles tactiles généreuses. Dernière ligne :
-/// RAZ, 0, effacement.
+/// Clavier numérique du PIN (3 × 4), cibles tactiles généreuses. Dernière
+/// ligne : remise à zéro, 0, effacement.
 class ClavierPin extends StatelessWidget {
   const ClavierPin({
     required this.onChiffre,
@@ -54,27 +69,52 @@ class ClavierPin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
     return Column(
       children: [
-        _ligne(['1', '2', '3']),
-        _ligne(['4', '5', '6']),
-        _ligne(['7', '8', '9']),
+        for (final ligne in const [
+          ['1', '2', '3'],
+          ['4', '5', '6'],
+          ['7', '8', '9'],
+        ])
+          Row(
+            children: [
+              for (final chiffre in ligne)
+                Expanded(
+                  child: _Touche(
+                    libelle: chiffre,
+                    onTap: () => onChiffre(chiffre),
+                    child: _Chiffre(chiffre),
+                  ),
+                ),
+            ],
+          ),
         Row(
           children: [
             Expanded(
-              child: _ToucheAction(
-                icone: PhosphorIconsRegular.arrowCounterClockwise,
-                libelle: 'RAZ',
+              child: _Touche(
+                libelle: t.pinRaz,
                 onTap: onRaz,
+                secondaire: true,
+                child: _Action(
+                  icone: PhosphorIconsRegular.arrowCounterClockwise,
+                  texte: t.pinRaz,
+                ),
               ),
             ),
             Expanded(
-              child: _ToucheChiffre(chiffre: '0', onTap: onChiffre),
+              child: _Touche(
+                libelle: '0',
+                onTap: () => onChiffre('0'),
+                child: const _Chiffre('0'),
+              ),
             ),
             Expanded(
-              child: _ToucheAction(
-                icone: PhosphorIconsRegular.backspace,
+              child: _Touche(
+                libelle: t.pinEffacer,
                 onTap: onEffacer,
+                secondaire: true,
+                child: const _Action(icone: PhosphorIconsRegular.backspace),
               ),
             ),
           ],
@@ -82,89 +122,91 @@ class ClavierPin extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _ligne(List<String> chiffres) {
-    return Row(
-      children: [
-        for (final chiffre in chiffres)
-          Expanded(
-            child: _ToucheChiffre(chiffre: chiffre, onTap: onChiffre),
+class _Touche extends StatelessWidget {
+  const _Touche({
+    required this.libelle,
+    required this.onTap,
+    required this.child,
+    this.secondaire = false,
+  });
+
+  final String libelle;
+  final VoidCallback onTap;
+  final Widget child;
+  final bool secondaire;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Semantics(
+        button: true,
+        label: libelle,
+        child: Appui(
+          onTap: onTap,
+          echelle: 0.94,
+          child: Container(
+            height: 62,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: secondaire ? p.fondAlt : p.surface,
+              borderRadius: BorderRadius.circular(Jetons.rayonBloc),
+              border: secondaire ? null : Border.all(color: p.bordure),
+              boxShadow: secondaire ? null : p.ombreDouce,
+            ),
+            child: ExcludeSemantics(child: child),
           ),
-      ],
+        ),
+      ),
     );
   }
 }
 
-class _ToucheChiffre extends StatelessWidget {
-  const _ToucheChiffre({required this.chiffre, required this.onTap});
+class _Chiffre extends StatelessWidget {
+  const _Chiffre(this.chiffre);
 
   final String chiffre;
-  final void Function(String) onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(Jetons.espace2 / 2),
-      child: CarteLevitation(
-        onTap: () => onTap(chiffre),
-        child: Container(
-          height: 64,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Jetons.surface,
-            borderRadius: BorderRadius.circular(Jetons.rayonChamp),
-            border: Border.all(color: Jetons.bordure),
-          ),
-          child: Text(
-            chiffre,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-              color: Jetons.marine,
-            ),
-          ),
-        ),
+    final p = context.palette;
+    return Text(
+      chiffre,
+      style: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: p.sombre ? p.texte : Jetons.marine,
       ),
     );
   }
 }
 
-class _ToucheAction extends StatelessWidget {
-  const _ToucheAction({required this.icone, required this.onTap, this.libelle});
+class _Action extends StatelessWidget {
+  const _Action({required this.icone, this.texte});
 
   final IconData icone;
-  final String? libelle;
-  final VoidCallback onTap;
+  final String? texte;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(Jetons.espace2 / 2),
-      child: CarteLevitation(
-        onTap: onTap,
-        child: Container(
-          height: 64,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Jetons.fondSection,
-            borderRadius: BorderRadius.circular(Jetons.rayonChamp),
+    final p = context.palette;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icone, color: p.texteSecondaire, size: 22),
+        if (texte != null)
+          Text(
+            texte!,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: p.texteSecondaire,
+            ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icone, color: Jetons.texteSecondaire),
-              if (libelle != null)
-                Text(
-                  libelle!,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Jetons.texteSecondaire,
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+      ],
     );
   }
 }

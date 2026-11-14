@@ -1,18 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../components/boutons.dart';
+import '../../../components/logo_schiavone.dart';
+import '../../../components/surfaces.dart';
+import '../../../core/navigation/onglet_role.dart';
 import '../../../core/providers.dart';
+import '../../../core/roles/role_terrain.dart';
 import '../../../theme/animations.dart';
 import '../../../theme/jetons.dart';
+import '../../../theme/palette.dart';
+import '../domain/profil_utilisateur.dart';
 import 'widgets/clavier_pin.dart';
 
 /// Déverrouillage hors-ligne par PIN (session valide moins de 14 jours).
-/// Fidèle au wireframe « Écran 1 — Connexion PIN hors-ligne ».
+/// Reprend la maquette « Écran 1 — Connexion PIN hors-ligne ».
 class EcranDeverrouillage extends ConsumerStatefulWidget {
-  const EcranDeverrouillage({required this.identifiant, super.key});
+  const EcranDeverrouillage({
+    required this.profil,
+    required this.role,
+    this.derniereConnexion,
+    super.key,
+  });
 
-  final String identifiant;
+  final ProfilUtilisateur profil;
+  final RoleTerrain role;
+  final DateTime? derniereConnexion;
 
   @override
   ConsumerState<EcranDeverrouillage> createState() =>
@@ -20,125 +36,179 @@ class EcranDeverrouillage extends ConsumerStatefulWidget {
 }
 
 class _EcranDeverrouillageState extends ConsumerState<EcranDeverrouillage> {
-  static const _longueur = 6;
   String _pin = '';
-  String? _erreur;
+  bool _erreur = false;
   bool _enCours = false;
 
   void _ajouter(String chiffre) {
-    if (_pin.length >= _longueur) return;
+    if (_pin.length >= longueurPin || _enCours) return;
     setState(() {
       _pin += chiffre;
-      _erreur = null;
+      _erreur = false;
     });
+    // Le sixième chiffre valide tout seul : un geste de moins sur le chantier.
+    if (_pin.length == longueurPin) _connecter();
   }
 
   void _effacer() {
     if (_pin.isEmpty) return;
-    setState(() => _pin = _pin.substring(0, _pin.length - 1));
+    setState(() {
+      _pin = _pin.substring(0, _pin.length - 1);
+      _erreur = false;
+    });
   }
 
-  void _raz() => setState(() => _pin = '');
+  void _raz() => setState(() {
+    _pin = '';
+    _erreur = false;
+  });
 
   Future<void> _connecter() async {
-    if (_pin.length < 4) {
-      setState(() => _erreur = 'Code incomplet.');
+    if (_pin.length < longueurPin) {
+      setState(() => _erreur = true);
       return;
     }
-    setState(() {
-      _enCours = true;
-      _erreur = null;
-    });
+    setState(() => _enCours = true);
     final ok = await ref
         .read(controleurAuthProvider.notifier)
         .deverrouiller(_pin);
     if (!mounted) return;
+    if (!ok) HapticFeedback.heavyImpact();
     setState(() {
       _enCours = false;
-      if (!ok) {
-        _erreur = 'Code incorrect.';
-        _pin = '';
-      }
+      _erreur = !ok;
+      if (!ok) _pin = '';
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
+    final t = context.t;
+    final incomplet = _erreur && _pin.isEmpty;
+
     return Scaffold(
-      backgroundColor: Jetons.fond,
       body: Column(
         children: [
           const _BanniereHorsLigne(),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(Jetons.margeMobile),
+              padding: const EdgeInsets.fromLTRB(
+                Jetons.margeMobile,
+                Jetons.espace3,
+                Jetons.margeMobile,
+                Jetons.espace4,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Apparition(child: _CarteMarque()),
-                  const SizedBox(height: Jetons.espace3),
+                  const SizedBox(height: 12),
                   Apparition(
-                    delai: const Duration(milliseconds: 60),
+                    rang: 1,
                     child: _CarteOperateur(
-                      identifiant: widget.identifiant,
-                      onChanger: () =>
-                          ref.read(controleurAuthProvider.notifier).revoquer(),
+                      profil: widget.profil,
+                      role: widget.role,
+                      onChanger: _confirmerChangement,
                     ),
                   ),
-                  const SizedBox(height: Jetons.espace3),
+                  const SizedBox(height: 12),
                   Apparition(
-                    delai: const Duration(milliseconds: 120),
-                    child: _CartePin(remplis: _pin.length, total: _longueur),
+                    rang: 2,
+                    child: Carte(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Jetons.espace3,
+                        vertical: 20,
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                PhosphorIconsRegular.password,
+                                size: 18,
+                                color: p.sombre ? p.texte : Jetons.marine,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                t.pinTitre,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.6,
+                                  color: p.sombre ? p.texte : Jetons.marine,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: Jetons.espace3),
+                          PointsPin(remplis: _pin.length, erreur: _erreur),
+                          const SizedBox(height: 12),
+                          AnimatedSwitcher(
+                            duration: Jetons.dureeMicro,
+                            child: Text(
+                              _erreur
+                                  ? (incomplet
+                                        ? t.pinIncorrect
+                                        : t.pinIncomplet)
+                                  : t.pinAide,
+                              key: ValueKey('$_erreur$incomplet'),
+                              style: TextStyle(
+                                color: _erreur ? p.danger : p.texteSecondaire,
+                                fontWeight: _erreur
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: Jetons.espace3),
+                  const SizedBox(height: 10),
                   Apparition(
-                    delai: const Duration(milliseconds: 180),
+                    rang: 3,
                     child: ClavierPin(
                       onChiffre: _ajouter,
                       onEffacer: _effacer,
                       onRaz: _raz,
                     ),
                   ),
-                  if (_erreur != null) ...[
-                    const SizedBox(height: Jetons.espace3),
-                    Text(
-                      _erreur!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Jetons.danger),
+                  const SizedBox(height: 12),
+                  Apparition(
+                    rang: 4,
+                    child: _BandeauDeverrouillage(
+                      derniereConnexion: widget.derniereConnexion,
                     ),
-                  ],
-                  const SizedBox(height: Jetons.espace3),
-                  const Apparition(
-                    delai: Duration(milliseconds: 240),
-                    child: _BandeauDeverrouillage(),
                   ),
                   const SizedBox(height: Jetons.espace3),
-                  FilledButton(
-                    onPressed: _enCours ? null : _connecter,
-                    child: _enCours
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('SE CONNECTER'),
-                              SizedBox(width: Jetons.espace2),
-                              Icon(PhosphorIconsRegular.arrowRight, size: 18),
-                            ],
+                  Apparition(
+                    rang: 5,
+                    child: BoutonPrincipal(
+                      libelle: t.seConnecter,
+                      iconeFin: PhosphorIconsBold.arrowRight,
+                      enChargement: _enCours,
+                      onPressed: _connecter,
+                    ),
+                  ),
+                  const SizedBox(height: Jetons.espace3),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          t.piedHorsLigne,
+                          style: TextStyle(
+                            color: p.texteSecondaire,
+                            fontSize: 12,
                           ),
-                  ),
-                  const SizedBox(height: Jetons.espace2),
-                  const Center(
-                    child: Text(
-                      'Stockage local sécurisé · Schiavone Group',
-                      style: TextStyle(
-                        color: Jetons.texteAttenue,
-                        fontSize: 12,
+                        ),
                       ),
-                    ),
+                      Pastille(
+                        libelle: t.appareil(ref.watch(idAppareilProvider)),
+                        icone: PhosphorIconsRegular.deviceMobile,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -148,6 +218,30 @@ class _EcranDeverrouillageState extends ConsumerState<EcranDeverrouillage> {
       ),
     );
   }
+
+  Future<void> _confirmerChangement() async {
+    final t = context.t;
+    final confirme = await showDialog<bool>(
+      context: context,
+      builder: (contexte) => AlertDialog(
+        title: Text(t.retirerCompteTitre),
+        content: Text(t.retirerCompteTexte),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(contexte).pop(false),
+            child: Text(t.annuler),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(contexte).pop(true),
+            child: Text(t.retirerCompteAction),
+          ),
+        ],
+      ),
+    );
+    if (confirme == true) {
+      await ref.read(controleurAuthProvider.notifier).revoquer();
+    }
+  }
 }
 
 class _BanniereHorsLigne extends StatelessWidget {
@@ -155,41 +249,51 @@ class _BanniereHorsLigne extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Jetons.marine,
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Jetons.espace3,
-            vertical: Jetons.espace2,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Jetons.orVif,
+    final p = context.palette;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [p.enteteDebut, p.enteteFin]),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Jetons.espace3,
+              vertical: 10,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Jetons.sable,
+                  ),
                 ),
-              ),
-              const SizedBox(width: Jetons.espace2),
-              const Icon(
-                PhosphorIconsRegular.cloudSlash,
-                color: Colors.white,
-                size: 18,
-              ),
-              const SizedBox(width: Jetons.espace2),
-              const Text(
-                'MODE HORS-LIGNE SÉCURISÉ',
-                style: TextStyle(
+                const SizedBox(width: 10),
+                const Icon(
+                  PhosphorIconsRegular.cloudSlash,
                   color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
+                  size: 18,
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    context.t.modeHorsLigneSecurise,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -202,188 +306,127 @@ class _CarteMarque extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(Jetons.espace3),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'ChantierSync',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Jetons.marine,
-                      fontWeight: FontWeight.w700,
-                    ),
+    final p = context.palette;
+    return Carte(
+      child: Row(
+        children: [
+          const TuileEmbleme(taille: 52),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'ChantierSync',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: p.sombre ? p.texte : Jetons.marine,
                   ),
-                  const Text(
-                    'Schiavone Group · Italia Construction',
-                    style: TextStyle(color: Jetons.texteSecondaire),
-                  ),
-                ],
-              ),
+                ),
+                Text(
+                  'Schiavone Group · Italia Construction',
+                  style: TextStyle(color: p.texteSecondaire, fontSize: 12.5),
+                ),
+              ],
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: Jetons.espace2,
-                vertical: 4,
-              ),
-              decoration: BoxDecoration(
-                color: Jetons.fondSection,
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: const Text(
-                '● BTP · PRO',
-                style: TextStyle(color: Jetons.sarcelle, fontSize: 12),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class _CarteOperateur extends StatelessWidget {
-  const _CarteOperateur({required this.identifiant, required this.onChanger});
+  const _CarteOperateur({
+    required this.profil,
+    required this.role,
+    required this.onChanger,
+  });
 
-  final String identifiant;
+  final ProfilUtilisateur profil;
+  final RoleTerrain role;
   final VoidCallback onChanger;
 
   @override
   Widget build(BuildContext context) {
-    final initiales = identifiant.isEmpty
-        ? '?'
-        : identifiant.substring(0, 1).toUpperCase();
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(Jetons.espace3),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: Jetons.marine,
-              child: Text(
-                initiales,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            const SizedBox(width: Jetons.espace3),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'OPÉRATEUR TERRAIN',
-                    style: TextStyle(
-                      color: Jetons.texteAttenue,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  Text(
-                    identifiant,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            TextButton(onPressed: onChanger, child: const Text('Changer')),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CartePin extends StatelessWidget {
-  const _CartePin({required this.remplis, required this.total});
-
-  final int remplis;
-  final int total;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Jetons.espace3,
-          vertical: Jetons.espace4,
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    final p = context.palette;
+    final t = context.t;
+    return Carte(
+      child: Row(
+        children: [
+          AvatarInitiales(profil.nomComplet, taille: 48),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(
-                  PhosphorIconsRegular.keyboard,
-                  size: 18,
-                  color: Jetons.marine,
-                ),
-                const SizedBox(width: Jetons.espace2),
                 Text(
-                  'CODE PIN CHANTIER',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Jetons.marine,
+                  profil.nomComplet,
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+                    fontSize: 16,
+                    color: p.texte,
                   ),
+                ),
+                Text(
+                  '${libelleRole(t, role)} · ${profil.perimetre}',
+                  style: TextStyle(color: p.texteSecondaire, fontSize: 12.5),
                 ),
               ],
             ),
-            const SizedBox(height: Jetons.espace3),
-            PointsPin(remplis: remplis, total: total),
-            const SizedBox(height: Jetons.espace2),
-            const Text(
-              'Matricule déchiffré · 6 chiffres requis',
-              style: TextStyle(color: Jetons.texteSecondaire),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 8),
+          BoutonSecondaire(
+            libelle: t.changer,
+            icone: PhosphorIconsRegular.swap,
+            ton: Ton.neutre,
+            compact: true,
+            onPressed: onChanger,
+          ),
+        ],
       ),
     );
   }
 }
 
 class _BandeauDeverrouillage extends StatelessWidget {
-  const _BandeauDeverrouillage();
+  const _BandeauDeverrouillage({this.derniereConnexion});
+
+  final DateTime? derniereConnexion;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(Jetons.espace3),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8F5E9),
-        borderRadius: BorderRadius.circular(Jetons.rayonChamp),
-        border: Border.all(color: const Color(0xFFBFE3C4)),
-      ),
-      child: const Row(
+    final p = context.palette;
+    final t = context.t;
+    final date = derniereConnexion;
+    final langue = Localizations.localeOf(context).toLanguageTag();
+    return Bloc(
+      couleur: p.succesFond,
+      bordure: p.succes.withValues(alpha: 0.25),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
         children: [
-          Icon(PhosphorIconsRegular.sealCheck, color: Jetons.succes),
-          SizedBox(width: Jetons.espace3),
+          Icon(PhosphorIconsFill.sealCheck, color: p.succes),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Déverrouillage hors-ligne actif',
+                  t.deverrouillageActif,
                   style: TextStyle(
-                    color: Jetons.succes,
+                    color: p.succes,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 Text(
-                  'Données sécurisées sur l\'appareil.',
-                  style: TextStyle(color: Jetons.succes),
+                  date == null
+                      ? t.donneesSurAppareil
+                      : t.donneesSynchroniseesLe(
+                          DateFormat.MMMd(langue).add_Hm().format(date),
+                        ),
+                  style: TextStyle(color: p.succes, fontSize: 12.5),
                 ),
               ],
             ),
