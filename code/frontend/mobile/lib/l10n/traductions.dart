@@ -579,6 +579,948 @@ abstract class Traductions {
   /// In fr, this message translates to:
   /// **'Schiavone Group · Italia Construction\nAppareil {appareil} · version 1.0'**
   String profilAPropos(String appareil);
+
+  /// No description provided for @niveauVide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vide'**
+  String get niveauVide;
+
+  /// No description provided for @niveauCritique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Critique'**
+  String get niveauCritique;
+
+  /// No description provided for @niveauMini.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mini'**
+  String get niveauMini;
+
+  /// No description provided for @niveauPlein.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plein'**
+  String get niveauPlein;
+
+  /// No description provided for @stockNegatif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock négatif'**
+  String get stockNegatif;
+
+  /// No description provided for @stockNegatifExplication.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le stock est négatif : anomalie à corriger par un inventaire.'**
+  String get stockNegatifExplication;
+
+  /// No description provided for @jaugeCapacite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Capacité'**
+  String get jaugeCapacite;
+
+  /// No description provided for @typeReception.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réception'**
+  String get typeReception;
+
+  /// No description provided for @typeSortie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sortie'**
+  String get typeSortie;
+
+  /// No description provided for @typeRetour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour'**
+  String get typeRetour;
+
+  /// No description provided for @typePerte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perte ou casse'**
+  String get typePerte;
+
+  /// No description provided for @typeAjustement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajustement d\'inventaire'**
+  String get typeAjustement;
+
+  /// No description provided for @statutEnregistre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistré'**
+  String get statutEnregistre;
+
+  /// No description provided for @statutAValider.
+  ///
+  /// In fr, this message translates to:
+  /// **'À valider'**
+  String get statutAValider;
+
+  /// No description provided for @statutValide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validé'**
+  String get statutValide;
+
+  /// No description provided for @statutRejete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refusé'**
+  String get statutRejete;
+
+  /// No description provided for @aLInstant.
+  ///
+  /// In fr, this message translates to:
+  /// **'à l\'instant'**
+  String get aLInstant;
+
+  /// No description provided for @ilYAMinutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'il y a {n} min'**
+  String ilYAMinutes(int n);
+
+  /// No description provided for @ilYAHeures.
+  ///
+  /// In fr, this message translates to:
+  /// **'il y a {n} h'**
+  String ilYAHeures(int n);
+
+  /// No description provided for @aujourdhui.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get aujourdhui;
+
+  /// No description provided for @hier.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hier'**
+  String get hier;
+
+  /// No description provided for @choisirArticleTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un article'**
+  String get choisirArticleTitre;
+
+  /// No description provided for @rechercherArticle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un article, un code…'**
+  String get rechercherArticle;
+
+  /// No description provided for @aucunResultat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun article trouvé'**
+  String get aucunResultat;
+
+  /// No description provided for @aucunResultatAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifiez la recherche ou le filtre.'**
+  String get aucunResultatAide;
+
+  /// No description provided for @stockActuel.
+  ///
+  /// In fr, this message translates to:
+  /// **'stock actuel : {quantite}'**
+  String stockActuel(String quantite);
+
+  /// No description provided for @sortieTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sortie rapide'**
+  String get sortieTitre;
+
+  /// No description provided for @sortieAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remettre du matériel à une équipe'**
+  String get sortieAide;
+
+  /// No description provided for @receptionTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réception'**
+  String get receptionTitre;
+
+  /// No description provided for @receptionAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer un bon de livraison'**
+  String get receptionAide;
+
+  /// No description provided for @retourTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour, casse ou perte'**
+  String get retourTitre;
+
+  /// No description provided for @retourAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déclarer un surplus ou un matériel abîmé'**
+  String get retourAide;
+
+  /// No description provided for @retourCourt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour / perte'**
+  String get retourCourt;
+
+  /// No description provided for @saisieSousTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistré sur l\'appareil'**
+  String get saisieSousTitre;
+
+  /// No description provided for @saisieArticle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Article'**
+  String get saisieArticle;
+
+  /// No description provided for @saisieQuantite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité'**
+  String get saisieQuantite;
+
+  /// No description provided for @saisieMention.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoi automatique au retour du réseau.'**
+  String get saisieMention;
+
+  /// No description provided for @saisieIncomplete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Complétez les champs obligatoires pour valider.'**
+  String get saisieIncomplete;
+
+  /// No description provided for @toutLeStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout le stock ({quantite})'**
+  String toutLeStock(String quantite);
+
+  /// No description provided for @stockProjete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock après saisie'**
+  String get stockProjete;
+
+  /// No description provided for @sortieDestination.
+  ///
+  /// In fr, this message translates to:
+  /// **'Destination'**
+  String get sortieDestination;
+
+  /// No description provided for @sortieLogement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Logement ou zone de pose'**
+  String get sortieLogement;
+
+  /// No description provided for @sortieCorpsEtat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Corps d\'état'**
+  String get sortieCorpsEtat;
+
+  /// No description provided for @sortieBeneficiaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Équipe bénéficiaire'**
+  String get sortieBeneficiaire;
+
+  /// No description provided for @facultatif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Facultatif'**
+  String get facultatif;
+
+  /// No description provided for @receptionTracabilite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bon de livraison et fournisseur'**
+  String get receptionTracabilite;
+
+  /// No description provided for @receptionBon.
+  ///
+  /// In fr, this message translates to:
+  /// **'N° de bon de livraison ou de conteneur'**
+  String get receptionBon;
+
+  /// No description provided for @receptionBonExemple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. BL-2026-0589'**
+  String get receptionBonExemple;
+
+  /// No description provided for @receptionFournisseur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fournisseur'**
+  String get receptionFournisseur;
+
+  /// No description provided for @receptionEtat.
+  ///
+  /// In fr, this message translates to:
+  /// **'État de la livraison'**
+  String get receptionEtat;
+
+  /// No description provided for @receptionConforme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conforme'**
+  String get receptionConforme;
+
+  /// No description provided for @receptionReserves.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réserves'**
+  String get receptionReserves;
+
+  /// No description provided for @observations.
+  ///
+  /// In fr, this message translates to:
+  /// **'Observations'**
+  String get observations;
+
+  /// No description provided for @receptionObservationsExemple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. deux sacs éventrés au déchargement'**
+  String get receptionObservationsExemple;
+
+  /// No description provided for @retourNature.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nature de la déclaration'**
+  String get retourNature;
+
+  /// No description provided for @natureRetour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour au magasin'**
+  String get natureRetour;
+
+  /// No description provided for @natureRetourDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surplus réintégré au stock'**
+  String get natureRetourDetail;
+
+  /// No description provided for @natureCasse.
+  ///
+  /// In fr, this message translates to:
+  /// **'Casse ou avarie'**
+  String get natureCasse;
+
+  /// No description provided for @natureCasseDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Matériel abîmé, inutilisable'**
+  String get natureCasseDetail;
+
+  /// No description provided for @naturePerte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Perte'**
+  String get naturePerte;
+
+  /// No description provided for @naturePerteDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Matériel manquant, introuvable'**
+  String get naturePerteDetail;
+
+  /// No description provided for @retourMotif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Motif'**
+  String get retourMotif;
+
+  /// No description provided for @retourMotifAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un motif'**
+  String get retourMotifAide;
+
+  /// No description provided for @retourObservationsExemple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. palette restée sous la pluie'**
+  String get retourObservationsExemple;
+
+  /// No description provided for @motifSurplus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surplus de chantier'**
+  String get motifSurplus;
+
+  /// No description provided for @motifErreurMetre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur de métré'**
+  String get motifErreurMetre;
+
+  /// No description provided for @motifHumidite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sac éventré ou humidité'**
+  String get motifHumidite;
+
+  /// No description provided for @motifChoc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choc ou chute'**
+  String get motifChoc;
+
+  /// No description provided for @motifIntrouvable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Introuvable au comptage'**
+  String get motifIntrouvable;
+
+  /// No description provided for @motifAutre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre'**
+  String get motifAutre;
+
+  /// No description provided for @validerSortie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider la sortie ({quantite})'**
+  String validerSortie(String quantite);
+
+  /// No description provided for @enregistrerReception.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer la réception ({quantite})'**
+  String enregistrerReception(String quantite);
+
+  /// No description provided for @validerDeclaration.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider la déclaration ({quantite})'**
+  String validerDeclaration(String quantite);
+
+  /// No description provided for @mouvementEnregistre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mouvement enregistré sur l\'appareil.'**
+  String get mouvementEnregistre;
+
+  /// No description provided for @controleOk.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock suffisant : la saisie laisse l\'article au-dessus de son seuil.'**
+  String get controleOk;
+
+  /// No description provided for @avertissementSeuil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock restant {reste}, sous le seuil mini de {seuil}.'**
+  String avertissementSeuil(String reste, String seuil);
+
+  /// No description provided for @avertissementNegatif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette saisie rend le stock négatif. Elle sera signalée comme anomalie.'**
+  String get avertissementNegatif;
+
+  /// No description provided for @registreTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Registre du stock'**
+  String get registreTitre;
+
+  /// No description provided for @registreSousTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantités connues de l\'appareil'**
+  String get registreSousTitre;
+
+  /// No description provided for @references.
+  ///
+  /// In fr, this message translates to:
+  /// **'références'**
+  String get references;
+
+  /// No description provided for @nouveauMouvement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau mouvement'**
+  String get nouveauMouvement;
+
+  /// No description provided for @filtreTous.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous'**
+  String get filtreTous;
+
+  /// No description provided for @filtreSousSeuil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sous seuil'**
+  String get filtreSousSeuil;
+
+  /// No description provided for @filtreSorties.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sorties'**
+  String get filtreSorties;
+
+  /// No description provided for @filtreEntrees.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrées'**
+  String get filtreEntrees;
+
+  /// No description provided for @seuilMini.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seuil mini : {seuil}'**
+  String seuilMini(String seuil);
+
+  /// No description provided for @seuilMiniEcart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seuil mini : {seuil} ({ecart})'**
+  String seuilMiniEcart(String seuil, String ecart);
+
+  /// No description provided for @stockConforme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock conforme (mini : {seuil})'**
+  String stockConforme(String seuil);
+
+  /// No description provided for @ficheArticleTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fiche article'**
+  String get ficheArticleTitre;
+
+  /// No description provided for @disponibles.
+  ///
+  /// In fr, this message translates to:
+  /// **'{unite} en stock'**
+  String disponibles(String unite);
+
+  /// No description provided for @mouvementsRecents.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mouvements récents'**
+  String get mouvementsRecents;
+
+  /// No description provided for @journalComplet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Journal complet'**
+  String get journalComplet;
+
+  /// No description provided for @aucunMouvement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun mouvement'**
+  String get aucunMouvement;
+
+  /// No description provided for @aucunMouvementAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les sorties, réceptions et retours apparaîtront ici.'**
+  String get aucunMouvementAide;
+
+  /// No description provided for @codeBarres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code-barres'**
+  String get codeBarres;
+
+  /// No description provided for @journalTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Journal des mouvements'**
+  String get journalTitre;
+
+  /// No description provided for @journalSousTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrées et sorties du magasin'**
+  String get journalSousTitre;
+
+  /// No description provided for @journalRecherche.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un bon, un article, une personne…'**
+  String get journalRecherche;
+
+  /// No description provided for @mouvementsDuJour.
+  ///
+  /// In fr, this message translates to:
+  /// **'mouvements du jour'**
+  String get mouvementsDuJour;
+
+  /// No description provided for @entreesDuJour.
+  ///
+  /// In fr, this message translates to:
+  /// **'entrées du jour'**
+  String get entreesDuJour;
+
+  /// No description provided for @journalNonModifiable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Journal horodaté et non modifiable'**
+  String get journalNonModifiable;
+
+  /// No description provided for @validationTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validations'**
+  String get validationTitre;
+
+  /// No description provided for @validationSousTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sorties de stock et alertes'**
+  String get validationSousTitre;
+
+  /// No description provided for @ongletDemandes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demandes'**
+  String get ongletDemandes;
+
+  /// No description provided for @ongletAlertes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alertes de seuil'**
+  String get ongletAlertes;
+
+  /// No description provided for @aucuneDemande.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sortie à valider'**
+  String get aucuneDemande;
+
+  /// No description provided for @aucuneDemandeAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les sorties saisies par les magasiniers apparaîtront ici.'**
+  String get aucuneDemandeAide;
+
+  /// No description provided for @aucuneAlerte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune alerte'**
+  String get aucuneAlerte;
+
+  /// No description provided for @aucuneAlerteAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous les articles sont au-dessus de leur seuil.'**
+  String get aucuneAlerteAide;
+
+  /// No description provided for @materiau.
+  ///
+  /// In fr, this message translates to:
+  /// **'Matériau'**
+  String get materiau;
+
+  /// No description provided for @demandeur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saisi par'**
+  String get demandeur;
+
+  /// No description provided for @affectation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Destination'**
+  String get affectation;
+
+  /// No description provided for @rejeter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refuser'**
+  String get rejeter;
+
+  /// No description provided for @approuver.
+  ///
+  /// In fr, this message translates to:
+  /// **'Approuver'**
+  String get approuver;
+
+  /// No description provided for @signatureSortie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Approuver la sortie {numero} ({quantite}).'**
+  String signatureSortie(String numero, String quantite);
+
+  /// No description provided for @sortieApprouvee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sortie approuvée.'**
+  String get sortieApprouvee;
+
+  /// No description provided for @sortieRefusee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sortie refusée : la quantité revient en stock.'**
+  String get sortieRefusee;
+
+  /// No description provided for @separationFonctions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous avez saisi cette opération : une autre personne doit la valider.'**
+  String get separationFonctions;
+
+  /// No description provided for @stockRestant.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock restant :'**
+  String get stockRestant;
+
+  /// No description provided for @inventaireTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire tournant'**
+  String get inventaireTitre;
+
+  /// No description provided for @inventaireEnCours.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get inventaireEnCours;
+
+  /// No description provided for @inventaireProgression.
+  ///
+  /// In fr, this message translates to:
+  /// **'{faits, plural, =1{1 article compté} other{{faits} articles comptés}} sur {total}'**
+  String inventaireProgression(int faits, int total);
+
+  /// No description provided for @articleEnControle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Article à compter'**
+  String get articleEnControle;
+
+  /// No description provided for @stockTheorique.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock attendu'**
+  String get stockTheorique;
+
+  /// No description provided for @quantiteComptee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité comptée'**
+  String get quantiteComptee;
+
+  /// No description provided for @ecartDetecte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écart constaté : {ecart}. Justification obligatoire.'**
+  String ecartDetecte(String ecart);
+
+  /// No description provided for @ecartChutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chutes de coupe'**
+  String get ecartChutes;
+
+  /// No description provided for @ecartRebut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Matériel au rebut'**
+  String get ecartRebut;
+
+  /// No description provided for @ecartNonDeclare.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mouvement non déclaré'**
+  String get ecartNonDeclare;
+
+  /// No description provided for @ecartRecompter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptage à refaire'**
+  String get ecartRecompter;
+
+  /// No description provided for @justificationObligatoire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez une justification pour l\'écart.'**
+  String get justificationObligatoire;
+
+  /// No description provided for @validerArticle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider {quantite} et passer au suivant'**
+  String validerArticle(String quantite);
+
+  /// No description provided for @soumettreInventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Soumettre l\'inventaire à validation'**
+  String get soumettreInventaire;
+
+  /// No description provided for @inventaireSoumis.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire transmis pour validation.'**
+  String get inventaireSoumis;
+
+  /// No description provided for @validerInventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider l\'inventaire'**
+  String get validerInventaire;
+
+  /// No description provided for @inventaireValide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire validé : le stock a été ajusté.'**
+  String get inventaireValide;
+
+  /// No description provided for @inventaireRegle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le stock n\'est ajusté qu\'après cette validation.'**
+  String get inventaireRegle;
+
+  /// No description provided for @signatureInventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider l\'inventaire {id} et ajuster le stock ({n} écarts).'**
+  String signatureInventaire(String id, int n);
+
+  /// No description provided for @inventaireEnAttenteValidation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptage terminé. L\'inventaire attend la validation du gestionnaire de stock.'**
+  String get inventaireEnAttenteValidation;
+
+  /// No description provided for @inventaireArticles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Articles de la zone'**
+  String get inventaireArticles;
+
+  /// No description provided for @inventaireAValider.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inventaire à valider'**
+  String get inventaireAValider;
+
+  /// No description provided for @inventaireEcarts.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{Aucun écart} =1{1 écart à examiner} other{{n} écarts à examiner}}'**
+  String inventaireEcarts(int n);
+
+  /// No description provided for @aCompter.
+  ///
+  /// In fr, this message translates to:
+  /// **'À compter'**
+  String get aCompter;
+
+  /// No description provided for @conforme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conforme'**
+  String get conforme;
+
+  /// No description provided for @alertesPriorites.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alertes et priorités'**
+  String get alertesPriorites;
+
+  /// No description provided for @voirToutesAlertes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les {n} alertes'**
+  String voirToutesAlertes(int n);
+
+  /// No description provided for @stockMagasin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock du magasin'**
+  String get stockMagasin;
+
+  /// No description provided for @sousSeuil.
+  ///
+  /// In fr, this message translates to:
+  /// **'sous seuil'**
+  String get sousSeuil;
+
+  /// No description provided for @consulterStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consulter le stock'**
+  String get consulterStock;
+
+  /// No description provided for @consulterRegistre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consulter le registre'**
+  String get consulterRegistre;
+
+  /// No description provided for @raccourcis.
+  ///
+  /// In fr, this message translates to:
+  /// **'Raccourcis'**
+  String get raccourcis;
+
+  /// No description provided for @reprendreComptage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre le comptage'**
+  String get reprendreComptage;
+
+  /// No description provided for @suivreInventaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivre le comptage'**
+  String get suivreInventaire;
+
+  /// No description provided for @mouvements24h.
+  ///
+  /// In fr, this message translates to:
+  /// **'mouv. sur 24 h'**
+  String get mouvements24h;
+
+  /// No description provided for @sortiesAValider.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sorties à valider'**
+  String get sortiesAValider;
+
+  /// No description provided for @nombreDemandes.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{À jour} =1{1 demande} other{{n} demandes}}'**
+  String nombreDemandes(int n);
+
+  /// No description provided for @examinerSorties.
+  ///
+  /// In fr, this message translates to:
+  /// **'Examiner les {n} sorties'**
+  String examinerSorties(int n);
 }
 
 class _TraductionsDelegate extends LocalizationsDelegate<Traductions> {

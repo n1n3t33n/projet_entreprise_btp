@@ -1,19 +1,16 @@
 {
   "@@locale": "fr",
-
   "ongletStock": "Stock",
   "ongletFiches": "Fiches",
   "ongletAValider": "À valider",
   "ongletHistorique": "Historique",
   "ongletSynchro": "Synchro",
   "ongletProfil": "Profil",
-
   "roleMagasinier": "Magasinier",
   "roleTechnicien": "Technicien",
   "roleChefChantier": "Chef de chantier",
   "roleGestionnaireStock": "Gestionnaire de stock",
   "roleResponsableTechnique": "Responsable technique",
-
   "annuler": "Annuler",
   "changer": "Changer",
   "seConnecter": "Se connecter",
@@ -21,7 +18,6 @@
   "diminuer": "Diminuer",
   "augmenter": "Augmenter",
   "champObligatoire": "Ce champ est obligatoire.",
-
   "modeHorsLigneSecurise": "MODE HORS-LIGNE SÉCURISÉ",
   "pinTitre": "CODE PIN CHANTIER",
   "pinAide": "Saisissez votre code à 6 chiffres",
@@ -32,8 +28,12 @@
   "pinSaisi": "{remplis} chiffres saisis sur {total}",
   "@pinSaisi": {
     "placeholders": {
-      "remplis": {"type": "int"},
-      "total": {"type": "int"}
+      "remplis": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "deverrouillageActif": "Déverrouillage hors-ligne actif",
@@ -41,27 +41,31 @@
   "donneesSynchroniseesLe": "Dernière connexion en ligne : {date}",
   "@donneesSynchroniseesLe": {
     "placeholders": {
-      "date": {"type": "String"}
+      "date": {
+        "type": "String"
+      }
     }
   },
   "piedHorsLigne": "ChantierSync · Mode hors-ligne",
   "appareil": "Appareil {id}",
   "@appareil": {
     "placeholders": {
-      "id": {"type": "String"}
+      "id": {
+        "type": "String"
+      }
     }
   },
-
   "retirerCompteTitre": "Retirer ce compte de l'appareil ?",
   "retirerCompteTexte": "Les données enregistrées sur cet appareil seront effacées. Une connexion en ligne sera nécessaire pour revenir.",
   "retirerCompteAction": "Retirer le compte",
   "retirerCompteAlerte": "{n, plural, =1{Attention : 1 saisie n'a pas encore été envoyée et sera perdue.} other{Attention : {n} saisies n'ont pas encore été envoyées et seront perdues.}}",
   "@retirerCompteAlerte": {
     "placeholders": {
-      "n": {"type": "int"}
+      "n": {
+        "type": "int"
+      }
     }
   },
-
   "connexionAccroche": "Le chantier dans la poche, même sans réseau.",
   "identifiant": "Identifiant",
   "motDePasse": "Mot de passe",
@@ -70,13 +74,14 @@
   "connexionAide": "Connexion en ligne requise une seule fois, puis accès par code PIN.",
   "comptesDemoTitre": "Comptes de démonstration",
   "comptesDemoAide": "Affichés uniquement parce que les données sont simulées. Touchez un profil pour remplir le formulaire.",
-
   "erreurIdentifiants": "Identifiant ou mot de passe incorrect.",
   "erreurCompteInactif": "Ce compte est désactivé. Contactez votre administrateur.",
   "erreurVerrouille": "{secondes, plural, =0{Compte temporairement verrouillé après plusieurs échecs.} =1{Compte verrouillé. Réessayez dans 1 seconde.} other{Compte verrouillé. Réessayez dans {secondes} secondes.}}",
   "@erreurVerrouille": {
     "placeholders": {
-      "secondes": {"type": "int"}
+      "secondes": {
+        "type": "int"
+      }
     }
   },
   "erreurSansAccesTerrain": "Ce compte n'a pas d'accès terrain sur l'application mobile.",
@@ -84,7 +89,6 @@
   "infoSessionExpiree": "Plus de 14 jours sans connexion en ligne : reconnectez-vous pour continuer.",
   "erreurDonneesInaccessibles": "Impossible d'ouvrir les données de l'appareil.",
   "erreurConnexionImpossible": "Connexion impossible. Vérifiez le réseau puis réessayez.",
-
   "definirCodeTitre": "Définir mon code",
   "definirCodeSousTitre": "Pour ouvrir l'application sans réseau",
   "choisirCode": "Choisissez un code",
@@ -92,12 +96,13 @@
   "confirmerCode": "Confirmez le code",
   "confirmerCodeAide": "Saisissez à nouveau le même code.",
   "codesDifferents": "Les deux codes ne correspondent pas. Recommencez.",
-
   "synchroAJour": "Données à jour",
   "synchroEnAttente": "{n, plural, =1{1 élément en attente d'envoi} other{{n} éléments en attente d'envoi}}",
   "@synchroEnAttente": {
     "placeholders": {
-      "n": {"type": "int"}
+      "n": {
+        "type": "int"
+      }
     }
   },
   "synchroTitre": "Synchronisation",
@@ -107,12 +112,9 @@
   "fileVideTexte": "Les saisies faites sans réseau apparaîtront ici en attendant leur envoi.",
   "etatEnAttenteEnvoi": "En attente",
   "etatEnvoye": "Envoyé",
-
   "signatureTitre": "Signature par code PIN",
   "signatureAide": "Votre code confirme la décision.",
-
   "moduleEnPreparation": "Cet espace est en cours d'installation.",
-
   "profilLangue": "Langue",
   "profilTheme": "Apparence",
   "themeSysteme": "Automatique",
@@ -125,7 +127,328 @@
   "profilAPropos": "Schiavone Group · Italia Construction\nAppareil {appareil} · version 1.0",
   "@profilAPropos": {
     "placeholders": {
-      "appareil": {"type": "String"}
+      "appareil": {
+        "type": "String"
+      }
+    }
+  },
+  "niveauVide": "Vide",
+  "niveauCritique": "Critique",
+  "niveauMini": "Mini",
+  "niveauPlein": "Plein",
+  "stockNegatif": "Stock négatif",
+  "stockNegatifExplication": "Le stock est négatif : anomalie à corriger par un inventaire.",
+  "jaugeCapacite": "Capacité",
+  "typeReception": "Réception",
+  "typeSortie": "Sortie",
+  "typeRetour": "Retour",
+  "typePerte": "Perte ou casse",
+  "typeAjustement": "Ajustement d'inventaire",
+  "statutEnregistre": "Enregistré",
+  "statutAValider": "À valider",
+  "statutValide": "Validé",
+  "statutRejete": "Refusé",
+  "aLInstant": "à l'instant",
+  "ilYAMinutes": "il y a {n} min",
+  "@ilYAMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ilYAHeures": "il y a {n} h",
+  "@ilYAHeures": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "aujourdhui": "Aujourd'hui",
+  "hier": "Hier",
+  "choisirArticleTitre": "Choisir un article",
+  "rechercherArticle": "Rechercher un article, un code…",
+  "aucunResultat": "Aucun article trouvé",
+  "aucunResultatAide": "Modifiez la recherche ou le filtre.",
+  "stockActuel": "stock actuel : {quantite}",
+  "@stockActuel": {
+    "placeholders": {
+      "quantite": {
+        "type": "String"
+      }
+    }
+  },
+  "sortieTitre": "Sortie rapide",
+  "sortieAide": "Remettre du matériel à une équipe",
+  "receptionTitre": "Réception",
+  "receptionAide": "Enregistrer un bon de livraison",
+  "retourTitre": "Retour, casse ou perte",
+  "retourAide": "Déclarer un surplus ou un matériel abîmé",
+  "retourCourt": "Retour / perte",
+  "saisieSousTitre": "Enregistré sur l'appareil",
+  "saisieArticle": "Article",
+  "saisieQuantite": "Quantité",
+  "saisieMention": "Envoi automatique au retour du réseau.",
+  "saisieIncomplete": "Complétez les champs obligatoires pour valider.",
+  "toutLeStock": "Tout le stock ({quantite})",
+  "@toutLeStock": {
+    "placeholders": {
+      "quantite": {
+        "type": "String"
+      }
+    }
+  },
+  "stockProjete": "Stock après saisie",
+  "sortieDestination": "Destination",
+  "sortieLogement": "Logement ou zone de pose",
+  "sortieCorpsEtat": "Corps d'état",
+  "sortieBeneficiaire": "Équipe bénéficiaire",
+  "facultatif": "Facultatif",
+  "receptionTracabilite": "Bon de livraison et fournisseur",
+  "receptionBon": "N° de bon de livraison ou de conteneur",
+  "receptionBonExemple": "Ex. BL-2026-0589",
+  "receptionFournisseur": "Fournisseur",
+  "receptionEtat": "État de la livraison",
+  "receptionConforme": "Conforme",
+  "receptionReserves": "Réserves",
+  "observations": "Observations",
+  "receptionObservationsExemple": "Ex. deux sacs éventrés au déchargement",
+  "retourNature": "Nature de la déclaration",
+  "natureRetour": "Retour au magasin",
+  "natureRetourDetail": "Surplus réintégré au stock",
+  "natureCasse": "Casse ou avarie",
+  "natureCasseDetail": "Matériel abîmé, inutilisable",
+  "naturePerte": "Perte",
+  "naturePerteDetail": "Matériel manquant, introuvable",
+  "retourMotif": "Motif",
+  "retourMotifAide": "Choisir un motif",
+  "retourObservationsExemple": "Ex. palette restée sous la pluie",
+  "motifSurplus": "Surplus de chantier",
+  "motifErreurMetre": "Erreur de métré",
+  "motifHumidite": "Sac éventré ou humidité",
+  "motifChoc": "Choc ou chute",
+  "motifIntrouvable": "Introuvable au comptage",
+  "motifAutre": "Autre",
+  "validerSortie": "Valider la sortie ({quantite})",
+  "@validerSortie": {
+    "placeholders": {
+      "quantite": {
+        "type": "String"
+      }
+    }
+  },
+  "enregistrerReception": "Enregistrer la réception ({quantite})",
+  "@enregistrerReception": {
+    "placeholders": {
+      "quantite": {
+        "type": "String"
+      }
+    }
+  },
+  "validerDeclaration": "Valider la déclaration ({quantite})",
+  "@validerDeclaration": {
+    "placeholders": {
+      "quantite": {
+        "type": "String"
+      }
+    }
+  },
+  "mouvementEnregistre": "Mouvement enregistré sur l'appareil.",
+  "controleOk": "Stock suffisant : la saisie laisse l'article au-dessus de son seuil.",
+  "avertissementSeuil": "Stock restant {reste}, sous le seuil mini de {seuil}.",
+  "@avertissementSeuil": {
+    "placeholders": {
+      "reste": {
+        "type": "String"
+      },
+      "seuil": {
+        "type": "String"
+      }
+    }
+  },
+  "avertissementNegatif": "Cette saisie rend le stock négatif. Elle sera signalée comme anomalie.",
+  "registreTitre": "Registre du stock",
+  "registreSousTitre": "Quantités connues de l'appareil",
+  "references": "références",
+  "nouveauMouvement": "Nouveau mouvement",
+  "filtreTous": "Tous",
+  "filtreSousSeuil": "Sous seuil",
+  "filtreSorties": "Sorties",
+  "filtreEntrees": "Entrées",
+  "seuilMini": "Seuil mini : {seuil}",
+  "@seuilMini": {
+    "placeholders": {
+      "seuil": {
+        "type": "String"
+      }
+    }
+  },
+  "seuilMiniEcart": "Seuil mini : {seuil} ({ecart})",
+  "@seuilMiniEcart": {
+    "placeholders": {
+      "seuil": {
+        "type": "String"
+      },
+      "ecart": {
+        "type": "String"
+      }
+    }
+  },
+  "stockConforme": "Stock conforme (mini : {seuil})",
+  "@stockConforme": {
+    "placeholders": {
+      "seuil": {
+        "type": "String"
+      }
+    }
+  },
+  "ficheArticleTitre": "Fiche article",
+  "disponibles": "{unite} en stock",
+  "@disponibles": {
+    "placeholders": {
+      "unite": {
+        "type": "String"
+      }
+    }
+  },
+  "mouvementsRecents": "Mouvements récents",
+  "journalComplet": "Journal complet",
+  "aucunMouvement": "Aucun mouvement",
+  "aucunMouvementAide": "Les sorties, réceptions et retours apparaîtront ici.",
+  "codeBarres": "Code-barres",
+  "journalTitre": "Journal des mouvements",
+  "journalSousTitre": "Entrées et sorties du magasin",
+  "journalRecherche": "Rechercher un bon, un article, une personne…",
+  "mouvementsDuJour": "mouvements du jour",
+  "entreesDuJour": "entrées du jour",
+  "journalNonModifiable": "Journal horodaté et non modifiable",
+  "validationTitre": "Validations",
+  "validationSousTitre": "Sorties de stock et alertes",
+  "ongletDemandes": "Demandes",
+  "ongletAlertes": "Alertes de seuil",
+  "aucuneDemande": "Aucune sortie à valider",
+  "aucuneDemandeAide": "Les sorties saisies par les magasiniers apparaîtront ici.",
+  "aucuneAlerte": "Aucune alerte",
+  "aucuneAlerteAide": "Tous les articles sont au-dessus de leur seuil.",
+  "materiau": "Matériau",
+  "demandeur": "Saisi par",
+  "affectation": "Destination",
+  "rejeter": "Refuser",
+  "approuver": "Approuver",
+  "signatureSortie": "Approuver la sortie {numero} ({quantite}).",
+  "@signatureSortie": {
+    "placeholders": {
+      "numero": {
+        "type": "String"
+      },
+      "quantite": {
+        "type": "String"
+      }
+    }
+  },
+  "sortieApprouvee": "Sortie approuvée.",
+  "sortieRefusee": "Sortie refusée : la quantité revient en stock.",
+  "separationFonctions": "Vous avez saisi cette opération : une autre personne doit la valider.",
+  "stockRestant": "Stock restant :",
+  "inventaireTitre": "Inventaire tournant",
+  "inventaireEnCours": "En cours",
+  "inventaireProgression": "{faits, plural, =1{1 article compté} other{{faits} articles comptés}} sur {total}",
+  "@inventaireProgression": {
+    "placeholders": {
+      "faits": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "articleEnControle": "Article à compter",
+  "stockTheorique": "Stock attendu",
+  "quantiteComptee": "Quantité comptée",
+  "ecartDetecte": "Écart constaté : {ecart}. Justification obligatoire.",
+  "@ecartDetecte": {
+    "placeholders": {
+      "ecart": {
+        "type": "String"
+      }
+    }
+  },
+  "ecartChutes": "Chutes de coupe",
+  "ecartRebut": "Matériel au rebut",
+  "ecartNonDeclare": "Mouvement non déclaré",
+  "ecartRecompter": "Comptage à refaire",
+  "justificationObligatoire": "Choisissez une justification pour l'écart.",
+  "validerArticle": "Valider {quantite} et passer au suivant",
+  "@validerArticle": {
+    "placeholders": {
+      "quantite": {
+        "type": "String"
+      }
+    }
+  },
+  "soumettreInventaire": "Soumettre l'inventaire à validation",
+  "inventaireSoumis": "Inventaire transmis pour validation.",
+  "validerInventaire": "Valider l'inventaire",
+  "inventaireValide": "Inventaire validé : le stock a été ajusté.",
+  "inventaireRegle": "Le stock n'est ajusté qu'après cette validation.",
+  "signatureInventaire": "Valider l'inventaire {id} et ajuster le stock ({n} écarts).",
+  "@signatureInventaire": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "inventaireEnAttenteValidation": "Comptage terminé. L'inventaire attend la validation du gestionnaire de stock.",
+  "inventaireArticles": "Articles de la zone",
+  "inventaireAValider": "Inventaire à valider",
+  "inventaireEcarts": "{n, plural, =0{Aucun écart} =1{1 écart à examiner} other{{n} écarts à examiner}}",
+  "@inventaireEcarts": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "aCompter": "À compter",
+  "conforme": "Conforme",
+  "alertesPriorites": "Alertes et priorités",
+  "voirToutesAlertes": "Voir les {n} alertes",
+  "@voirToutesAlertes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "stockMagasin": "Stock du magasin",
+  "sousSeuil": "sous seuil",
+  "consulterStock": "Consulter le stock",
+  "consulterRegistre": "Consulter le registre",
+  "raccourcis": "Raccourcis",
+  "reprendreComptage": "Reprendre le comptage",
+  "suivreInventaire": "Suivre le comptage",
+  "mouvements24h": "mouv. sur 24 h",
+  "sortiesAValider": "Sorties à valider",
+  "nombreDemandes": "{n, plural, =0{À jour} =1{1 demande} other{{n} demandes}}",
+  "@nombreDemandes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "examinerSorties": "Examiner les {n} sorties",
+  "@examinerSorties": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
     }
   }
 }

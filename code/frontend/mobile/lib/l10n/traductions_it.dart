@@ -293,4 +293,551 @@ class TraductionsIt extends Traductions {
   String profilAPropos(String appareil) {
     return 'Schiavone Group · Italia Construction\nDispositivo $appareil · versione 1.0';
   }
+
+  @override
+  String get niveauVide => 'Vuoto';
+
+  @override
+  String get niveauCritique => 'Critico';
+
+  @override
+  String get niveauMini => 'Minimo';
+
+  @override
+  String get niveauPlein => 'Pieno';
+
+  @override
+  String get stockNegatif => 'Giacenza negativa';
+
+  @override
+  String get stockNegatifExplication =>
+      'La giacenza è negativa: anomalia da correggere con un inventario.';
+
+  @override
+  String get jaugeCapacite => 'Capacità';
+
+  @override
+  String get typeReception => 'Ricevimento';
+
+  @override
+  String get typeSortie => 'Uscita';
+
+  @override
+  String get typeRetour => 'Reso';
+
+  @override
+  String get typePerte => 'Perdita o rottura';
+
+  @override
+  String get typeAjustement => 'Rettifica d\'inventario';
+
+  @override
+  String get statutEnregistre => 'Registrato';
+
+  @override
+  String get statutAValider => 'Da validare';
+
+  @override
+  String get statutValide => 'Validato';
+
+  @override
+  String get statutRejete => 'Rifiutato';
+
+  @override
+  String get aLInstant => 'adesso';
+
+  @override
+  String ilYAMinutes(int n) {
+    return '$n min fa';
+  }
+
+  @override
+  String ilYAHeures(int n) {
+    return '$n h fa';
+  }
+
+  @override
+  String get aujourdhui => 'Oggi';
+
+  @override
+  String get hier => 'Ieri';
+
+  @override
+  String get choisirArticleTitre => 'Scegli un articolo';
+
+  @override
+  String get rechercherArticle => 'Cerca un articolo, un codice…';
+
+  @override
+  String get aucunResultat => 'Nessun articolo trovato';
+
+  @override
+  String get aucunResultatAide => 'Modifica la ricerca o il filtro.';
+
+  @override
+  String stockActuel(String quantite) {
+    return 'giacenza attuale: $quantite';
+  }
+
+  @override
+  String get sortieTitre => 'Uscita rapida';
+
+  @override
+  String get sortieAide => 'Consegnare materiale a una squadra';
+
+  @override
+  String get receptionTitre => 'Ricevimento';
+
+  @override
+  String get receptionAide => 'Registrare una bolla di consegna';
+
+  @override
+  String get retourTitre => 'Reso, rottura o perdita';
+
+  @override
+  String get retourAide => 'Dichiarare un\'eccedenza o materiale danneggiato';
+
+  @override
+  String get retourCourt => 'Reso / perdita';
+
+  @override
+  String get saisieSousTitre => 'Salvato sul dispositivo';
+
+  @override
+  String get saisieArticle => 'Articolo';
+
+  @override
+  String get saisieQuantite => 'Quantità';
+
+  @override
+  String get saisieMention => 'Invio automatico al ritorno della rete.';
+
+  @override
+  String get saisieIncomplete => 'Completa i campi obbligatori per confermare.';
+
+  @override
+  String toutLeStock(String quantite) {
+    return 'Tutta la giacenza ($quantite)';
+  }
+
+  @override
+  String get stockProjete => 'Giacenza dopo l\'inserimento';
+
+  @override
+  String get sortieDestination => 'Destinazione';
+
+  @override
+  String get sortieLogement => 'Alloggio o zona di posa';
+
+  @override
+  String get sortieCorpsEtat => 'Categoria di lavoro';
+
+  @override
+  String get sortieBeneficiaire => 'Squadra destinataria';
+
+  @override
+  String get facultatif => 'Facoltativo';
+
+  @override
+  String get receptionTracabilite => 'Bolla e fornitore';
+
+  @override
+  String get receptionBon => 'N. di bolla o di container';
+
+  @override
+  String get receptionBonExemple => 'Es. BL-2026-0589';
+
+  @override
+  String get receptionFournisseur => 'Fornitore';
+
+  @override
+  String get receptionEtat => 'Stato della consegna';
+
+  @override
+  String get receptionConforme => 'Conforme';
+
+  @override
+  String get receptionReserves => 'Con riserva';
+
+  @override
+  String get observations => 'Osservazioni';
+
+  @override
+  String get receptionObservationsExemple =>
+      'Es. due sacchi strappati allo scarico';
+
+  @override
+  String get retourNature => 'Tipo di dichiarazione';
+
+  @override
+  String get natureRetour => 'Reso al magazzino';
+
+  @override
+  String get natureRetourDetail => 'Eccedenza rimessa a magazzino';
+
+  @override
+  String get natureCasse => 'Rottura o avaria';
+
+  @override
+  String get natureCasseDetail => 'Materiale danneggiato, inutilizzabile';
+
+  @override
+  String get naturePerte => 'Perdita';
+
+  @override
+  String get naturePerteDetail => 'Materiale mancante, introvabile';
+
+  @override
+  String get retourMotif => 'Motivo';
+
+  @override
+  String get retourMotifAide => 'Scegli un motivo';
+
+  @override
+  String get retourObservationsExemple =>
+      'Es. bancale rimasto sotto la pioggia';
+
+  @override
+  String get motifSurplus => 'Eccedenza di cantiere';
+
+  @override
+  String get motifErreurMetre => 'Errore di computo';
+
+  @override
+  String get motifHumidite => 'Sacco strappato o umidità';
+
+  @override
+  String get motifChoc => 'Urto o caduta';
+
+  @override
+  String get motifIntrouvable => 'Introvabile al conteggio';
+
+  @override
+  String get motifAutre => 'Altro';
+
+  @override
+  String validerSortie(String quantite) {
+    return 'Conferma l\'uscita ($quantite)';
+  }
+
+  @override
+  String enregistrerReception(String quantite) {
+    return 'Registra il ricevimento ($quantite)';
+  }
+
+  @override
+  String validerDeclaration(String quantite) {
+    return 'Conferma la dichiarazione ($quantite)';
+  }
+
+  @override
+  String get mouvementEnregistre => 'Movimento salvato sul dispositivo.';
+
+  @override
+  String get controleOk =>
+      'Giacenza sufficiente: l\'articolo resta sopra la soglia.';
+
+  @override
+  String avertissementSeuil(String reste, String seuil) {
+    return 'Giacenza residua $reste, sotto la soglia minima di $seuil.';
+  }
+
+  @override
+  String get avertissementNegatif =>
+      'Questo inserimento rende negativa la giacenza. Sarà segnalato come anomalia.';
+
+  @override
+  String get registreTitre => 'Registro di magazzino';
+
+  @override
+  String get registreSousTitre => 'Quantità note al dispositivo';
+
+  @override
+  String get references => 'articoli';
+
+  @override
+  String get nouveauMouvement => 'Nuovo movimento';
+
+  @override
+  String get filtreTous => 'Tutti';
+
+  @override
+  String get filtreSousSeuil => 'Sotto soglia';
+
+  @override
+  String get filtreSorties => 'Uscite';
+
+  @override
+  String get filtreEntrees => 'Entrate';
+
+  @override
+  String seuilMini(String seuil) {
+    return 'Soglia minima: $seuil';
+  }
+
+  @override
+  String seuilMiniEcart(String seuil, String ecart) {
+    return 'Soglia minima: $seuil ($ecart)';
+  }
+
+  @override
+  String stockConforme(String seuil) {
+    return 'Giacenza conforme (minimo: $seuil)';
+  }
+
+  @override
+  String get ficheArticleTitre => 'Scheda articolo';
+
+  @override
+  String disponibles(String unite) {
+    return '$unite a magazzino';
+  }
+
+  @override
+  String get mouvementsRecents => 'Movimenti recenti';
+
+  @override
+  String get journalComplet => 'Registro completo';
+
+  @override
+  String get aucunMouvement => 'Nessun movimento';
+
+  @override
+  String get aucunMouvementAide =>
+      'Uscite, ricevimenti e resi compariranno qui.';
+
+  @override
+  String get codeBarres => 'Codice a barre';
+
+  @override
+  String get journalTitre => 'Registro dei movimenti';
+
+  @override
+  String get journalSousTitre => 'Entrate e uscite del magazzino';
+
+  @override
+  String get journalRecherche => 'Cerca una bolla, un articolo, una persona…';
+
+  @override
+  String get mouvementsDuJour => 'movimenti di oggi';
+
+  @override
+  String get entreesDuJour => 'entrate di oggi';
+
+  @override
+  String get journalNonModifiable =>
+      'Registro con data e ora, non modificabile';
+
+  @override
+  String get validationTitre => 'Validazioni';
+
+  @override
+  String get validationSousTitre => 'Uscite di magazzino e avvisi';
+
+  @override
+  String get ongletDemandes => 'Richieste';
+
+  @override
+  String get ongletAlertes => 'Avvisi di soglia';
+
+  @override
+  String get aucuneDemande => 'Nessuna uscita da validare';
+
+  @override
+  String get aucuneDemandeAide =>
+      'Le uscite inserite dai magazzinieri compariranno qui.';
+
+  @override
+  String get aucuneAlerte => 'Nessun avviso';
+
+  @override
+  String get aucuneAlerteAide => 'Tutti gli articoli sono sopra la soglia.';
+
+  @override
+  String get materiau => 'Materiale';
+
+  @override
+  String get demandeur => 'Inserito da';
+
+  @override
+  String get affectation => 'Destinazione';
+
+  @override
+  String get rejeter => 'Rifiuta';
+
+  @override
+  String get approuver => 'Approva';
+
+  @override
+  String signatureSortie(String numero, String quantite) {
+    return 'Approvare l\'uscita $numero ($quantite).';
+  }
+
+  @override
+  String get sortieApprouvee => 'Uscita approvata.';
+
+  @override
+  String get sortieRefusee =>
+      'Uscita rifiutata: la quantità torna a magazzino.';
+
+  @override
+  String get separationFonctions =>
+      'Hai inserito questa operazione: deve validarla un\'altra persona.';
+
+  @override
+  String get stockRestant => 'Giacenza residua:';
+
+  @override
+  String get inventaireTitre => 'Inventario rotativo';
+
+  @override
+  String get inventaireEnCours => 'In corso';
+
+  @override
+  String inventaireProgression(int faits, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      faits,
+      locale: localeName,
+      other: '$faits articoli contati',
+      one: '1 articolo contato',
+    );
+    return '$_temp0 su $total';
+  }
+
+  @override
+  String get articleEnControle => 'Articolo da contare';
+
+  @override
+  String get stockTheorique => 'Giacenza attesa';
+
+  @override
+  String get quantiteComptee => 'Quantità contata';
+
+  @override
+  String ecartDetecte(String ecart) {
+    return 'Differenza rilevata: $ecart. Giustificazione obbligatoria.';
+  }
+
+  @override
+  String get ecartChutes => 'Sfridi di taglio';
+
+  @override
+  String get ecartRebut => 'Materiale di scarto';
+
+  @override
+  String get ecartNonDeclare => 'Movimento non dichiarato';
+
+  @override
+  String get ecartRecompter => 'Conteggio da rifare';
+
+  @override
+  String get justificationObligatoire =>
+      'Scegli una giustificazione per la differenza.';
+
+  @override
+  String validerArticle(String quantite) {
+    return 'Conferma $quantite e passa al successivo';
+  }
+
+  @override
+  String get soumettreInventaire => 'Invia l\'inventario alla validazione';
+
+  @override
+  String get inventaireSoumis => 'Inventario inviato per la validazione.';
+
+  @override
+  String get validerInventaire => 'Valida l\'inventario';
+
+  @override
+  String get inventaireValide =>
+      'Inventario validato: la giacenza è stata rettificata.';
+
+  @override
+  String get inventaireRegle =>
+      'La giacenza viene rettificata solo dopo questa validazione.';
+
+  @override
+  String signatureInventaire(String id, int n) {
+    return 'Validare l\'inventario $id e rettificare la giacenza ($n differenze).';
+  }
+
+  @override
+  String get inventaireEnAttenteValidation =>
+      'Conteggio terminato. L\'inventario attende la validazione del responsabile di magazzino.';
+
+  @override
+  String get inventaireArticles => 'Articoli della zona';
+
+  @override
+  String get inventaireAValider => 'Inventario da validare';
+
+  @override
+  String inventaireEcarts(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n differenze da esaminare',
+      one: '1 differenza da esaminare',
+      zero: 'Nessuna differenza',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get aCompter => 'Da contare';
+
+  @override
+  String get conforme => 'Conforme';
+
+  @override
+  String get alertesPriorites => 'Avvisi e priorità';
+
+  @override
+  String voirToutesAlertes(int n) {
+    return 'Vedi tutti i $n avvisi';
+  }
+
+  @override
+  String get stockMagasin => 'Giacenze di magazzino';
+
+  @override
+  String get sousSeuil => 'sotto soglia';
+
+  @override
+  String get consulterStock => 'Consulta il magazzino';
+
+  @override
+  String get consulterRegistre => 'Apri il registro';
+
+  @override
+  String get raccourcis => 'Scorciatoie';
+
+  @override
+  String get reprendreComptage => 'Riprendi il conteggio';
+
+  @override
+  String get suivreInventaire => 'Segui il conteggio';
+
+  @override
+  String get mouvements24h => 'mov. in 24 h';
+
+  @override
+  String get sortiesAValider => 'Uscite da validare';
+
+  @override
+  String nombreDemandes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n richieste',
+      one: '1 richiesta',
+      zero: 'Aggiornato',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String examinerSorties(int n) {
+    return 'Esamina le $n uscite';
+  }
 }
