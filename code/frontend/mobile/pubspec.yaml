@@ -1,0 +1,78 @@
+name: chantiersync_mobile
+description: "ChantierSync - application mobile de chantier (hors-ligne d'abord)"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # État.
+  flutter_riverpod: ^2.6.1
+
+  # Accès réseau (même contrat d'API que le web).
+  dio: ^5.7.0
+
+  # Base locale chiffrée (CL-6 / MPD-6).
+  drift: ^2.21.0
+  sqlcipher_flutter_libs: ^0.6.4
+  sqlite3: ^2.4.6
+  path_provider: ^2.1.5
+  path: ^1.9.0
+
+  # Secrets d'appareil : clé de la base, jeton.
+  flutter_secure_storage: ^9.2.2
+
+  # Dérivation de clé / empreinte du PIN.
+  cryptography: ^2.7.0
+
+  # Identité visuelle (charte Schiavone).
+  # Police embarquée (assets/fonts) : aucun téléchargement à l'exécution.
+  phosphor_flutter: ^2.1.0
+  flutter_svg: ^2.0.10
+
+  # Traductions (français, anglais, italien) et formats de date/nombre.
+  intl: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+  # Génération de code (drift).
+  drift_dev: ^2.21.0
+  build_runner: ^2.4.13
+
+  # Tests.
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+
+  # Génère les classes de traduction depuis lib/l10n/*.arb (voir l10n.yaml).
+  generate: true
+
+  assets:
+    - assets/logo/
+
+  fonts:
+    - family: PlusJakartaSans
+      fonts:
+        - asset: assets/fonts/PlusJakartaSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/PlusJakartaSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/PlusJakartaSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/PlusJakartaSans-ExtraBold.ttf
+          weight: 800

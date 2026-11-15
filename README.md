@@ -434,7 +434,7 @@ les wireframes.
 
 | Ressource | Accès |
 | --- | --- |
-| **Maquettes Figma** — écrans mobile et web | [Ouvrir](https://www.figma.com/design/E9NpCmHAATVt8FzWRomWrI/ChantierSync---Mobile---Web) |
+| **Maquettes Figma** — écrans mobile et web | [Ouvrir](https://www.figma.com/design/E9NpCmHAATVt8FzWRomWrI/ChantierSync---Mobile---Web?node-id=31-1137&t=LHRlggApnLPoz3Oj-1) |
 | **Suivi de projet** — backlog, sprints, décisions *(équipe et encadrement)* | [Ouvrir](https://wealthy-colony-2ff.notion.site/ChantierSync-Espace-projet-401be86480f281b39c61d6516494412c) |
 | **Suivi d'avancement** — vue destinée à Italia Construction | [Ouvrir](https://wealthy-colony-2ff.notion.site/Suivi-ChantierSync-Espace-Italia-401be86480f281f7b186e5c9456bc778) |
 

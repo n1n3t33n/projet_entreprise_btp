@@ -1,0 +1,10 @@
+# Traductions de l'application : le français est la langue de référence,
+# l'anglais et l'italien en sont dérivés (lib/l10n/app_*.arb).
+arb-dir: lib/l10n
+template-arb-file: app_fr.arb
+output-dir: lib/l10n
+output-localization-file: traductions.dart
+output-class: Traductions
+synthetic-package: false
+nullable-getter: false
+format: true
