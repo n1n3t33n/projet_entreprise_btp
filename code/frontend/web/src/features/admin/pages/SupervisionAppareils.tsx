@@ -21,7 +21,16 @@
 
 import { useMemo, useState } from 'react'
 import { DeviceMobile, ShieldSlash, WarningCircle } from '@phosphor-icons/react'
-import { Button, Card, type ColonneTable, KpiCard, Modal, StatusPill, Table, useToast } from '@/components/ui'
+import {
+  Button,
+  Card,
+  type ColonneTable,
+  KpiCard,
+  Modal,
+  StatusPill,
+  Table,
+  useToast,
+} from '@/components/ui'
 import { listerAppareils, revoquerAppareil } from '@/features/admin/api/appareils'
 import {
   fraicheurSynchro,
@@ -80,7 +89,8 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
       afficherToast({
         ton: 'succes',
         titre: 'Appareil révoqué',
-        message: "L'accès est bloqué immédiatement ; la base locale sera effacée à la prochaine connexion.",
+        message:
+          "L'accès est bloqué immédiatement ; la base locale sera effacée à la prochaine connexion.",
       })
       setARevoquer(null)
       etat.recharger()
@@ -116,7 +126,9 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
       rendu: (appareil) => (
         <div className="min-w-0">
           <p className="truncate text-sm text-texte">{appareil.nomUtilisateur}</p>
-          <p className="truncate text-xs text-texte-secondaire">{appareil.identifiantUtilisateur}</p>
+          <p className="truncate text-xs text-texte-secondaire">
+            {appareil.identifiantUtilisateur}
+          </p>
         </div>
       ),
       triable: true,
@@ -144,9 +156,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
       triable: true,
       // Trie du plus ancien au plus récent ; « jamais » (null) compte comme le plus ancien.
       valeurTri: (appareil) =>
-        appareil.derniereSynchronisation
-          ? new Date(appareil.derniereSynchronisation).getTime()
-          : 0,
+        appareil.derniereSynchronisation ? new Date(appareil.derniereSynchronisation).getTime() : 0,
     },
     {
       cle: 'statut',
@@ -200,20 +210,28 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
         titre="Supervision des appareils"
         description="Appareils enrôlés, dernière synchronisation et révocation"
         actions={
-          peutModifier ? undefined : (
-            <StatusPill ton="neutre" taille="sm" libelle="Lecture seule" />
-          )
+          peutModifier ? undefined : <StatusPill ton="neutre" taille="sm" libelle="Lecture seule" />
         }
       >
         <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <KpiCard libelle="Appareils actifs" valeur={indicateurs.actifs} icone={DeviceMobile} accent="succes" />
+          <KpiCard
+            libelle="Appareils actifs"
+            valeur={indicateurs.actifs}
+            icone={DeviceMobile}
+            accent="succes"
+          />
           <KpiCard
             libelle="Synchro > 24 h"
             valeur={indicateurs.enRetard}
             icone={WarningCircle}
             accent={indicateurs.enRetard > 0 ? 'or' : 'sarcelle'}
           />
-          <KpiCard libelle="Révoqués" valeur={indicateurs.revoques} icone={ShieldSlash} accent="danger" />
+          <KpiCard
+            libelle="Révoqués"
+            valeur={indicateurs.revoques}
+            icone={ShieldSlash}
+            accent="danger"
+          />
         </div>
 
         <Table
@@ -229,8 +247,9 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
 
         <p className="mt-4 text-xs text-texte-secondaire">
           Un appareil est signalé « Plus de 24&nbsp;h » quand sa dernière synchronisation dépasse le
-          seuil (RG-Y7). La révocation (EF-AUT-06) bloque l&apos;accès immédiatement et efface la base
-          locale chiffrée à la prochaine connexion&nbsp;; elle est tracée au journal d&apos;audit.
+          seuil (RG-Y7). La révocation (EF-AUT-06) bloque l&apos;accès immédiatement et efface la
+          base locale chiffrée à la prochaine connexion&nbsp;; elle est tracée au journal
+          d&apos;audit.
         </p>
       </Card>
 
@@ -239,9 +258,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
         onFermer={() => (enCours ? undefined : setARevoquer(null))}
         titre="Révoquer cet appareil ?"
         description={
-          aRevoquer
-            ? `${aRevoquer.empreinteMateriel} — ${aRevoquer.nomUtilisateur}`
-            : undefined
+          aRevoquer ? `${aRevoquer.empreinteMateriel} — ${aRevoquer.nomUtilisateur}` : undefined
         }
         ton="danger"
         taille="sm"
@@ -250,16 +267,21 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
             <Button variante="secondaire" onClick={() => setARevoquer(null)} disabled={enCours}>
               Annuler
             </Button>
-            <Button variante="danger" icone={ShieldSlash} onClick={confirmerRevocation} enChargement={enCours}>
+            <Button
+              variante="danger"
+              icone={ShieldSlash}
+              onClick={confirmerRevocation}
+              enChargement={enCours}
+            >
               Révoquer
             </Button>
           </>
         }
       >
         <p className="text-sm text-texte">
-          L&apos;appareil perdra l&apos;accès immédiatement. Sa base locale chiffrée sera effacée à sa
-          prochaine tentative de connexion, et il devra être ré-enrôlé par une nouvelle connexion en
-          ligne. Cette action est tracée au journal d&apos;audit.
+          L&apos;appareil perdra l&apos;accès immédiatement. Sa base locale chiffrée sera effacée à
+          sa prochaine tentative de connexion, et il devra être ré-enrôlé par une nouvelle connexion
+          en ligne. Cette action est tracée au journal d&apos;audit.
         </p>
       </Modal>
     </>

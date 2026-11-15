@@ -37,7 +37,7 @@ export function FilterPill({
         'inline-flex items-center rounded-full border text-sm font-medium',
         'transition-colors duration-[var(--duree-survol)] ease-out',
         actif
-          ? 'border-marine bg-marine text-white'
+          ? 'border-marine bg-encre text-white'
           : 'border-bordure bg-surface text-texte hover:bg-fond',
         desactive && 'pointer-events-none opacity-50',
         className,

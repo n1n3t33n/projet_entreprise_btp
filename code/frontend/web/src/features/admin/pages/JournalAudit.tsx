@@ -16,7 +16,11 @@
 import { useMemo, useState } from 'react'
 import { Card, type ColonneTable, FilterPill, StatusPill, Table } from '@/components/ui'
 import { chargerAudit } from '@/features/admin/api/audit'
-import { libelleAction, LIBELLE_ACTION_AUDIT, tonAction } from '@/features/admin/presentation/audit-libelles'
+import {
+  libelleAction,
+  LIBELLE_ACTION_AUDIT,
+  tonAction,
+} from '@/features/admin/presentation/audit-libelles'
 import { formatDateHeure } from '@/lib/format'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { EntreeAudit, FiltresAudit } from '@/features/admin/types/audit'
@@ -62,7 +66,11 @@ export function JournalAudit() {
       entete: 'Action',
       largeur: '13rem',
       rendu: (entree) => (
-        <StatusPill ton={tonAction(entree.action)} taille="sm" libelle={libelleAction(entree.action)} />
+        <StatusPill
+          ton={tonAction(entree.action)}
+          taille="sm"
+          libelle={libelleAction(entree.action)}
+        />
       ),
       triable: true,
       valeurTri: (entree) => libelleAction(entree.action),

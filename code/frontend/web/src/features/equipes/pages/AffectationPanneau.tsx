@@ -123,7 +123,9 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
     {
       cle: 'etape',
       entete: 'Étape',
-      rendu: (etape) => <span className="text-sm font-medium text-marine">{etape.libelleEtape}</span>,
+      rendu: (etape) => (
+        <span className="text-sm font-medium text-marine">{etape.libelleEtape}</span>
+      ),
       triable: true,
       valeurTri: (etape) => etape.libelleEtape,
     },
@@ -144,7 +146,9 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
       cle: 'corps',
       entete: "Corps d'état",
       largeur: '10rem',
-      rendu: (etape) => <span className="text-sm text-texte-secondaire">{etape.libelleCorpsEtat}</span>,
+      rendu: (etape) => (
+        <span className="text-sm text-texte-secondaire">{etape.libelleCorpsEtat}</span>
+      ),
       triable: true,
       valeurTri: (etape) => etape.libelleCorpsEtat,
     },
@@ -176,9 +180,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
         <span className="text-sm text-texte">
           {fiche.idsEtapes.length === 0
             ? '—'
-            : fiche.idsEtapes
-                .map((id) => nomEtapeParId.get(id)?.libelleEtape ?? id)
-                .join(', ')}
+            : fiche.idsEtapes.map((id) => nomEtapeParId.get(id)?.libelleEtape ?? id).join(', ')}
         </span>
       ),
     },
@@ -188,14 +190,21 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
       alignement: 'centre',
       largeur: '7rem',
       rendu: (fiche) => (
-        <StatusPill ton={TON_STATUT_FICHE[fiche.statut]} taille="sm" libelle={LIBELLE_STATUT_FICHE[fiche.statut]} />
+        <StatusPill
+          ton={TON_STATUT_FICHE[fiche.statut]}
+          taille="sm"
+          libelle={LIBELLE_STATUT_FICHE[fiche.statut]}
+        />
       ),
     },
   ]
 
   return (
     <div className="flex flex-col gap-6">
-      <Card titre="Choisir un membre" description="Affecter le travail se fait membre par membre (une fiche de route appartient à un technicien)">
+      <Card
+        titre="Choisir un membre"
+        description="Affecter le travail se fait membre par membre (une fiche de route appartient à un technicien)"
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField libelle="Équipe">
             {(champ) => (

@@ -8,6 +8,15 @@
 @theme {
   /* Couleurs de marque */
   --color-marine: #002e5e;
+  /* Marine des aplats (barre latérale, bouton principal) : reste sombre dans les deux thèmes. */
+  --color-encre: #002e5e;
+  --color-encre-profond: #001f42;
+  /* Action principale : marine en clair, bleu ciel en sombre pour rester visible. */
+  --color-primaire: #002e5e;
+  --color-sur-primaire: #ffffff;
+  /* Cyan et sable de l'emblème Schiavone : accents réservés aux fonds sombres. */
+  --color-ciel: #4ec9e1;
+  --color-sable: #f0d98c;
   --color-sarcelle: #1f7fa8;
   --color-or: #8a6508;
   --color-or-clair: #fbf1cf;
@@ -31,12 +40,12 @@
   --color-bordure: #e3edf5;
 
   /* Rayons d'angle */
-  --radius-carte: 1rem; /* 16px — cartes */
-  --radius-controle: 0.75rem; /* 12px — boutons, champs */
+  --radius-carte: 1.25rem; /* 20px — cartes */
+  --radius-controle: 0.875rem; /* 14px — champs, lignes de menu */
 
   /* Ombres */
-  --shadow-douce: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-levee: 0 8px 24px rgba(0, 46, 94, 0.12);
+  --shadow-douce: 0 1px 2px rgb(var(--ombre) / 0.05), 0 4px 14px rgb(var(--ombre) / 0.06);
+  --shadow-levee: 0 12px 32px rgb(var(--ombre) / 0.16);
 
   /* Typographie */
   --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
@@ -67,6 +76,7 @@
   démonter les panneaux au bon moment.
 */
 :root {
+  --ombre: 0 46 94; /* teinte des ombres portées */
   --duree-bouton: 160ms; /* retour tactile immédiat d'un contrôle */
   --duree-survol: 240ms; /* survol, changement d'état d'une surface */
   --duree-cascade: 200ms; /* entrée en cascade d'une liste de blocs */
@@ -169,11 +179,76 @@
   }
 }
 
+/*
+  Thème sombre : seuls les jetons changent, aucun composant n'est réécrit.
+  L'attribut est posé sur la racine du document par PreferencesProvider.
+*/
+:root[data-theme='sombre'] {
+  color-scheme: dark;
+  --ombre: 0 0 0;
+  --color-marine: #cfe6f5; /* titres et accents de texte, lisibles sur fond sombre */
+  --color-encre: #14355a;
+  --color-encre-profond: #0a2644;
+  --color-primaire: #7ccbea;
+  --color-sur-primaire: #00213f;
+  --color-sarcelle: #7ccbea;
+  --color-or: #f0d98c;
+  --color-or-clair: #3a300f;
+  --color-or-vif: #6b5716;
+  --color-fond: #071a2e;
+  --color-fond-alt: #0b2239;
+  --color-surface: #0f2a47;
+  --color-texte: #e9f0f7;
+  --color-texte-secondaire: #b1c2d3;
+  --color-texte-attenue: #8aa0b6;
+  --color-succes: #86d391;
+  --color-danger: #ff9485;
+  --color-bordure: #214668;
+}
+
 @layer base {
   body {
     font-family: var(--font-sans);
     color: var(--color-texte);
     background-color: var(--color-fond);
+    font-variant-numeric: tabular-nums;
+    transition: background-color var(--duree-survol) var(--courbe-entree);
+  }
+
+  /* Surfaces du navigateur, alignées sur la charte. */
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-sarcelle) 28%, transparent);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-bordure) transparent;
+  }
+}
+
+/*
+  Motif « façade » : les panneaux vitrés en perspective de l'emblème
+  Schiavone, très discrets, sur les aplats marine (barre latérale, connexion).
+*/
+.fond-facade {
+  background-color: var(--color-encre);
+  background-image:
+    linear-gradient(160deg, transparent 55%, rgb(78 201 225 / 0.1) 55% 72%, transparent 72%),
+    linear-gradient(200deg, transparent 62%, rgb(240 217 140 / 0.08) 62% 80%, transparent 80%),
+    linear-gradient(150deg, var(--color-encre), var(--color-encre-profond));
+}
+
+/* Carte qui se soulève légèrement au survol (charte § 7), souris uniquement. */
+@media (hover: hover) and (pointer: fine) {
+  .carte-levitation {
+    transition:
+      transform var(--duree-survol) var(--courbe-entree),
+      box-shadow var(--duree-survol) var(--courbe-entree);
+  }
+
+  .carte-levitation:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-levee);
   }
 }
 

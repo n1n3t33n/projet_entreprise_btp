@@ -7,10 +7,7 @@
 */
 
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import {
-  analyserImportMock,
-  confirmerImportMock,
-} from '@/lib/mocks/import-csv-grand-bassam'
+import { analyserImportMock, confirmerImportMock } from '@/lib/mocks/import-csv-grand-bassam'
 import { consignerAudit } from '@/lib/mocks/audit-grand-bassam'
 import type { CibleImport } from '@/features/admin/types/import-csv'
 

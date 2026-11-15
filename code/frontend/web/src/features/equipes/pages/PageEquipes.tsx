@@ -77,7 +77,7 @@ function MembresEquipe() {
     },
     {
       cle: 'fin',
-      entete: 'Jusqu\'au',
+      entete: "Jusqu'au",
       largeur: '8rem',
       rendu: (membre) => formatDate(membre.dateFin),
     },

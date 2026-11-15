@@ -15,10 +15,7 @@ import { useMemo } from 'react'
 import { BellRinging, HouseLine } from '@phosphor-icons/react'
 import { Card, type ColonneTable, JaugeProgression, StatusPill, Table } from '@/components/ui'
 import { EnTetePage } from '@/components/templates'
-import {
-  chargerAvancementLogement,
-  chargerNotificationsAcquereur,
-} from '@/features/acquereur/api'
+import { chargerAvancementLogement, chargerNotificationsAcquereur } from '@/features/acquereur/api'
 import { LIBELLE_STATUT_ETAPE, TON_STATUT_ETAPE } from '@/features/avancement/presentation/libelles'
 import { formatDate } from '@/lib/format'
 import { useRequete } from '@/lib/hooks/useRequete'
@@ -29,10 +26,7 @@ export function PageEspaceAcquereur() {
   const notificationsEtat = useRequete(chargerNotificationsAcquereur, [])
 
   const logement = logementEtat.donnees
-  const notifications = useMemo(
-    () => notificationsEtat.donnees ?? [],
-    [notificationsEtat.donnees],
-  )
+  const notifications = useMemo(() => notificationsEtat.donnees ?? [], [notificationsEtat.donnees])
 
   const colonnes: ColonneTable<EtapeAcquereur>[] = [
     {
@@ -58,7 +52,10 @@ export function PageEspaceAcquereur() {
       alignement: 'centre',
       largeur: '11rem',
       rendu: (etape) => (
-        <StatusPill ton={TON_STATUT_ETAPE[etape.statut]} libelle={LIBELLE_STATUT_ETAPE[etape.statut]} />
+        <StatusPill
+          ton={TON_STATUT_ETAPE[etape.statut]}
+          libelle={LIBELLE_STATUT_ETAPE[etape.statut]}
+        />
       ),
     },
     {
@@ -158,7 +155,9 @@ export function PageEspaceAcquereur() {
                     Franchie le {formatDate(notification.dateFranchissement)}
                   </p>
                 </div>
-                {!notification.lue && <StatusPill ton="information" taille="sm" libelle="Nouveau" />}
+                {!notification.lue && (
+                  <StatusPill ton="information" taille="sm" libelle="Nouveau" />
+                )}
               </li>
             ))}
           </ul>

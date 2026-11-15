@@ -78,7 +78,7 @@ export function KpiCard({
   return (
     <article
       className={cn(
-        'flex flex-col gap-3 rounded-carte border border-bordure bg-surface p-5 shadow-douce',
+        'carte-levitation flex flex-col gap-3 rounded-carte border border-bordure bg-surface p-5 shadow-douce',
         className,
       )}
     >

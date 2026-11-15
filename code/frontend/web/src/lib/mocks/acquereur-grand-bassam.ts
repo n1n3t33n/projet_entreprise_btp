@@ -11,10 +11,7 @@
   que l'acquéreur voie les mêmes états que le pilotage, en version simplifiée.
 */
 
-import type {
-  AvancementLogementDto,
-  NotificationAcquereurDto,
-} from '@/features/acquereur/api/dto'
+import type { AvancementLogementDto, NotificationAcquereurDto } from '@/features/acquereur/api/dto'
 
 function ilYaJours(jours: number): string {
   return new Date(Date.now() - jours * 86_400_000).toISOString()

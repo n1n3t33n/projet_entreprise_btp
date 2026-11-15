@@ -1,33 +1,48 @@
+import embleme from '@/assets/logo/schiavone-embleme.svg'
+import logoComplet from '@/assets/logo/schiavone-logo.svg'
+import { useT } from '@/app/preferences-context'
+
 type LogoProps = {
   variant?: 'sur-marine' | 'sur-clair'
   avecSousTitre?: boolean
 }
 
+/*
+  Logo officiel du groupe Schiavone (fichiers de cadrage/logo, seulement
+  recadres). Sur fond marine : la facade seule dans une tuile blanche, le nom
+  en blanc. Sur fond clair : le logo complet, pose sur une plaque blanche pour
+  rester lisible aussi en theme sombre (le nom du groupe est marine).
+*/
 export function Logo({ variant = 'sur-clair', avecSousTitre = true }: LogoProps) {
-  const surMarine = variant === 'sur-marine'
-  const couleurMarque = surMarine ? 'text-white' : 'text-marine'
-  const couleurSousTitre = surMarine ? 'text-white/70' : 'text-texte-secondaire'
+  const t = useT()
+
+  if (variant === 'sur-clair') {
+    return (
+      <div className="flex flex-col items-center gap-3">
+        <span className="rounded-carte bg-white px-5 py-3 shadow-douce">
+          <img
+            src={logoComplet}
+            alt="Schiavone Group"
+            width={176}
+            height={86}
+            className="h-[86px] w-auto"
+          />
+        </span>
+        {avecSousTitre && (
+          <span className="text-sm font-medium text-texte-secondaire">{t.marque.sousTitre}</span>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="flex items-center gap-3">
-      <span className={couleurMarque} aria-hidden>
-        <svg viewBox="0 0 40 40" width="36" height="36" fill="none" role="presentation">
-          <rect x="7" y="4" width="26" height="32" rx="4" stroke="currentColor" strokeWidth="2.5" />
-          <line x1="7" y1="13" x2="33" y2="13" stroke="currentColor" strokeWidth="2.5" />
-          <rect x="12" y="18" width="5" height="5" rx="1" fill="currentColor" />
-          <rect x="23" y="18" width="5" height="5" rx="1" fill="currentColor" />
-          <rect x="17" y="27" width="6" height="9" rx="1" fill="currentColor" />
-        </svg>
+      <span className="flex size-11 shrink-0 items-center justify-center rounded-controle bg-white">
+        <img src={embleme} alt="" width={32} height={15} className="w-8" />
       </span>
       <span className="leading-tight">
-        <span className={`block text-sm font-bold tracking-wide ${couleurMarque}`}>
-          SCHIAVONE GROUP
-        </span>
-        {avecSousTitre && (
-          <span className={`block text-xs ${couleurSousTitre}`}>
-            ChantierSync · Poste de pilotage
-          </span>
-        )}
+        <span className="block text-sm font-bold tracking-wide text-white">SCHIAVONE GROUP</span>
+        {avecSousTitre && <span className="block text-xs text-white/70">{t.marque.sousTitre}</span>}
       </span>
     </div>
   )

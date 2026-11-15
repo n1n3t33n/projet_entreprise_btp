@@ -8,16 +8,19 @@
 */
 
 import { Outlet } from 'react-router-dom'
+import { PreferencesProvider } from '@/app/PreferencesProvider'
 import { SessionProvider } from '@/app/SessionProvider'
 import { ToastProvider } from '@/components/ui'
 import { PARAMETRES_PAR_DEFAUT } from '@/config/parametres'
 
 export function Racine() {
   return (
-    <SessionProvider>
-      <ToastProvider dureeParDefautMs={PARAMETRES_PAR_DEFAUT.notifications.dureeToastMs}>
-        <Outlet />
-      </ToastProvider>
-    </SessionProvider>
+    <PreferencesProvider>
+      <SessionProvider>
+        <ToastProvider dureeParDefautMs={PARAMETRES_PAR_DEFAUT.notifications.dureeToastMs}>
+          <Outlet />
+        </ToastProvider>
+      </SessionProvider>
+    </PreferencesProvider>
   )
 }

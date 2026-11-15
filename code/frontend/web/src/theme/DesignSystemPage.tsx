@@ -40,7 +40,7 @@ const marque: Swatch[] = [
     nom: 'Primaire · marine',
     role: 'Navigation, boutons, titres',
     hex: '#002E5E',
-    bgClass: 'bg-marine',
+    bgClass: 'bg-encre',
     sombre: true,
   },
   {
