@@ -840,4 +840,394 @@ class TraductionsIt extends Traductions {
   String examinerSorties(int n) {
     return 'Esamina le $n uscite';
   }
+
+  @override
+  String get etapeAFaire => 'Da fare';
+
+  @override
+  String get etapeEnCours => 'In corso';
+
+  @override
+  String get etapeADeclaree => 'Da validare';
+
+  @override
+  String get etapeValidee => 'Validata';
+
+  @override
+  String get etapeBloquee => 'Bloccata';
+
+  @override
+  String get etapesFaites => 'completate';
+
+  @override
+  String get filtreToutes => 'Tutte';
+
+  @override
+  String get evDemarrage => 'Avvio';
+
+  @override
+  String get evPointage => 'Avanzamento';
+
+  @override
+  String get evPause => 'Pausa';
+
+  @override
+  String get evReprise => 'Ripresa';
+
+  @override
+  String get evBlocage => 'Blocco';
+
+  @override
+  String get evLeveeBlocage => 'Blocco rimosso';
+
+  @override
+  String get evFin => 'Fine dichiarata';
+
+  @override
+  String get evValidation => 'Validazione';
+
+  @override
+  String get evRejet => 'Ripresa richiesta';
+
+  @override
+  String get evReaffectation => 'Riassegnazione';
+
+  @override
+  String get blocageRupture => 'Mancanza di materiale';
+
+  @override
+  String get blocagePanne => 'Guasto di mezzi o attrezzi';
+
+  @override
+  String get blocageIntemperies => 'Maltempo';
+
+  @override
+  String get blocageNonConformite => 'Supporto non conforme';
+
+  @override
+  String get blocageAcces => 'Accesso al cantiere bloccato';
+
+  @override
+  String get graviteArret => 'Fermo totale';
+
+  @override
+  String get graviteRalenti => 'Rallentato';
+
+  @override
+  String get graviteAlerte => 'Solo avviso';
+
+  @override
+  String get retardDeuxHeures => '2 ore';
+
+  @override
+  String get retardDemiJournee => 'Mezza giornata';
+
+  @override
+  String get retardUnJour => 'Un giorno o più';
+
+  @override
+  String get ficheRouteTitre => 'Scheda di lavoro';
+
+  @override
+  String get progressionJour => 'Avanzamento di oggi';
+
+  @override
+  String etapesTerminees(int faits, int total) {
+    return '$faits fasi completate su $total';
+  }
+
+  @override
+  String get aucuneEtape => 'Nessuna fase';
+
+  @override
+  String get aucuneEtapeAide => 'Nessuna fase corrisponde per ora.';
+
+  @override
+  String etapeTitre(String id) {
+    return 'Fase $id';
+  }
+
+  @override
+  String get actionImpossible =>
+      'Azione non possibile nello stato attuale della fase.';
+
+  @override
+  String get demarrerEtape => 'Avvia la fase';
+
+  @override
+  String validerPointage(String valeur) {
+    return 'Salva l\'avanzamento ($valeur)';
+  }
+
+  @override
+  String get pointageEnregistre => 'Avanzamento salvato sul dispositivo.';
+
+  @override
+  String get terminerEtape => 'Dichiara la fase completata';
+
+  @override
+  String get etapeDeclaree =>
+      'Fase dichiarata completata: in attesa di validazione.';
+
+  @override
+  String get terminerMention => 'Un\'altra persona dovrà validare la fase.';
+
+  @override
+  String get terminerConditions =>
+      'Per completare: quantità raggiunta e tutti i controlli spuntati.';
+
+  @override
+  String get leverBlocage => 'Rimuovi il blocco';
+
+  @override
+  String get journalEtapeTitre => 'Registro della fase';
+
+  @override
+  String get journalEtapeSousTitre => 'Attività con data e ora';
+
+  @override
+  String get localisation => 'Posizione';
+
+  @override
+  String get pointageActif => 'RILEVAZIONE IN CORSO';
+
+  @override
+  String get pointageArrete => 'RILEVAZIONE IN PAUSA';
+
+  @override
+  String get mettreEnPause => 'Metti in pausa';
+
+  @override
+  String get reprendre => 'Riprendi';
+
+  @override
+  String get avancementMetre => 'Avanzamento delle quantità';
+
+  @override
+  String cible(String valeur) {
+    return 'Obiettivo: $valeur';
+  }
+
+  @override
+  String surCible(String valeur) {
+    return 'su $valeur';
+  }
+
+  @override
+  String get solde => 'Tutto il resto';
+
+  @override
+  String get gammeSecurite => 'Procedura e sicurezza';
+
+  @override
+  String get declarerBlocage => 'Segnala un blocco';
+
+  @override
+  String get reaffecterEtape => 'Riassegna a un\'altra squadra';
+
+  @override
+  String get blocageTitre => 'Segnala un blocco';
+
+  @override
+  String get blocageMention =>
+      'L\'avviso parte verso l\'ufficio appena torna la connessione.';
+
+  @override
+  String get transmettreBlocage => 'Invia l\'avviso di blocco';
+
+  @override
+  String get blocageTransmis => 'Blocco registrato: la fase è ferma.';
+
+  @override
+  String get blocageNature => 'Tipo di blocco';
+
+  @override
+  String get blocageArticle => 'Indica l\'articolo mancante';
+
+  @override
+  String get blocageGravite => 'Gravità';
+
+  @override
+  String get blocageRetard => 'Ritardo stimato';
+
+  @override
+  String get blocageObservationsExemple =>
+      'Es. consegna del cemento in ritardo di 3 h';
+
+  @override
+  String get controlesTitre => 'Controlli e accettazione';
+
+  @override
+  String get controlesSousTitre => 'Fasi dichiarate completate';
+
+  @override
+  String signatureEtape(String id, String libelle) {
+    return 'Validare la fase $id: $libelle.';
+  }
+
+  @override
+  String get etapeValideeMessage => 'Fase validata.';
+
+  @override
+  String get etapeRefuseeMessage =>
+      'Ripresa richiesta: la fase torna in corso.';
+
+  @override
+  String get aucunControle => 'Nessuna fase da validare';
+
+  @override
+  String get aucunControleAide =>
+      'Le fasi dichiarate completate compariranno qui.';
+
+  @override
+  String declarePar(String nom) {
+    return 'Dichiarata completata da $nom';
+  }
+
+  @override
+  String get validerEtape => 'Valida';
+
+  @override
+  String get reaffectationTitre => 'Riassegnazione';
+
+  @override
+  String get reaffectationMention =>
+      'La nuova squadra vedrà la fase sulla sua scheda.';
+
+  @override
+  String get confirmerReaffectation => 'Conferma la riassegnazione';
+
+  @override
+  String reaffectationFaite(String equipe) {
+    return 'Fase affidata a $equipe.';
+  }
+
+  @override
+  String get reaffectationMotif => 'Motivo';
+
+  @override
+  String get motifRetardPlanning => 'Ritardo di programma';
+
+  @override
+  String get motifAbsence => 'Assenza di operai';
+
+  @override
+  String get motifCompetence => 'Competenza richiesta';
+
+  @override
+  String get motifSurcroit => 'Picco di attività';
+
+  @override
+  String get reaffectationEquipe => 'Nuova squadra';
+
+  @override
+  String equipeDetail(String chef, int n) {
+    return 'Capo: $chef · $n operai';
+  }
+
+  @override
+  String get chargeActuelle => 'Carico';
+
+  @override
+  String get reaffectationConsigne => 'Nota di consegna';
+
+  @override
+  String get reaffectationConsigneExemple =>
+      'Es. casseri pronti, attendere la consegna del calcestruzzo';
+
+  @override
+  String get dureePointee => 'tempo rilevato';
+
+  @override
+  String get evenementsTraces => 'eventi registrati';
+
+  @override
+  String get aucunEvenement => 'Nessuna attività';
+
+  @override
+  String get aucunEvenementAide =>
+      'Avvii, avanzamenti e validazioni compariranno qui.';
+
+  @override
+  String pourcentRealise(int n) {
+    return '$n% completato';
+  }
+
+  @override
+  String get ouvrirFicheRoute => 'Apri la scheda di lavoro';
+
+  @override
+  String get maFicheDuJour => 'La mia scheda di oggi';
+
+  @override
+  String get pointageRapide => 'Avanzamento rapido';
+
+  @override
+  String get prochainesEtapes => 'Prossime fasi';
+
+  @override
+  String get aValiderPriorite => 'Da validare per primo';
+
+  @override
+  String nombreActions(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n azioni',
+      one: '1 azione',
+      zero: 'Aggiornato',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortiesAValiderDetail => 'Bolle di materiale del magazzino';
+
+  @override
+  String get etapesAControler => 'Fasi da controllare';
+
+  @override
+  String get etapesAControlerDetail => 'Lavori dichiarati completati';
+
+  @override
+  String nombreEtapes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n fasi',
+      one: '1 fase',
+      zero: 'Nessuna fase',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get blocagesPrioritaires => 'Blocchi in corso';
+
+  @override
+  String get aucunBlocage => 'Nessuna fase bloccata.';
+
+  @override
+  String get supervisionTravaux => 'Supervisione lavori e conformità';
+
+  @override
+  String get visasTechniques => 'Approvazioni tecniche';
+
+  @override
+  String get examinerEtapes => 'Esamina le fasi';
+
+  @override
+  String get syntheseChantier => 'Sintesi per categoria di lavoro';
+
+  @override
+  String etapesValideesSur(int faits, int total) {
+    return '$faits fasi validate su $total';
+  }
+
+  @override
+  String get outilsPosteFixe => 'Strumenti completi da postazione fissa';
+
+  @override
+  String get outilsPosteFixeAide =>
+      'Pianificazioni, squadre ed esportazioni si gestiscono dalla postazione web.';
 }

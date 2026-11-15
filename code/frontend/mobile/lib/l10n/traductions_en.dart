@@ -833,4 +833,391 @@ class TraductionsEn extends Traductions {
   String examinerSorties(int n) {
     return 'Review the $n issues';
   }
+
+  @override
+  String get etapeAFaire => 'To do';
+
+  @override
+  String get etapeEnCours => 'In progress';
+
+  @override
+  String get etapeADeclaree => 'To approve';
+
+  @override
+  String get etapeValidee => 'Approved';
+
+  @override
+  String get etapeBloquee => 'Blocked';
+
+  @override
+  String get etapesFaites => 'done';
+
+  @override
+  String get filtreToutes => 'All';
+
+  @override
+  String get evDemarrage => 'Start';
+
+  @override
+  String get evPointage => 'Progress update';
+
+  @override
+  String get evPause => 'Pause';
+
+  @override
+  String get evReprise => 'Resume';
+
+  @override
+  String get evBlocage => 'Blocked';
+
+  @override
+  String get evLeveeBlocage => 'Unblocked';
+
+  @override
+  String get evFin => 'Declared done';
+
+  @override
+  String get evValidation => 'Approval';
+
+  @override
+  String get evRejet => 'Rework requested';
+
+  @override
+  String get evReaffectation => 'Reassignment';
+
+  @override
+  String get blocageRupture => 'Material shortage';
+
+  @override
+  String get blocagePanne => 'Machine or tool breakdown';
+
+  @override
+  String get blocageIntemperies => 'Bad weather';
+
+  @override
+  String get blocageNonConformite => 'Non-compliant substrate';
+
+  @override
+  String get blocageAcces => 'Site access blocked';
+
+  @override
+  String get graviteArret => 'Full stop';
+
+  @override
+  String get graviteRalenti => 'Slowed down';
+
+  @override
+  String get graviteAlerte => 'Warning only';
+
+  @override
+  String get retardDeuxHeures => '2 hours';
+
+  @override
+  String get retardDemiJournee => 'Half a day';
+
+  @override
+  String get retardUnJour => 'A day or more';
+
+  @override
+  String get ficheRouteTitre => 'Work sheet';
+
+  @override
+  String get progressionJour => 'Today\'s progress';
+
+  @override
+  String etapesTerminees(int faits, int total) {
+    return '$faits of $total steps done';
+  }
+
+  @override
+  String get aucuneEtape => 'No step';
+
+  @override
+  String get aucuneEtapeAide => 'No step matches for now.';
+
+  @override
+  String etapeTitre(String id) {
+    return 'Step $id';
+  }
+
+  @override
+  String get actionImpossible =>
+      'This action is not possible in the step\'s current state.';
+
+  @override
+  String get demarrerEtape => 'Start the step';
+
+  @override
+  String validerPointage(String valeur) {
+    return 'Save progress ($valeur)';
+  }
+
+  @override
+  String get pointageEnregistre => 'Progress saved on this device.';
+
+  @override
+  String get terminerEtape => 'Declare the step done';
+
+  @override
+  String get etapeDeclaree => 'Step declared done: waiting for approval.';
+
+  @override
+  String get terminerMention => 'Another person will have to approve the step.';
+
+  @override
+  String get terminerConditions =>
+      'To finish: target reached and all checks ticked.';
+
+  @override
+  String get leverBlocage => 'Remove the block';
+
+  @override
+  String get journalEtapeTitre => 'Step log';
+
+  @override
+  String get journalEtapeSousTitre => 'Time-stamped activity';
+
+  @override
+  String get localisation => 'Location';
+
+  @override
+  String get pointageActif => 'TIME TRACKING ON';
+
+  @override
+  String get pointageArrete => 'TIME TRACKING PAUSED';
+
+  @override
+  String get mettreEnPause => 'Pause';
+
+  @override
+  String get reprendre => 'Resume';
+
+  @override
+  String get avancementMetre => 'Quantity progress';
+
+  @override
+  String cible(String valeur) {
+    return 'Target: $valeur';
+  }
+
+  @override
+  String surCible(String valeur) {
+    return 'out of $valeur';
+  }
+
+  @override
+  String get solde => 'All remaining';
+
+  @override
+  String get gammeSecurite => 'Method and safety checks';
+
+  @override
+  String get declarerBlocage => 'Report a blocker';
+
+  @override
+  String get reaffecterEtape => 'Reassign to another crew';
+
+  @override
+  String get blocageTitre => 'Report a blocker';
+
+  @override
+  String get blocageMention =>
+      'The alert is sent to the office as soon as the connection is back.';
+
+  @override
+  String get transmettreBlocage => 'Send the blocker alert';
+
+  @override
+  String get blocageTransmis => 'Blocker saved: the step is stopped.';
+
+  @override
+  String get blocageNature => 'Type of blocker';
+
+  @override
+  String get blocageArticle => 'Select the missing item';
+
+  @override
+  String get blocageGravite => 'Severity';
+
+  @override
+  String get blocageRetard => 'Estimated delay';
+
+  @override
+  String get blocageObservationsExemple => 'E.g. cement delivery 3 h late';
+
+  @override
+  String get controlesTitre => 'Checks and acceptance';
+
+  @override
+  String get controlesSousTitre => 'Steps declared done';
+
+  @override
+  String signatureEtape(String id, String libelle) {
+    return 'Approve step $id: $libelle.';
+  }
+
+  @override
+  String get etapeValideeMessage => 'Step approved.';
+
+  @override
+  String get etapeRefuseeMessage =>
+      'Rework requested: the step is in progress again.';
+
+  @override
+  String get aucunControle => 'No step to approve';
+
+  @override
+  String get aucunControleAide => 'Steps declared done will appear here.';
+
+  @override
+  String declarePar(String nom) {
+    return 'Declared done by $nom';
+  }
+
+  @override
+  String get validerEtape => 'Approve';
+
+  @override
+  String get reaffectationTitre => 'Reassignment';
+
+  @override
+  String get reaffectationMention =>
+      'The new crew will see the step on its work sheet.';
+
+  @override
+  String get confirmerReaffectation => 'Confirm reassignment';
+
+  @override
+  String reaffectationFaite(String equipe) {
+    return 'Step handed over to $equipe.';
+  }
+
+  @override
+  String get reaffectationMotif => 'Reason';
+
+  @override
+  String get motifRetardPlanning => 'Schedule delay';
+
+  @override
+  String get motifAbsence => 'Workers absent';
+
+  @override
+  String get motifCompetence => 'Skill required';
+
+  @override
+  String get motifSurcroit => 'Workload peak';
+
+  @override
+  String get reaffectationEquipe => 'New crew';
+
+  @override
+  String equipeDetail(String chef, int n) {
+    return 'Lead: $chef · $n workers';
+  }
+
+  @override
+  String get chargeActuelle => 'Workload';
+
+  @override
+  String get reaffectationConsigne => 'Handover note';
+
+  @override
+  String get reaffectationConsigneExemple =>
+      'E.g. formwork ready, wait for the concrete delivery';
+
+  @override
+  String get dureePointee => 'time tracked';
+
+  @override
+  String get evenementsTraces => 'events logged';
+
+  @override
+  String get aucunEvenement => 'No activity';
+
+  @override
+  String get aucunEvenementAide =>
+      'Starts, progress updates and approvals will appear here.';
+
+  @override
+  String pourcentRealise(int n) {
+    return '$n% done';
+  }
+
+  @override
+  String get ouvrirFicheRoute => 'Open the work sheet';
+
+  @override
+  String get maFicheDuJour => 'My work sheet today';
+
+  @override
+  String get pointageRapide => 'Quick progress update';
+
+  @override
+  String get prochainesEtapes => 'Next steps';
+
+  @override
+  String get aValiderPriorite => 'To approve first';
+
+  @override
+  String nombreActions(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n actions',
+      one: '1 action',
+      zero: 'Up to date',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortiesAValiderDetail => 'Store material notes';
+
+  @override
+  String get etapesAControler => 'Steps to check';
+
+  @override
+  String get etapesAControlerDetail => 'Work declared done';
+
+  @override
+  String nombreEtapes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n steps',
+      one: '1 step',
+      zero: 'No step',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get blocagesPrioritaires => 'Current blockers';
+
+  @override
+  String get aucunBlocage => 'No blocked step.';
+
+  @override
+  String get supervisionTravaux => 'Works supervision and compliance';
+
+  @override
+  String get visasTechniques => 'Technical approvals';
+
+  @override
+  String get examinerEtapes => 'Review the steps';
+
+  @override
+  String get syntheseChantier => 'Summary by trade';
+
+  @override
+  String etapesValideesSur(int faits, int total) {
+    return '$faits of $total steps approved';
+  }
+
+  @override
+  String get outilsPosteFixe => 'Full tools on desktop';
+
+  @override
+  String get outilsPosteFixeAide =>
+      'Schedules, crews and exports are managed from the web control desk.';
 }

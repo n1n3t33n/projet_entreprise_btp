@@ -1521,6 +1521,684 @@ abstract class Traductions {
   /// In fr, this message translates to:
   /// **'Examiner les {n} sorties'**
   String examinerSorties(int n);
+
+  /// No description provided for @etapeAFaire.
+  ///
+  /// In fr, this message translates to:
+  /// **'À faire'**
+  String get etapeAFaire;
+
+  /// No description provided for @etapeEnCours.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get etapeEnCours;
+
+  /// No description provided for @etapeADeclaree.
+  ///
+  /// In fr, this message translates to:
+  /// **'À valider'**
+  String get etapeADeclaree;
+
+  /// No description provided for @etapeValidee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validée'**
+  String get etapeValidee;
+
+  /// No description provided for @etapeBloquee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bloquée'**
+  String get etapeBloquee;
+
+  /// No description provided for @etapesFaites.
+  ///
+  /// In fr, this message translates to:
+  /// **'terminées'**
+  String get etapesFaites;
+
+  /// No description provided for @filtreToutes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes'**
+  String get filtreToutes;
+
+  /// No description provided for @evDemarrage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrage'**
+  String get evDemarrage;
+
+  /// No description provided for @evPointage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pointage'**
+  String get evPointage;
+
+  /// No description provided for @evPause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pause'**
+  String get evPause;
+
+  /// No description provided for @evReprise.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprise'**
+  String get evReprise;
+
+  /// No description provided for @evBlocage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Blocage'**
+  String get evBlocage;
+
+  /// No description provided for @evLeveeBlocage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Blocage levé'**
+  String get evLeveeBlocage;
+
+  /// No description provided for @evFin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fin déclarée'**
+  String get evFin;
+
+  /// No description provided for @evValidation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Validation'**
+  String get evValidation;
+
+  /// No description provided for @evRejet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprise demandée'**
+  String get evRejet;
+
+  /// No description provided for @evReaffectation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réaffectation'**
+  String get evReaffectation;
+
+  /// No description provided for @blocageRupture.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rupture de matériau'**
+  String get blocageRupture;
+
+  /// No description provided for @blocagePanne.
+  ///
+  /// In fr, this message translates to:
+  /// **'Panne d\'engin ou d\'outillage'**
+  String get blocagePanne;
+
+  /// No description provided for @blocageIntemperies.
+  ///
+  /// In fr, this message translates to:
+  /// **'Intempéries'**
+  String get blocageIntemperies;
+
+  /// No description provided for @blocageNonConformite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non-conformité du support'**
+  String get blocageNonConformite;
+
+  /// No description provided for @blocageAcces.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accès au chantier bloqué'**
+  String get blocageAcces;
+
+  /// No description provided for @graviteArret.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrêt total'**
+  String get graviteArret;
+
+  /// No description provided for @graviteRalenti.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ralenti'**
+  String get graviteRalenti;
+
+  /// No description provided for @graviteAlerte.
+  ///
+  /// In fr, this message translates to:
+  /// **'Simple alerte'**
+  String get graviteAlerte;
+
+  /// No description provided for @retardDeuxHeures.
+  ///
+  /// In fr, this message translates to:
+  /// **'2 heures'**
+  String get retardDeuxHeures;
+
+  /// No description provided for @retardDemiJournee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demi-journée'**
+  String get retardDemiJournee;
+
+  /// No description provided for @retardUnJour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un jour ou plus'**
+  String get retardUnJour;
+
+  /// No description provided for @ficheRouteTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fiche de route'**
+  String get ficheRouteTitre;
+
+  /// No description provided for @progressionJour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Progression du jour'**
+  String get progressionJour;
+
+  /// No description provided for @etapesTerminees.
+  ///
+  /// In fr, this message translates to:
+  /// **'{faits} étapes terminées sur {total}'**
+  String etapesTerminees(int faits, int total);
+
+  /// No description provided for @aucuneEtape.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune étape'**
+  String get aucuneEtape;
+
+  /// No description provided for @aucuneEtapeAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune étape ne correspond pour le moment.'**
+  String get aucuneEtapeAide;
+
+  /// No description provided for @etapeTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape {id}'**
+  String etapeTitre(String id);
+
+  /// No description provided for @actionImpossible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Action impossible dans l\'état actuel de l\'étape.'**
+  String get actionImpossible;
+
+  /// No description provided for @demarrerEtape.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrer l\'étape'**
+  String get demarrerEtape;
+
+  /// No description provided for @validerPointage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer le pointage ({valeur})'**
+  String validerPointage(String valeur);
+
+  /// No description provided for @pointageEnregistre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pointage enregistré sur l\'appareil.'**
+  String get pointageEnregistre;
+
+  /// No description provided for @terminerEtape.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déclarer l\'étape terminée'**
+  String get terminerEtape;
+
+  /// No description provided for @etapeDeclaree.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape déclarée terminée : elle attend sa validation.'**
+  String get etapeDeclaree;
+
+  /// No description provided for @terminerMention.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une autre personne devra valider l\'étape.'**
+  String get terminerMention;
+
+  /// No description provided for @terminerConditions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour terminer : métré atteint et tous les contrôles cochés.'**
+  String get terminerConditions;
+
+  /// No description provided for @leverBlocage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lever le blocage'**
+  String get leverBlocage;
+
+  /// No description provided for @journalEtapeTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Journal d\'étape'**
+  String get journalEtapeTitre;
+
+  /// No description provided for @journalEtapeSousTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Activité horodatée'**
+  String get journalEtapeSousTitre;
+
+  /// No description provided for @localisation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Localisation'**
+  String get localisation;
+
+  /// No description provided for @pointageActif.
+  ///
+  /// In fr, this message translates to:
+  /// **'POINTAGE EN COURS'**
+  String get pointageActif;
+
+  /// No description provided for @pointageArrete.
+  ///
+  /// In fr, this message translates to:
+  /// **'POINTAGE EN PAUSE'**
+  String get pointageArrete;
+
+  /// No description provided for @mettreEnPause.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre en pause'**
+  String get mettreEnPause;
+
+  /// No description provided for @reprendre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre'**
+  String get reprendre;
+
+  /// No description provided for @avancementMetre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avancement du métré'**
+  String get avancementMetre;
+
+  /// No description provided for @cible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cible : {valeur}'**
+  String cible(String valeur);
+
+  /// No description provided for @surCible.
+  ///
+  /// In fr, this message translates to:
+  /// **'sur {valeur}'**
+  String surCible(String valeur);
+
+  /// No description provided for @solde.
+  ///
+  /// In fr, this message translates to:
+  /// **'Solde total'**
+  String get solde;
+
+  /// No description provided for @gammeSecurite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gamme opératoire et sécurité'**
+  String get gammeSecurite;
+
+  /// No description provided for @declarerBlocage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déclarer un blocage'**
+  String get declarerBlocage;
+
+  /// No description provided for @reaffecterEtape.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réaffecter à une autre équipe'**
+  String get reaffecterEtape;
+
+  /// No description provided for @blocageTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déclarer un blocage'**
+  String get blocageTitre;
+
+  /// No description provided for @blocageMention.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'alerte part vers le bureau dès que la connexion revient.'**
+  String get blocageMention;
+
+  /// No description provided for @transmettreBlocage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Transmettre l\'alerte de blocage'**
+  String get transmettreBlocage;
+
+  /// No description provided for @blocageTransmis.
+  ///
+  /// In fr, this message translates to:
+  /// **'Blocage enregistré : l\'étape est arrêtée.'**
+  String get blocageTransmis;
+
+  /// No description provided for @blocageNature.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nature du blocage'**
+  String get blocageNature;
+
+  /// No description provided for @blocageArticle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Désigner l\'article manquant'**
+  String get blocageArticle;
+
+  /// No description provided for @blocageGravite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gravité'**
+  String get blocageGravite;
+
+  /// No description provided for @blocageRetard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retard estimé'**
+  String get blocageRetard;
+
+  /// No description provided for @blocageObservationsExemple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. livraison de ciment retardée de 3 h'**
+  String get blocageObservationsExemple;
+
+  /// No description provided for @controlesTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contrôles et réception'**
+  String get controlesTitre;
+
+  /// No description provided for @controlesSousTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étapes déclarées terminées'**
+  String get controlesSousTitre;
+
+  /// No description provided for @signatureEtape.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider l\'étape {id} : {libelle}.'**
+  String signatureEtape(String id, String libelle);
+
+  /// No description provided for @etapeValideeMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape validée.'**
+  String get etapeValideeMessage;
+
+  /// No description provided for @etapeRefuseeMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprise demandée : l\'étape repasse en cours.'**
+  String get etapeRefuseeMessage;
+
+  /// No description provided for @aucunControle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune étape à valider'**
+  String get aucunControle;
+
+  /// No description provided for @aucunControleAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les étapes déclarées terminées apparaîtront ici.'**
+  String get aucunControleAide;
+
+  /// No description provided for @declarePar.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déclarée terminée par {nom}'**
+  String declarePar(String nom);
+
+  /// No description provided for @validerEtape.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get validerEtape;
+
+  /// No description provided for @reaffectationTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réaffectation'**
+  String get reaffectationTitre;
+
+  /// No description provided for @reaffectationMention.
+  ///
+  /// In fr, this message translates to:
+  /// **'La nouvelle équipe verra l\'étape sur sa fiche de route.'**
+  String get reaffectationMention;
+
+  /// No description provided for @confirmerReaffectation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer la réaffectation'**
+  String get confirmerReaffectation;
+
+  /// No description provided for @reaffectationFaite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape confiée à {equipe}.'**
+  String reaffectationFaite(String equipe);
+
+  /// No description provided for @reaffectationMotif.
+  ///
+  /// In fr, this message translates to:
+  /// **'Motif'**
+  String get reaffectationMotif;
+
+  /// No description provided for @motifRetardPlanning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retard de planning'**
+  String get motifRetardPlanning;
+
+  /// No description provided for @motifAbsence.
+  ///
+  /// In fr, this message translates to:
+  /// **'Absence d\'ouvriers'**
+  String get motifAbsence;
+
+  /// No description provided for @motifCompetence.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compétence requise'**
+  String get motifCompetence;
+
+  /// No description provided for @motifSurcroit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surcroît d\'activité'**
+  String get motifSurcroit;
+
+  /// No description provided for @reaffectationEquipe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle équipe'**
+  String get reaffectationEquipe;
+
+  /// No description provided for @equipeDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chef : {chef} · {n} ouvriers'**
+  String equipeDetail(String chef, int n);
+
+  /// No description provided for @chargeActuelle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Charge'**
+  String get chargeActuelle;
+
+  /// No description provided for @reaffectationConsigne.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consigne de transmission'**
+  String get reaffectationConsigne;
+
+  /// No description provided for @reaffectationConsigneExemple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. coffrage prêt, attendre la livraison du béton'**
+  String get reaffectationConsigneExemple;
+
+  /// No description provided for @dureePointee.
+  ///
+  /// In fr, this message translates to:
+  /// **'temps pointé'**
+  String get dureePointee;
+
+  /// No description provided for @evenementsTraces.
+  ///
+  /// In fr, this message translates to:
+  /// **'événements tracés'**
+  String get evenementsTraces;
+
+  /// No description provided for @aucunEvenement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune activité'**
+  String get aucunEvenement;
+
+  /// No description provided for @aucunEvenementAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les démarrages, pointages et validations apparaîtront ici.'**
+  String get aucunEvenementAide;
+
+  /// No description provided for @pourcentRealise.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n} % réalisé'**
+  String pourcentRealise(int n);
+
+  /// No description provided for @ouvrirFicheRoute.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrir la fiche de route'**
+  String get ouvrirFicheRoute;
+
+  /// No description provided for @maFicheDuJour.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma fiche de route du jour'**
+  String get maFicheDuJour;
+
+  /// No description provided for @pointageRapide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pointage rapide'**
+  String get pointageRapide;
+
+  /// No description provided for @prochainesEtapes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochaines étapes'**
+  String get prochainesEtapes;
+
+  /// No description provided for @aValiderPriorite.
+  ///
+  /// In fr, this message translates to:
+  /// **'À valider en priorité'**
+  String get aValiderPriorite;
+
+  /// No description provided for @nombreActions.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{À jour} =1{1 action} other{{n} actions}}'**
+  String nombreActions(int n);
+
+  /// No description provided for @sortiesAValiderDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bons de matériel du magasin'**
+  String get sortiesAValiderDetail;
+
+  /// No description provided for @etapesAControler.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étapes à contrôler'**
+  String get etapesAControler;
+
+  /// No description provided for @etapesAControlerDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Travaux déclarés terminés'**
+  String get etapesAControlerDetail;
+
+  /// No description provided for @nombreEtapes.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{Aucune étape} =1{1 étape} other{{n} étapes}}'**
+  String nombreEtapes(int n);
+
+  /// No description provided for @blocagesPrioritaires.
+  ///
+  /// In fr, this message translates to:
+  /// **'Blocages en cours'**
+  String get blocagesPrioritaires;
+
+  /// No description provided for @aucunBlocage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune étape bloquée.'**
+  String get aucunBlocage;
+
+  /// No description provided for @supervisionTravaux.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supervision des travaux et conformité'**
+  String get supervisionTravaux;
+
+  /// No description provided for @visasTechniques.
+  ///
+  /// In fr, this message translates to:
+  /// **'Visas techniques'**
+  String get visasTechniques;
+
+  /// No description provided for @examinerEtapes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Examiner les étapes'**
+  String get examinerEtapes;
+
+  /// No description provided for @syntheseChantier.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synthèse par corps d\'état'**
+  String get syntheseChantier;
+
+  /// No description provided for @etapesValideesSur.
+  ///
+  /// In fr, this message translates to:
+  /// **'{faits} étapes validées sur {total}'**
+  String etapesValideesSur(int faits, int total);
+
+  /// No description provided for @outilsPosteFixe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Outils complets sur poste fixe'**
+  String get outilsPosteFixe;
+
+  /// No description provided for @outilsPosteFixeAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plannings, équipes et exports se pilotent depuis le poste de pilotage web.'**
+  String get outilsPosteFixeAide;
 }
 
 class _TraductionsDelegate extends LocalizationsDelegate<Traductions> {

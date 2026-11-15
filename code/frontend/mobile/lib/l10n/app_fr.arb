@@ -450,5 +450,221 @@
         "type": "int"
       }
     }
-  }
+  },
+  "etapeAFaire": "À faire",
+  "etapeEnCours": "En cours",
+  "etapeADeclaree": "À valider",
+  "etapeValidee": "Validée",
+  "etapeBloquee": "Bloquée",
+  "etapesFaites": "terminées",
+  "filtreToutes": "Toutes",
+  "evDemarrage": "Démarrage",
+  "evPointage": "Pointage",
+  "evPause": "Pause",
+  "evReprise": "Reprise",
+  "evBlocage": "Blocage",
+  "evLeveeBlocage": "Blocage levé",
+  "evFin": "Fin déclarée",
+  "evValidation": "Validation",
+  "evRejet": "Reprise demandée",
+  "evReaffectation": "Réaffectation",
+  "blocageRupture": "Rupture de matériau",
+  "blocagePanne": "Panne d'engin ou d'outillage",
+  "blocageIntemperies": "Intempéries",
+  "blocageNonConformite": "Non-conformité du support",
+  "blocageAcces": "Accès au chantier bloqué",
+  "graviteArret": "Arrêt total",
+  "graviteRalenti": "Ralenti",
+  "graviteAlerte": "Simple alerte",
+  "retardDeuxHeures": "2 heures",
+  "retardDemiJournee": "Demi-journée",
+  "retardUnJour": "Un jour ou plus",
+  "ficheRouteTitre": "Fiche de route",
+  "progressionJour": "Progression du jour",
+  "etapesTerminees": "{faits} étapes terminées sur {total}",
+  "@etapesTerminees": {
+    "placeholders": {
+      "faits": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "aucuneEtape": "Aucune étape",
+  "aucuneEtapeAide": "Aucune étape ne correspond pour le moment.",
+  "etapeTitre": "Étape {id}",
+  "@etapeTitre": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "actionImpossible": "Action impossible dans l'état actuel de l'étape.",
+  "demarrerEtape": "Démarrer l'étape",
+  "validerPointage": "Enregistrer le pointage ({valeur})",
+  "@validerPointage": {
+    "placeholders": {
+      "valeur": {
+        "type": "String"
+      }
+    }
+  },
+  "pointageEnregistre": "Pointage enregistré sur l'appareil.",
+  "terminerEtape": "Déclarer l'étape terminée",
+  "etapeDeclaree": "Étape déclarée terminée : elle attend sa validation.",
+  "terminerMention": "Une autre personne devra valider l'étape.",
+  "terminerConditions": "Pour terminer : métré atteint et tous les contrôles cochés.",
+  "leverBlocage": "Lever le blocage",
+  "journalEtapeTitre": "Journal d'étape",
+  "journalEtapeSousTitre": "Activité horodatée",
+  "localisation": "Localisation",
+  "pointageActif": "POINTAGE EN COURS",
+  "pointageArrete": "POINTAGE EN PAUSE",
+  "mettreEnPause": "Mettre en pause",
+  "reprendre": "Reprendre",
+  "avancementMetre": "Avancement du métré",
+  "cible": "Cible : {valeur}",
+  "@cible": {
+    "placeholders": {
+      "valeur": {
+        "type": "String"
+      }
+    }
+  },
+  "surCible": "sur {valeur}",
+  "@surCible": {
+    "placeholders": {
+      "valeur": {
+        "type": "String"
+      }
+    }
+  },
+  "solde": "Solde total",
+  "gammeSecurite": "Gamme opératoire et sécurité",
+  "declarerBlocage": "Déclarer un blocage",
+  "reaffecterEtape": "Réaffecter à une autre équipe",
+  "blocageTitre": "Déclarer un blocage",
+  "blocageMention": "L'alerte part vers le bureau dès que la connexion revient.",
+  "transmettreBlocage": "Transmettre l'alerte de blocage",
+  "blocageTransmis": "Blocage enregistré : l'étape est arrêtée.",
+  "blocageNature": "Nature du blocage",
+  "blocageArticle": "Désigner l'article manquant",
+  "blocageGravite": "Gravité",
+  "blocageRetard": "Retard estimé",
+  "blocageObservationsExemple": "Ex. livraison de ciment retardée de 3 h",
+  "controlesTitre": "Contrôles et réception",
+  "controlesSousTitre": "Étapes déclarées terminées",
+  "signatureEtape": "Valider l'étape {id} : {libelle}.",
+  "@signatureEtape": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "libelle": {
+        "type": "String"
+      }
+    }
+  },
+  "etapeValideeMessage": "Étape validée.",
+  "etapeRefuseeMessage": "Reprise demandée : l'étape repasse en cours.",
+  "aucunControle": "Aucune étape à valider",
+  "aucunControleAide": "Les étapes déclarées terminées apparaîtront ici.",
+  "declarePar": "Déclarée terminée par {nom}",
+  "@declarePar": {
+    "placeholders": {
+      "nom": {
+        "type": "String"
+      }
+    }
+  },
+  "validerEtape": "Valider",
+  "reaffectationTitre": "Réaffectation",
+  "reaffectationMention": "La nouvelle équipe verra l'étape sur sa fiche de route.",
+  "confirmerReaffectation": "Confirmer la réaffectation",
+  "reaffectationFaite": "Étape confiée à {equipe}.",
+  "@reaffectationFaite": {
+    "placeholders": {
+      "equipe": {
+        "type": "String"
+      }
+    }
+  },
+  "reaffectationMotif": "Motif",
+  "motifRetardPlanning": "Retard de planning",
+  "motifAbsence": "Absence d'ouvriers",
+  "motifCompetence": "Compétence requise",
+  "motifSurcroit": "Surcroît d'activité",
+  "reaffectationEquipe": "Nouvelle équipe",
+  "equipeDetail": "Chef : {chef} · {n} ouvriers",
+  "@equipeDetail": {
+    "placeholders": {
+      "chef": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "chargeActuelle": "Charge",
+  "reaffectationConsigne": "Consigne de transmission",
+  "reaffectationConsigneExemple": "Ex. coffrage prêt, attendre la livraison du béton",
+  "dureePointee": "temps pointé",
+  "evenementsTraces": "événements tracés",
+  "aucunEvenement": "Aucune activité",
+  "aucunEvenementAide": "Les démarrages, pointages et validations apparaîtront ici.",
+  "pourcentRealise": "{n} % réalisé",
+  "@pourcentRealise": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "ouvrirFicheRoute": "Ouvrir la fiche de route",
+  "maFicheDuJour": "Ma fiche de route du jour",
+  "pointageRapide": "Pointage rapide",
+  "prochainesEtapes": "Prochaines étapes",
+  "aValiderPriorite": "À valider en priorité",
+  "nombreActions": "{n, plural, =0{À jour} =1{1 action} other{{n} actions}}",
+  "@nombreActions": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "sortiesAValiderDetail": "Bons de matériel du magasin",
+  "etapesAControler": "Étapes à contrôler",
+  "etapesAControlerDetail": "Travaux déclarés terminés",
+  "nombreEtapes": "{n, plural, =0{Aucune étape} =1{1 étape} other{{n} étapes}}",
+  "@nombreEtapes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "blocagesPrioritaires": "Blocages en cours",
+  "aucunBlocage": "Aucune étape bloquée.",
+  "supervisionTravaux": "Supervision des travaux et conformité",
+  "visasTechniques": "Visas techniques",
+  "examinerEtapes": "Examiner les étapes",
+  "syntheseChantier": "Synthèse par corps d'état",
+  "etapesValideesSur": "{faits} étapes validées sur {total}",
+  "@etapesValideesSur": {
+    "placeholders": {
+      "faits": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "outilsPosteFixe": "Outils complets sur poste fixe",
+  "outilsPosteFixeAide": "Plannings, équipes et exports se pilotent depuis le poste de pilotage web."
 }

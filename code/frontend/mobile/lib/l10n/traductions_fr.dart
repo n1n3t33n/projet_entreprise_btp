@@ -838,4 +838,394 @@ class TraductionsFr extends Traductions {
   String examinerSorties(int n) {
     return 'Examiner les $n sorties';
   }
+
+  @override
+  String get etapeAFaire => 'À faire';
+
+  @override
+  String get etapeEnCours => 'En cours';
+
+  @override
+  String get etapeADeclaree => 'À valider';
+
+  @override
+  String get etapeValidee => 'Validée';
+
+  @override
+  String get etapeBloquee => 'Bloquée';
+
+  @override
+  String get etapesFaites => 'terminées';
+
+  @override
+  String get filtreToutes => 'Toutes';
+
+  @override
+  String get evDemarrage => 'Démarrage';
+
+  @override
+  String get evPointage => 'Pointage';
+
+  @override
+  String get evPause => 'Pause';
+
+  @override
+  String get evReprise => 'Reprise';
+
+  @override
+  String get evBlocage => 'Blocage';
+
+  @override
+  String get evLeveeBlocage => 'Blocage levé';
+
+  @override
+  String get evFin => 'Fin déclarée';
+
+  @override
+  String get evValidation => 'Validation';
+
+  @override
+  String get evRejet => 'Reprise demandée';
+
+  @override
+  String get evReaffectation => 'Réaffectation';
+
+  @override
+  String get blocageRupture => 'Rupture de matériau';
+
+  @override
+  String get blocagePanne => 'Panne d\'engin ou d\'outillage';
+
+  @override
+  String get blocageIntemperies => 'Intempéries';
+
+  @override
+  String get blocageNonConformite => 'Non-conformité du support';
+
+  @override
+  String get blocageAcces => 'Accès au chantier bloqué';
+
+  @override
+  String get graviteArret => 'Arrêt total';
+
+  @override
+  String get graviteRalenti => 'Ralenti';
+
+  @override
+  String get graviteAlerte => 'Simple alerte';
+
+  @override
+  String get retardDeuxHeures => '2 heures';
+
+  @override
+  String get retardDemiJournee => 'Demi-journée';
+
+  @override
+  String get retardUnJour => 'Un jour ou plus';
+
+  @override
+  String get ficheRouteTitre => 'Fiche de route';
+
+  @override
+  String get progressionJour => 'Progression du jour';
+
+  @override
+  String etapesTerminees(int faits, int total) {
+    return '$faits étapes terminées sur $total';
+  }
+
+  @override
+  String get aucuneEtape => 'Aucune étape';
+
+  @override
+  String get aucuneEtapeAide => 'Aucune étape ne correspond pour le moment.';
+
+  @override
+  String etapeTitre(String id) {
+    return 'Étape $id';
+  }
+
+  @override
+  String get actionImpossible =>
+      'Action impossible dans l\'état actuel de l\'étape.';
+
+  @override
+  String get demarrerEtape => 'Démarrer l\'étape';
+
+  @override
+  String validerPointage(String valeur) {
+    return 'Enregistrer le pointage ($valeur)';
+  }
+
+  @override
+  String get pointageEnregistre => 'Pointage enregistré sur l\'appareil.';
+
+  @override
+  String get terminerEtape => 'Déclarer l\'étape terminée';
+
+  @override
+  String get etapeDeclaree =>
+      'Étape déclarée terminée : elle attend sa validation.';
+
+  @override
+  String get terminerMention => 'Une autre personne devra valider l\'étape.';
+
+  @override
+  String get terminerConditions =>
+      'Pour terminer : métré atteint et tous les contrôles cochés.';
+
+  @override
+  String get leverBlocage => 'Lever le blocage';
+
+  @override
+  String get journalEtapeTitre => 'Journal d\'étape';
+
+  @override
+  String get journalEtapeSousTitre => 'Activité horodatée';
+
+  @override
+  String get localisation => 'Localisation';
+
+  @override
+  String get pointageActif => 'POINTAGE EN COURS';
+
+  @override
+  String get pointageArrete => 'POINTAGE EN PAUSE';
+
+  @override
+  String get mettreEnPause => 'Mettre en pause';
+
+  @override
+  String get reprendre => 'Reprendre';
+
+  @override
+  String get avancementMetre => 'Avancement du métré';
+
+  @override
+  String cible(String valeur) {
+    return 'Cible : $valeur';
+  }
+
+  @override
+  String surCible(String valeur) {
+    return 'sur $valeur';
+  }
+
+  @override
+  String get solde => 'Solde total';
+
+  @override
+  String get gammeSecurite => 'Gamme opératoire et sécurité';
+
+  @override
+  String get declarerBlocage => 'Déclarer un blocage';
+
+  @override
+  String get reaffecterEtape => 'Réaffecter à une autre équipe';
+
+  @override
+  String get blocageTitre => 'Déclarer un blocage';
+
+  @override
+  String get blocageMention =>
+      'L\'alerte part vers le bureau dès que la connexion revient.';
+
+  @override
+  String get transmettreBlocage => 'Transmettre l\'alerte de blocage';
+
+  @override
+  String get blocageTransmis => 'Blocage enregistré : l\'étape est arrêtée.';
+
+  @override
+  String get blocageNature => 'Nature du blocage';
+
+  @override
+  String get blocageArticle => 'Désigner l\'article manquant';
+
+  @override
+  String get blocageGravite => 'Gravité';
+
+  @override
+  String get blocageRetard => 'Retard estimé';
+
+  @override
+  String get blocageObservationsExemple =>
+      'Ex. livraison de ciment retardée de 3 h';
+
+  @override
+  String get controlesTitre => 'Contrôles et réception';
+
+  @override
+  String get controlesSousTitre => 'Étapes déclarées terminées';
+
+  @override
+  String signatureEtape(String id, String libelle) {
+    return 'Valider l\'étape $id : $libelle.';
+  }
+
+  @override
+  String get etapeValideeMessage => 'Étape validée.';
+
+  @override
+  String get etapeRefuseeMessage =>
+      'Reprise demandée : l\'étape repasse en cours.';
+
+  @override
+  String get aucunControle => 'Aucune étape à valider';
+
+  @override
+  String get aucunControleAide =>
+      'Les étapes déclarées terminées apparaîtront ici.';
+
+  @override
+  String declarePar(String nom) {
+    return 'Déclarée terminée par $nom';
+  }
+
+  @override
+  String get validerEtape => 'Valider';
+
+  @override
+  String get reaffectationTitre => 'Réaffectation';
+
+  @override
+  String get reaffectationMention =>
+      'La nouvelle équipe verra l\'étape sur sa fiche de route.';
+
+  @override
+  String get confirmerReaffectation => 'Confirmer la réaffectation';
+
+  @override
+  String reaffectationFaite(String equipe) {
+    return 'Étape confiée à $equipe.';
+  }
+
+  @override
+  String get reaffectationMotif => 'Motif';
+
+  @override
+  String get motifRetardPlanning => 'Retard de planning';
+
+  @override
+  String get motifAbsence => 'Absence d\'ouvriers';
+
+  @override
+  String get motifCompetence => 'Compétence requise';
+
+  @override
+  String get motifSurcroit => 'Surcroît d\'activité';
+
+  @override
+  String get reaffectationEquipe => 'Nouvelle équipe';
+
+  @override
+  String equipeDetail(String chef, int n) {
+    return 'Chef : $chef · $n ouvriers';
+  }
+
+  @override
+  String get chargeActuelle => 'Charge';
+
+  @override
+  String get reaffectationConsigne => 'Consigne de transmission';
+
+  @override
+  String get reaffectationConsigneExemple =>
+      'Ex. coffrage prêt, attendre la livraison du béton';
+
+  @override
+  String get dureePointee => 'temps pointé';
+
+  @override
+  String get evenementsTraces => 'événements tracés';
+
+  @override
+  String get aucunEvenement => 'Aucune activité';
+
+  @override
+  String get aucunEvenementAide =>
+      'Les démarrages, pointages et validations apparaîtront ici.';
+
+  @override
+  String pourcentRealise(int n) {
+    return '$n % réalisé';
+  }
+
+  @override
+  String get ouvrirFicheRoute => 'Ouvrir la fiche de route';
+
+  @override
+  String get maFicheDuJour => 'Ma fiche de route du jour';
+
+  @override
+  String get pointageRapide => 'Pointage rapide';
+
+  @override
+  String get prochainesEtapes => 'Prochaines étapes';
+
+  @override
+  String get aValiderPriorite => 'À valider en priorité';
+
+  @override
+  String nombreActions(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n actions',
+      one: '1 action',
+      zero: 'À jour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortiesAValiderDetail => 'Bons de matériel du magasin';
+
+  @override
+  String get etapesAControler => 'Étapes à contrôler';
+
+  @override
+  String get etapesAControlerDetail => 'Travaux déclarés terminés';
+
+  @override
+  String nombreEtapes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n étapes',
+      one: '1 étape',
+      zero: 'Aucune étape',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get blocagesPrioritaires => 'Blocages en cours';
+
+  @override
+  String get aucunBlocage => 'Aucune étape bloquée.';
+
+  @override
+  String get supervisionTravaux => 'Supervision des travaux et conformité';
+
+  @override
+  String get visasTechniques => 'Visas techniques';
+
+  @override
+  String get examinerEtapes => 'Examiner les étapes';
+
+  @override
+  String get syntheseChantier => 'Synthèse par corps d\'état';
+
+  @override
+  String etapesValideesSur(int faits, int total) {
+    return '$faits étapes validées sur $total';
+  }
+
+  @override
+  String get outilsPosteFixe => 'Outils complets sur poste fixe';
+
+  @override
+  String get outilsPosteFixeAide =>
+      'Plannings, équipes et exports se pilotent depuis le poste de pilotage web.';
 }

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-import '../../../components/surfaces.dart';
 import '../../../core/navigation/onglet_role.dart';
 import '../../../core/navigation/transitions.dart';
 import '../../../core/roles/role_terrain.dart';
-import '../../../theme/palette.dart';
 import '../../auth/domain/profil_utilisateur.dart';
+import '../../avancement/application/etat_avancement.dart';
+import '../../avancement/presentation/accueils_avancement.dart';
+import '../../avancement/presentation/ecrans_etapes.dart';
+import '../../avancement/presentation/ecrans_suivi.dart';
 import '../../profil/presentation/ecran_profil.dart';
 import '../../stock/application/etat_stock.dart';
 import '../../stock/presentation/accueils_stock.dart';
@@ -32,24 +33,33 @@ Widget racineOnglet({
       RoleTerrain.gestionnaireStock => AccueilGestionnaire(profil: profil),
       _ => const EcranRegistre(racine: true),
     },
-    OngletRole.historique => const EcranJournal(racine: true),
-    OngletRole.aValider => const EcranValidationStock(racine: true),
+    OngletRole.fiches => switch (role) {
+      RoleTerrain.technicien => AccueilTechnicien(profil: profil),
+      _ => const EcranFicheRoute(racine: true),
+    },
+    OngletRole.aValider => switch (role) {
+      RoleTerrain.chefChantier => AccueilChef(profil: profil),
+      RoleTerrain.responsableTechnique => AccueilResponsable(profil: profil),
+      _ => const EcranValidationStock(racine: true),
+    },
+    OngletRole.historique => switch (role) {
+      RoleTerrain.technicien => const EcranJournalEtape(racine: true),
+      _ => const EcranJournal(racine: true),
+    },
     OngletRole.synchro => const EcranSynchronisation(),
     OngletRole.profil => EcranProfil(profil: profil, role: role),
-    OngletRole.fiches => TableauDeBord(
-      profil: profil,
-      role: role,
-      blocs: const [_EnPreparation()],
-    ),
   };
 }
 
-/// Compteurs affichés sur les onglets (éléments à valider…).
+/// Compteurs affichés sur les onglets : ce qui attend une décision du rôle.
 Map<OngletRole, int> pastillesOnglets(WidgetRef ref, RoleTerrain role) {
-  return {
-    if (role.peutValiderStock)
-      OngletRole.aValider: ref.watch(sortiesAValiderProvider).length,
-  };
+  final sorties = role.peutValiderStock
+      ? ref.watch(sortiesAValiderProvider).length
+      : 0;
+  final etapes = role.peutValiderEtapes
+      ? ref.watch(etapesAValiderProvider).length
+      : 0;
+  return {OngletRole.aValider: sorties + etapes};
 }
 
 /// Ouvre le centre de synchronisation : l'onglet s'il existe pour ce rôle,
@@ -64,16 +74,3 @@ void ouvrirSynchronisation(BuildContext context) {
 /// Texte de contexte commun aux en-têtes : marque et chantier.
 String surTitreChantier(ProfilUtilisateur profil) =>
     'SCHIAVONE GROUP · ${profil.perimetre}';
-
-class _EnPreparation extends StatelessWidget {
-  const _EnPreparation();
-
-  @override
-  Widget build(BuildContext context) {
-    return EtatVide(
-      icone: PhosphorIconsRegular.hardHat,
-      titre: context.t.ongletFiches,
-      texte: context.t.moduleEnPreparation,
-    );
-  }
-}
