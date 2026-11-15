@@ -108,7 +108,7 @@ export function Tabs({ intitule, onglets, actif, onChanger, children, className 
                 <span
                   className={cn(
                     'rounded-full px-1.5 py-0.5 text-xs font-bold',
-                    estActif ? 'bg-marine text-white' : 'bg-fond-alt text-texte-secondaire',
+                    estActif ? 'bg-encre text-white' : 'bg-fond-alt text-texte-secondaire',
                   )}
                 >
                   {onglet.badge}
@@ -120,7 +120,7 @@ export function Tabs({ intitule, onglets, actif, onChanger, children, className 
               <span
                 aria-hidden
                 className={cn(
-                  'absolute inset-x-2 bottom-0 h-0.5 origin-center rounded-full bg-marine',
+                  'absolute inset-x-2 bottom-0 h-0.5 origin-center rounded-full bg-encre',
                   'transition-transform duration-[var(--duree-survol)] ease-out',
                   estActif ? 'scale-x-100' : 'scale-x-0',
                 )}

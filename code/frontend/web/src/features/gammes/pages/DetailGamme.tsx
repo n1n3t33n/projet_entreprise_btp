@@ -211,7 +211,7 @@ export function DetailGamme({
             </div>
 
             {gamme.statut === 'active' && (
-              <div className="rounded-lg border border-marine/20 bg-marine/5 p-3">
+              <div className="rounded-lg border border-marine/20 bg-encre/5 p-3">
                 <p className="text-sm text-texte-secondaire">
                   Cette version est en service : ses étapes sont figées. Pour la faire évoluer,
                   créez une nouvelle version, modifiez ses étapes, puis publiez-la.

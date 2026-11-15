@@ -26,7 +26,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 }
 
 const PAR_VARIANTE: Record<VarianteBouton, string> = {
-  primaire: 'bg-marine text-white shadow-douce hover:bg-marine/90 active:bg-marine',
+  primaire: 'bg-primaire text-sur-primaire shadow-douce hover:bg-primaire/90 active:bg-primaire',
   secondaire: 'border border-bordure bg-surface text-texte hover:bg-fond active:bg-fond-alt',
   discret: 'text-texte-secondaire hover:bg-fond hover:text-texte active:bg-fond-alt',
   danger: 'bg-danger text-white shadow-douce hover:bg-danger/90 active:bg-danger',
@@ -73,7 +73,7 @@ export function Button({
       disabled={neutralise}
       aria-busy={enChargement || undefined}
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-controle font-semibold',
+        'inline-flex shrink-0 items-center justify-center rounded-full font-semibold',
         'transition-[background-color,border-color,box-shadow,transform] ease-out',
         'duration-[var(--duree-bouton)]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle',

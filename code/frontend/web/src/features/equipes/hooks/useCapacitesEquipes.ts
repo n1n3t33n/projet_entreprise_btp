@@ -4,7 +4,10 @@
 */
 
 import { useRole } from '@/app/role-context'
-import { capacitesEquipesPourRole, type CapacitesEquipes } from '@/features/equipes/config/capacites'
+import {
+  capacitesEquipesPourRole,
+  type CapacitesEquipes,
+} from '@/features/equipes/config/capacites'
 
 export function useCapacitesEquipes(): CapacitesEquipes {
   const { role } = useRole()

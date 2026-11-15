@@ -17,7 +17,17 @@
 
 import { useMemo, useState } from 'react'
 import { FileArrowUp, MagnifyingGlass } from '@phosphor-icons/react'
-import { Button, Card, type ColonneTable, FormField, Select, StatusPill, Table, Textarea, useToast } from '@/components/ui'
+import {
+  Button,
+  Card,
+  type ColonneTable,
+  FormField,
+  Select,
+  StatusPill,
+  Table,
+  Textarea,
+  useToast,
+} from '@/components/ui'
 import { analyserImport, confirmerImport } from '@/features/admin/api/import-csv'
 import type { CibleImport, LigneImport, RapportImport } from '@/features/admin/types/import-csv'
 
@@ -101,9 +111,7 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
     const colonnesDonnees = rapport.colonnes.map<ColonneTable<LigneImport>>((nom, index) => ({
       cle: `col-${index}`,
       entete: nom,
-      rendu: (ligne) => (
-        <span className="text-sm text-texte">{ligne.valeurs[index] ?? ''}</span>
-      ),
+      rendu: (ligne) => <span className="text-sm text-texte">{ligne.valeurs[index] ?? ''}</span>,
     }))
     return [
       {
@@ -131,7 +139,9 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
     <Card
       titre="Import CSV des référentiels"
       description="Charger en une fois les données initiales d'un référentiel, après contrôle ligne par ligne"
-      actions={peutImporter ? undefined : <StatusPill ton="neutre" taille="sm" libelle="Lecture seule" />}
+      actions={
+        peutImporter ? undefined : <StatusPill ton="neutre" taille="sm" libelle="Lecture seule" />
+      }
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[18rem,1fr]">
         <div className="flex flex-col gap-4">
@@ -189,7 +199,9 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
               disabled={!peutImporter}
               onChange={(evenement) => changerContenu(evenement.target.value)}
               rows={10}
-              placeholder={'code;libelle;unite;seuil_minimal;seuil_critique\nCIM-01;Ciment CPA 42.5;sac;50;20'}
+              placeholder={
+                'code;libelle;unite;seuil_minimal;seuil_critique\nCIM-01;Ciment CPA 42.5;sac;50;20'
+              }
               className="font-mono text-xs"
             />
           )}

@@ -142,7 +142,8 @@ export function listerFichesMembre(idUtilisateur: string): FicheRouteDto[] {
 
 /** Crée une fiche de route affectée à un membre, à partir d'étapes connues. */
 export function creerFicheMock(corps: Record<string, unknown>): FicheRouteDto | undefined {
-  const idUtilisateur = typeof corps.utilisateur_id_utilisateur === 'string' ? corps.utilisateur_id_utilisateur : ''
+  const idUtilisateur =
+    typeof corps.utilisateur_id_utilisateur === 'string' ? corps.utilisateur_id_utilisateur : ''
   const membre = membreExiste(idUtilisateur)
   if (!membre) {
     return undefined
@@ -165,7 +166,10 @@ export function creerFicheMock(corps: Record<string, unknown>): FicheRouteDto | 
     utilisateur_id_utilisateur: idUtilisateur,
     nom_utilisateur: membre.nom_utilisateur,
     type_cycle: typeCycle,
-    date_debut: typeof corps.date_debut === 'string' ? corps.date_debut : new Date().toISOString().slice(0, 10),
+    date_debut:
+      typeof corps.date_debut === 'string'
+        ? corps.date_debut
+        : new Date().toISOString().slice(0, 10),
     date_fin: typeof corps.date_fin === 'string' ? corps.date_fin : null,
     statut: 'OUVERTE',
     ids_etapes: idsEtapes,

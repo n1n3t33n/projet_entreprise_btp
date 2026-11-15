@@ -67,7 +67,7 @@ export function Modal({
         aria-hidden
         onClick={fermetureParVoile ? onFermer : undefined}
         className={cn(
-          'absolute inset-0 bg-marine/40',
+          'absolute inset-0 bg-encre/40',
           phase === 'entree' ? 'animate-voile-entree' : 'animate-voile-sortie',
         )}
       />

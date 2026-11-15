@@ -9,15 +9,8 @@
 */
 
 import { http } from '@/lib/api/http'
-import type {
-  RapportImportDto,
-  ResultatImportDto,
-} from '@/features/admin/api/import-csv-dto'
-import type {
-  CibleImport,
-  RapportImport,
-  ResultatImport,
-} from '@/features/admin/types/import-csv'
+import type { RapportImportDto, ResultatImportDto } from '@/features/admin/api/import-csv-dto'
+import type { CibleImport, RapportImport, ResultatImport } from '@/features/admin/types/import-csv'
 
 function mapperRapport(dto: RapportImportDto): RapportImport {
   return {
@@ -40,7 +33,10 @@ export async function analyserImport(cible: CibleImport, contenu: string): Promi
 }
 
 /** Confirme un import après analyse (EF-ADM-02, second temps). */
-export async function confirmerImport(cible: CibleImport, contenu: string): Promise<ResultatImport> {
+export async function confirmerImport(
+  cible: CibleImport,
+  contenu: string,
+): Promise<ResultatImport> {
   const reponse = await http.post<ResultatImportDto>('/import/confirmation', { cible, contenu })
   return { cible: reponse.data.cible, nombreImportees: reponse.data.nombre_importees }
 }
