@@ -1228,4 +1228,59 @@ class TraductionsFr extends Traductions {
   @override
   String get outilsPosteFixeAide =>
       'Plannings, équipes et exports se pilotent depuis le poste de pilotage web.';
+
+  @override
+  String synchroTerminee(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n éléments envoyés.',
+      one: '1 élément envoyé.',
+      zero: 'Rien à envoyer.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get derniereSynchro => 'Dernière synchronisation';
+
+  @override
+  String get jamais => 'Jamais';
+
+  @override
+  String get synchroniserMaintenant => 'Synchroniser maintenant';
+
+  @override
+  String get conflitsTitre => 'Écarts à arbitrer';
+
+  @override
+  String get conflitExplication =>
+      'La quantité saisie sur l\'appareil dépasse ce que le serveur connaît.';
+
+  @override
+  String get cetAppareil => 'Sortie saisie ici';
+
+  @override
+  String get serveur => 'Stock connu du bureau';
+
+  @override
+  String get resolutionServeur => 'Suivre le bureau (recommandé)';
+
+  @override
+  String get resolutionServeurDetail =>
+      'La sortie est ramenée à la quantité disponible.';
+
+  @override
+  String get resolutionLocale => 'Garder la saisie du terrain';
+
+  @override
+  String get resolutionLocaleDetail =>
+      'Le stock deviendra négatif et sera signalé.';
+
+  @override
+  String get resolutionArbitrage => 'Demander un arbitrage';
+
+  @override
+  String get resolutionArbitrageDetail =>
+      'La décision est renvoyée au conducteur de travaux.';
 }

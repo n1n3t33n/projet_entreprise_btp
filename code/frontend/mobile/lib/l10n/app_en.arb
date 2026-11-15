@@ -349,5 +349,19 @@
   "syntheseChantier": "Summary by trade",
   "etapesValideesSur": "{faits} of {total} steps approved",
   "outilsPosteFixe": "Full tools on desktop",
-  "outilsPosteFixeAide": "Schedules, crews and exports are managed from the web control desk."
+  "outilsPosteFixeAide": "Schedules, crews and exports are managed from the web control desk.",
+  "synchroTerminee": "{n, plural, =0{Nothing to send.} =1{1 item sent.} other{{n} items sent.}}",
+  "derniereSynchro": "Last synchronisation",
+  "jamais": "Never",
+  "synchroniserMaintenant": "Sync now",
+  "conflitsTitre": "Differences to settle",
+  "conflitExplication": "The quantity entered on this device is more than the server knows.",
+  "cetAppareil": "Issue entered here",
+  "serveur": "Stock known to the office",
+  "resolutionServeur": "Follow the office (recommended)",
+  "resolutionServeurDetail": "The issue is reduced to the available quantity.",
+  "resolutionLocale": "Keep the field entry",
+  "resolutionLocaleDetail": "Stock will become negative and will be flagged.",
+  "resolutionArbitrage": "Ask for a decision",
+  "resolutionArbitrageDetail": "The decision is sent to the site supervisor."
 }

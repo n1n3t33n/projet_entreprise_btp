@@ -1230,4 +1230,59 @@ class TraductionsIt extends Traductions {
   @override
   String get outilsPosteFixeAide =>
       'Pianificazioni, squadre ed esportazioni si gestiscono dalla postazione web.';
+
+  @override
+  String synchroTerminee(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n elementi inviati.',
+      one: '1 elemento inviato.',
+      zero: 'Niente da inviare.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get derniereSynchro => 'Ultima sincronizzazione';
+
+  @override
+  String get jamais => 'Mai';
+
+  @override
+  String get synchroniserMaintenant => 'Sincronizza ora';
+
+  @override
+  String get conflitsTitre => 'Differenze da risolvere';
+
+  @override
+  String get conflitExplication =>
+      'La quantità inserita sul dispositivo supera quella nota al server.';
+
+  @override
+  String get cetAppareil => 'Uscita inserita qui';
+
+  @override
+  String get serveur => 'Giacenza nota all\'ufficio';
+
+  @override
+  String get resolutionServeur => 'Seguire l\'ufficio (consigliato)';
+
+  @override
+  String get resolutionServeurDetail =>
+      'L\'uscita è ridotta alla quantità disponibile.';
+
+  @override
+  String get resolutionLocale => 'Mantenere l\'inserimento di cantiere';
+
+  @override
+  String get resolutionLocaleDetail =>
+      'La giacenza diventerà negativa e sarà segnalata.';
+
+  @override
+  String get resolutionArbitrage => 'Chiedere una decisione';
+
+  @override
+  String get resolutionArbitrageDetail =>
+      'La decisione è rimessa al direttore dei lavori.';
 }

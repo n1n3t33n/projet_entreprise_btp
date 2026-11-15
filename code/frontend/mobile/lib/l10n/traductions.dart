@@ -2199,6 +2199,90 @@ abstract class Traductions {
   /// In fr, this message translates to:
   /// **'Plannings, équipes et exports se pilotent depuis le poste de pilotage web.'**
   String get outilsPosteFixeAide;
+
+  /// No description provided for @synchroTerminee.
+  ///
+  /// In fr, this message translates to:
+  /// **'{n, plural, =0{Rien à envoyer.} =1{1 élément envoyé.} other{{n} éléments envoyés.}}'**
+  String synchroTerminee(int n);
+
+  /// No description provided for @derniereSynchro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dernière synchronisation'**
+  String get derniereSynchro;
+
+  /// No description provided for @jamais.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jamais'**
+  String get jamais;
+
+  /// No description provided for @synchroniserMaintenant.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchroniser maintenant'**
+  String get synchroniserMaintenant;
+
+  /// No description provided for @conflitsTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écarts à arbitrer'**
+  String get conflitsTitre;
+
+  /// No description provided for @conflitExplication.
+  ///
+  /// In fr, this message translates to:
+  /// **'La quantité saisie sur l\'appareil dépasse ce que le serveur connaît.'**
+  String get conflitExplication;
+
+  /// No description provided for @cetAppareil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sortie saisie ici'**
+  String get cetAppareil;
+
+  /// No description provided for @serveur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock connu du bureau'**
+  String get serveur;
+
+  /// No description provided for @resolutionServeur.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivre le bureau (recommandé)'**
+  String get resolutionServeur;
+
+  /// No description provided for @resolutionServeurDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'La sortie est ramenée à la quantité disponible.'**
+  String get resolutionServeurDetail;
+
+  /// No description provided for @resolutionLocale.
+  ///
+  /// In fr, this message translates to:
+  /// **'Garder la saisie du terrain'**
+  String get resolutionLocale;
+
+  /// No description provided for @resolutionLocaleDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le stock deviendra négatif et sera signalé.'**
+  String get resolutionLocaleDetail;
+
+  /// No description provided for @resolutionArbitrage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Demander un arbitrage'**
+  String get resolutionArbitrage;
+
+  /// No description provided for @resolutionArbitrageDetail.
+  ///
+  /// In fr, this message translates to:
+  /// **'La décision est renvoyée au conducteur de travaux.'**
+  String get resolutionArbitrageDetail;
 }
 
 class _TraductionsDelegate extends LocalizationsDelegate<Traductions> {

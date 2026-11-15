@@ -666,5 +666,26 @@
     }
   },
   "outilsPosteFixe": "Outils complets sur poste fixe",
-  "outilsPosteFixeAide": "Plannings, équipes et exports se pilotent depuis le poste de pilotage web."
+  "outilsPosteFixeAide": "Plannings, équipes et exports se pilotent depuis le poste de pilotage web.",
+  "synchroTerminee": "{n, plural, =0{Rien à envoyer.} =1{1 élément envoyé.} other{{n} éléments envoyés.}}",
+  "@synchroTerminee": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "derniereSynchro": "Dernière synchronisation",
+  "jamais": "Jamais",
+  "synchroniserMaintenant": "Synchroniser maintenant",
+  "conflitsTitre": "Écarts à arbitrer",
+  "conflitExplication": "La quantité saisie sur l'appareil dépasse ce que le serveur connaît.",
+  "cetAppareil": "Sortie saisie ici",
+  "serveur": "Stock connu du bureau",
+  "resolutionServeur": "Suivre le bureau (recommandé)",
+  "resolutionServeurDetail": "La sortie est ramenée à la quantité disponible.",
+  "resolutionLocale": "Garder la saisie du terrain",
+  "resolutionLocaleDetail": "Le stock deviendra négatif et sera signalé.",
+  "resolutionArbitrage": "Demander un arbitrage",
+  "resolutionArbitrageDetail": "La décision est renvoyée au conducteur de travaux."
 }

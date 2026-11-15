@@ -1220,4 +1220,59 @@ class TraductionsEn extends Traductions {
   @override
   String get outilsPosteFixeAide =>
       'Schedules, crews and exports are managed from the web control desk.';
+
+  @override
+  String synchroTerminee(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n items sent.',
+      one: '1 item sent.',
+      zero: 'Nothing to send.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get derniereSynchro => 'Last synchronisation';
+
+  @override
+  String get jamais => 'Never';
+
+  @override
+  String get synchroniserMaintenant => 'Sync now';
+
+  @override
+  String get conflitsTitre => 'Differences to settle';
+
+  @override
+  String get conflitExplication =>
+      'The quantity entered on this device is more than the server knows.';
+
+  @override
+  String get cetAppareil => 'Issue entered here';
+
+  @override
+  String get serveur => 'Stock known to the office';
+
+  @override
+  String get resolutionServeur => 'Follow the office (recommended)';
+
+  @override
+  String get resolutionServeurDetail =>
+      'The issue is reduced to the available quantity.';
+
+  @override
+  String get resolutionLocale => 'Keep the field entry';
+
+  @override
+  String get resolutionLocaleDetail =>
+      'Stock will become negative and will be flagged.';
+
+  @override
+  String get resolutionArbitrage => 'Ask for a decision';
+
+  @override
+  String get resolutionArbitrageDetail =>
+      'The decision is sent to the site supervisor.';
 }

@@ -349,5 +349,19 @@
   "syntheseChantier": "Sintesi per categoria di lavoro",
   "etapesValideesSur": "{faits} fasi validate su {total}",
   "outilsPosteFixe": "Strumenti completi da postazione fissa",
-  "outilsPosteFixeAide": "Pianificazioni, squadre ed esportazioni si gestiscono dalla postazione web."
+  "outilsPosteFixeAide": "Pianificazioni, squadre ed esportazioni si gestiscono dalla postazione web.",
+  "synchroTerminee": "{n, plural, =0{Niente da inviare.} =1{1 elemento inviato.} other{{n} elementi inviati.}}",
+  "derniereSynchro": "Ultima sincronizzazione",
+  "jamais": "Mai",
+  "synchroniserMaintenant": "Sincronizza ora",
+  "conflitsTitre": "Differenze da risolvere",
+  "conflitExplication": "La quantità inserita sul dispositivo supera quella nota al server.",
+  "cetAppareil": "Uscita inserita qui",
+  "serveur": "Giacenza nota all'ufficio",
+  "resolutionServeur": "Seguire l'ufficio (consigliato)",
+  "resolutionServeurDetail": "L'uscita è ridotta alla quantità disponibile.",
+  "resolutionLocale": "Mantenere l'inserimento di cantiere",
+  "resolutionLocaleDetail": "La giacenza diventerà negativa e sarà segnalata.",
+  "resolutionArbitrage": "Chiedere una decisione",
+  "resolutionArbitrageDetail": "La decisione è rimessa al direttore dei lavori."
 }

@@ -3,6 +3,7 @@ import 'package:chantiersync_mobile/core/outils/identifiants.dart';
 import 'package:chantiersync_mobile/core/roles/role_terrain.dart';
 import 'package:chantiersync_mobile/core/stockage/magasin_documents.dart';
 import 'package:chantiersync_mobile/features/sync/data/depot_file_envoi.dart';
+import 'package:chantiersync_mobile/features/sync/data/moteur_synchronisation.dart';
 import 'package:chantiersync_mobile/features/sync/domain/statut_envoi.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -125,6 +126,37 @@ void main() {
       expect(initiales('Mamadou Koné'), 'MK');
       expect(initiales('  kouassi  '), 'K');
       expect(initiales(''), '?');
+    });
+  });
+  group('synchronisation', () {
+    test('synchroniser envoie la file une seule fois', () async {
+      final file = DepotFileEnvoiMemoire();
+      final moteur = MoteurSynchronisation(MagasinDocumentsMemoire(), file);
+      await file.enfiler(
+        uuid: 'a',
+        type: 'MOUVEMENT_STOCK',
+        chargeUtile: const {},
+      );
+      await file.enfiler(
+        uuid: 'b',
+        type: 'EVENEMENT_ETAPE',
+        chargeUtile: const {},
+      );
+
+      expect(await moteur.synchroniser(), 2);
+      expect((await file.lister()).every((e) => !e.enAttente), isTrue);
+      expect(await moteur.synchroniser(), 0);
+      expect((await moteur.etat()).derniere, isNotNull);
+    });
+
+    test('un conflit disparait une fois tranche', () async {
+      final moteur = MoteurSynchronisation(
+        MagasinDocumentsMemoire(),
+        DepotFileEnvoiMemoire(),
+      );
+      final conflit = (await moteur.etat()).conflits.single;
+      await moteur.resoudre(conflit.id, ResolutionConflit.prioriteServeur);
+      expect((await moteur.etat()).conflits, isEmpty);
     });
   });
 }
