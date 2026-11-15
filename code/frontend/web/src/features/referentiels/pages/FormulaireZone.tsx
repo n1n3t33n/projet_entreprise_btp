@@ -10,6 +10,7 @@ import { Button, FormField, Input, Modal, Select, useToast } from '@/components/
 import { creerZone, modifierZone } from '@/features/referentiels/api'
 import { TYPES_ZONE } from '@/features/referentiels/presentation/libelles'
 import type { SaisieZone, TypeZone, Zone } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireZoneProps = {
   ouvert: boolean
@@ -54,10 +55,10 @@ export function FormulaireZone({
 
     const prochaines: ErreursZone = {}
     if (code.trim() === '') {
-      prochaines.code = 'Saisir un code zone.'
+      prochaines.code = tr('Saisir un code zone.')
     }
     if (nom.trim() === '') {
-      prochaines.nom = 'Saisir un nom.'
+      prochaines.nom = tr('Saisir un nom.')
     }
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) {
@@ -80,7 +81,7 @@ export function FormulaireZone({
       }
       afficherToast({
         ton: 'succes',
-        titre: modeModification ? 'Zone modifiée' : 'Zone créée',
+        titre: modeModification ? tr('Zone modifiée') : tr('Zone créée'),
         message: `${saisie.code} · ${saisie.nom}`,
       })
       onFermer()
@@ -88,7 +89,7 @@ export function FormulaireZone({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "La zone n'a pas pu être enregistrée",
+        titre: tr("La zone n'a pas pu être enregistrée"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -100,22 +101,22 @@ export function FormulaireZone({
     <Modal
       ouvert={ouvert}
       onFermer={onFermer}
-      titre={modeModification ? 'Modifier la zone' : 'Nouvelle zone'}
-      description="Découpage du chantier"
+      titre={modeModification ? tr('Modifier la zone') : tr('Nouvelle zone')}
+      description={tr('Découpage du chantier')}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button variante="primaire" type="submit" form="formulaire-zone" enChargement={enCours}>
-            {modeModification ? 'Enregistrer' : 'Créer la zone'}
+            {modeModification ? tr('Enregistrer') : tr('Créer la zone')}
           </Button>
         </>
       }
     >
       <form id="formulaire-zone" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Code zone" requis erreur={erreurs.code}>
+          <FormField libelle={tr('Code zone')} requis erreur={erreurs.code}>
             {(champ) => (
               <Input
                 {...champ}
@@ -127,7 +128,7 @@ export function FormulaireZone({
             )}
           </FormField>
 
-          <FormField libelle="Type de zone" requis>
+          <FormField libelle={tr('Type de zone')} requis>
             {(champ) => (
               <Select
                 {...champ}
@@ -144,14 +145,14 @@ export function FormulaireZone({
           </FormField>
         </div>
 
-        <FormField libelle="Nom" requis erreur={erreurs.nom}>
+        <FormField libelle={tr('Nom')} requis erreur={erreurs.nom}>
           {(champ) => (
             <Input
               {...champ}
               invalide={Boolean(erreurs.nom)}
               value={nom}
               onChange={(evenement) => setNom(evenement.target.value)}
-              placeholder="ex. Bâtiment A"
+              placeholder={tr('ex. Bâtiment A')}
             />
           )}
         </FormField>

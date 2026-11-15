@@ -12,6 +12,7 @@ import { Button, FormField, Input, Modal, Select, useToast } from '@/components/
 import { creerParametre, modifierParametre } from '@/features/parametrage/api'
 import { TYPES_VALEUR } from '@/features/parametrage/presentation/libelles'
 import type { ParametreChantier, SaisieParametre, TypeValeur } from '@/features/parametrage/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireParametreProps = {
   ouvert: boolean
@@ -57,10 +58,10 @@ export function FormulaireParametre({
   async function soumettre(evenement: FormEvent) {
     evenement.preventDefault()
     const prochaines: Erreurs = {}
-    if (!modeModification && cle.trim() === '') prochaines.cle = 'Saisir une clé.'
-    if (valeur.trim() === '') prochaines.valeur = 'Saisir une valeur.'
+    if (!modeModification && cle.trim() === '') prochaines.cle = tr('Saisir une clé.')
+    if (valeur.trim() === '') prochaines.valeur = tr('Saisir une valeur.')
     if ((typeValeur === 'entier' || typeValeur === 'decimal') && Number.isNaN(Number(valeur))) {
-      prochaines.valeur = 'Saisir un nombre valide.'
+      prochaines.valeur = tr('Saisir un nombre valide.')
     }
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) return
@@ -81,7 +82,7 @@ export function FormulaireParametre({
       }
       afficherToast({
         ton: 'succes',
-        titre: modeModification ? 'Paramètre modifié' : 'Paramètre créé',
+        titre: modeModification ? tr('Paramètre modifié') : tr('Paramètre créé'),
         message: `${saisie.cle} = ${saisie.valeur}`,
       })
       onFermer()
@@ -89,7 +90,7 @@ export function FormulaireParametre({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "Le paramètre n'a pas pu être enregistré",
+        titre: tr("Le paramètre n'a pas pu être enregistré"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -101,12 +102,12 @@ export function FormulaireParametre({
     <Modal
       ouvert={ouvert}
       onFermer={onFermer}
-      titre={modeModification ? 'Modifier le paramètre' : 'Nouveau paramètre'}
-      description="Réglage du chantier"
+      titre={modeModification ? tr('Modifier le paramètre') : tr('Nouveau paramètre')}
+      description={tr('Réglage du chantier')}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button
             variante="primaire"
@@ -114,7 +115,7 @@ export function FormulaireParametre({
             form="formulaire-parametre"
             enChargement={enCours}
           >
-            {modeModification ? 'Enregistrer' : 'Créer'}
+            {modeModification ? tr('Enregistrer') : tr('Créer')}
           </Button>
         </>
       }
@@ -126,7 +127,7 @@ export function FormulaireParametre({
         noValidate
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Clé" requis={!modeModification} erreur={erreurs.cle}>
+          <FormField libelle={tr('Clé')} requis={!modeModification} erreur={erreurs.cle}>
             {(champ) => (
               <Input
                 {...champ}
@@ -139,7 +140,7 @@ export function FormulaireParametre({
             )}
           </FormField>
 
-          <FormField libelle="Type de valeur" requis>
+          <FormField libelle={tr('Type de valeur')} requis>
             {(champ) => (
               <Select
                 {...champ}
@@ -156,12 +157,12 @@ export function FormulaireParametre({
           </FormField>
         </div>
 
-        <FormField libelle="Valeur" requis erreur={erreurs.valeur}>
+        <FormField libelle={tr('Valeur')} requis erreur={erreurs.valeur}>
           {(champ) =>
             typeValeur === 'booleen' ? (
               <Select {...champ} value={valeur} onChange={(e) => setValeur(e.target.value)}>
-                <option value="true">Oui</option>
-                <option value="false">Non</option>
+                <option value="true">{tr('Oui')}</option>
+                <option value="false">{tr('Non')}</option>
               </Select>
             ) : (
               <Input
@@ -176,7 +177,10 @@ export function FormulaireParametre({
           }
         </FormField>
 
-        <FormField libelle="Libellé" aide="Description lisible du paramètre (facultatif).">
+        <FormField
+          libelle={tr('Libellé')}
+          aide={tr('Description lisible du paramètre (facultatif).')}
+        >
           {(champ) => (
             <Input
               {...champ}

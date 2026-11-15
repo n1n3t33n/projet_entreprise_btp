@@ -2,7 +2,7 @@
   Éditeur des étapes-modèles d'une gamme en brouillon (EF-REF-05).
 
   N'est ouvert que pour une gamme BROUILLON : une gamme publiée est un contrat
-  figé. L'éditeur montre en permanence le poids total, car c'est lui qui sert de
+  figé. Ltr('éditeur montre en permanence le poids total, car c')est lui qui sert de
   dénominateur au calcul d'avancement (RG-A6) ; rien n'impose un total de 100,
   mais l'afficher évite les gammes déséquilibrées par inadvertance.
 */
@@ -13,6 +13,7 @@ import { Button, Drawer, Input, Select, useToast } from '@/components/ui'
 import { enregistrerEtapes } from '@/features/gammes/api'
 import { formatPourcentage } from '@/lib/format'
 import type { CorpsEtat, EtapeModele, SaisieEtapeModele } from '@/features/gammes/types'
+import { tr } from '@/i18n/tr'
 
 export type EditeurEtapesProps = {
   ouvert: boolean
@@ -99,8 +100,8 @@ export function EditeurEtapes({
     if (valides.length === 0) {
       afficherToast({
         ton: 'danger',
-        titre: 'Gamme vide',
-        message: 'Ajouter au moins une étape avant d’enregistrer.',
+        titre: tr('Gamme vide'),
+        message: tr('Ajouter au moins une étape avant d’enregistrer.'),
       })
       return
     }
@@ -120,7 +121,7 @@ export function EditeurEtapes({
       await enregistrerEtapes(idGamme, saisies)
       afficherToast({
         ton: 'succes',
-        titre: 'Étapes enregistrées',
+        titre: tr('Étapes enregistrées'),
         message: `${saisies.length} étape${saisies.length > 1 ? 's' : ''} · poids total ${poidsTotal}`,
       })
       onFermer()
@@ -128,7 +129,7 @@ export function EditeurEtapes({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "Les étapes n'ont pas pu être enregistrées",
+        titre: tr("Les étapes n'ont pas pu être enregistrées"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -140,7 +141,7 @@ export function EditeurEtapes({
     <Drawer
       ouvert={ouvert}
       onFermer={onFermer}
-      titre="Modifier les étapes"
+      titre={tr('Modifier les étapes')}
       description={libelleGamme}
       largeur="lg"
       pied={
@@ -151,10 +152,10 @@ export function EditeurEtapes({
           </span>
           <div className="flex gap-2">
             <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-              Annuler
+              {tr('Annuler')}
             </Button>
             <Button variante="primaire" onClick={enregistrer} enChargement={enCours}>
-              Enregistrer les étapes
+              {tr('Enregistrer les étapes')}
             </Button>
           </div>
         </div>
@@ -179,12 +180,12 @@ export function EditeurEtapes({
             <Input
               value={ligne.libelle}
               onChange={(evenement) => modifier(ligne.cleLocale, 'libelle', evenement.target.value)}
-              placeholder="Libellé de l'étape"
+              placeholder={tr("Libellé de l'étape")}
             />
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <Select
                 value={ligne.codeCorpsEtat}
-                aria-label="Corps d'état"
+                aria-label={tr("Corps d'état")}
                 onChange={(evenement) =>
                   modifier(ligne.cleLocale, 'codeCorpsEtat', evenement.target.value)
                 }
@@ -200,9 +201,9 @@ export function EditeurEtapes({
                 min={0}
                 step="0.1"
                 value={ligne.poids}
-                aria-label="Poids"
+                aria-label={tr('Poids')}
                 onChange={(evenement) => modifier(ligne.cleLocale, 'poids', evenement.target.value)}
-                placeholder="Poids"
+                placeholder={tr('Poids')}
               />
               <label className="flex items-center gap-2 text-sm text-texte">
                 <input
@@ -213,14 +214,14 @@ export function EditeurEtapes({
                   }
                   className="h-4 w-4 rounded border-bordure"
                 />
-                Contrôle requis
+                {tr('Contrôle requis')}
               </label>
             </div>
           </div>
         ))}
 
         <Button variante="secondaire" icone={Plus} onClick={ajouter}>
-          Ajouter une étape
+          {tr('Ajouter une étape')}
         </Button>
       </div>
     </Drawer>

@@ -8,6 +8,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Button, FormField, Input, Modal, Select, useToast } from '@/components/ui'
 import { creerMagasin, modifierMagasin } from '@/features/referentiels/api'
 import type { Chantier, MagasinVue, SaisieMagasin } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireMagasinProps = {
   ouvert: boolean
@@ -53,13 +54,13 @@ export function FormulaireMagasin({
 
     const prochaines: ErreursMagasin = {}
     if (code.trim() === '') {
-      prochaines.code = 'Saisir un code magasin.'
+      prochaines.code = tr('Saisir un code magasin.')
     }
     if (nom.trim() === '') {
-      prochaines.nom = 'Saisir un nom.'
+      prochaines.nom = tr('Saisir un nom.')
     }
     if (idChantier === '') {
-      prochaines.chantier = 'Choisir un chantier de rattachement.'
+      prochaines.chantier = tr('Choisir un chantier de rattachement.')
     }
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) {
@@ -82,7 +83,7 @@ export function FormulaireMagasin({
       }
       afficherToast({
         ton: 'succes',
-        titre: modeModification ? 'Magasin modifié' : 'Magasin créé',
+        titre: modeModification ? tr('Magasin modifié') : tr('Magasin créé'),
         message: `${saisie.code} · ${saisie.nom}`,
       })
       onFermer()
@@ -90,7 +91,7 @@ export function FormulaireMagasin({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "Le magasin n'a pas pu être enregistré",
+        titre: tr("Le magasin n'a pas pu être enregistré"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -102,12 +103,12 @@ export function FormulaireMagasin({
     <Modal
       ouvert={ouvert}
       onFermer={onFermer}
-      titre={modeModification ? 'Modifier le magasin' : 'Nouveau magasin'}
-      description="Référentiel des magasins"
+      titre={modeModification ? tr('Modifier le magasin') : tr('Nouveau magasin')}
+      description={tr('Référentiel des magasins')}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button
             variante="primaire"
@@ -115,14 +116,14 @@ export function FormulaireMagasin({
             form="formulaire-magasin"
             enChargement={enCours}
           >
-            {modeModification ? 'Enregistrer' : 'Créer le magasin'}
+            {modeModification ? tr('Enregistrer') : tr('Créer le magasin')}
           </Button>
         </>
       }
     >
       <form id="formulaire-magasin" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Code magasin" requis erreur={erreurs.code}>
+          <FormField libelle={tr('Code magasin')} requis erreur={erreurs.code}>
             {(champ) => (
               <Input
                 {...champ}
@@ -134,7 +135,7 @@ export function FormulaireMagasin({
             )}
           </FormField>
 
-          <FormField libelle="Chantier de rattachement" requis erreur={erreurs.chantier}>
+          <FormField libelle={tr('Chantier de rattachement')} requis erreur={erreurs.chantier}>
             {(champ) => (
               <Select
                 {...champ}
@@ -153,7 +154,7 @@ export function FormulaireMagasin({
           </FormField>
         </div>
 
-        <FormField libelle="Nom du magasin" requis erreur={erreurs.nom}>
+        <FormField libelle={tr('Nom du magasin')} requis erreur={erreurs.nom}>
           {(champ) => (
             <Input
               {...champ}
@@ -172,7 +173,7 @@ export function FormulaireMagasin({
             onChange={(evenement) => setActif(evenement.target.checked)}
             className="size-4 rounded border-bordure text-marine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
           />
-          Magasin actif
+          {tr('Magasin actif')}
         </label>
       </form>
     </Modal>

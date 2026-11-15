@@ -17,6 +17,7 @@ import { FormulaireCompte } from '@/features/admin/pages/FormulaireCompte'
 import { formatDate } from '@/lib/format'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { Utilisateur } from '@/features/auth/types/domaine'
+import { tr } from '@/i18n/tr'
 
 export type ComptesUtilisateursProps = {
   peutModifier: boolean
@@ -41,7 +42,7 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
   const colonnes: ColonneTable<Utilisateur>[] = [
     {
       cle: 'identifiant',
-      entete: 'Identifiant',
+      entete: tr('Identifiant'),
       largeur: '11rem',
       rendu: (compte) => <span className="font-medium text-marine">{compte.identifiant}</span>,
       triable: true,
@@ -49,7 +50,7 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
     },
     {
       cle: 'nom',
-      entete: 'Nom',
+      entete: tr('Nom'),
       rendu: (compte) => (
         <div className="min-w-0">
           <p className="truncate text-sm text-texte">
@@ -66,7 +67,7 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
     },
     {
       cle: 'role',
-      entete: 'Rôle',
+      entete: tr('Rôle'),
       largeur: '12rem',
       rendu: (compte) => libelleRole(compte.role),
       triable: true,
@@ -74,14 +75,14 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
     },
     {
       cle: 'perimetre',
-      entete: 'Périmètre',
+      entete: tr('Périmètre'),
       rendu: (compte) => compte.libellePerimetre,
       triable: true,
       valeurTri: (compte) => compte.libellePerimetre,
     },
     {
       cle: 'creation',
-      entete: 'Créé le',
+      entete: tr('Créé le'),
       largeur: '8rem',
       rendu: (compte) => formatDate(compte.dateCreation),
       triable: true,
@@ -89,13 +90,13 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
     },
     {
       cle: 'statut',
-      entete: 'Statut',
+      entete: tr('Statut'),
       alignement: 'centre',
       largeur: '7rem',
       rendu: (compte) => (
         <StatusPill
           ton={compte.statut === 'actif' ? 'succes' : 'neutre'}
-          libelle={compte.statut === 'actif' ? 'Actif' : 'Désactivé'}
+          libelle={compte.statut === 'actif' ? tr('Actif') : tr('Désactivé')}
         />
       ),
       triable: true,
@@ -119,7 +120,7 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
             setModaleOuverte(true)
           }}
         >
-          Modifier
+          {tr('Modifier')}
         </Button>
       ),
     })
@@ -127,7 +128,7 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
 
   if (comptesEtat.statut === 'erreur') {
     return (
-      <Card titre="Comptes indisponibles">
+      <Card titre={tr('Comptes indisponibles')}>
         <p className="text-sm text-danger">{comptesEtat.erreur}</p>
       </Card>
     )
@@ -136,8 +137,8 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
   return (
     <>
       <Card
-        titre="Comptes utilisateurs"
-        description="Comptes nominatifs, rôle affecté et périmètre d'exercice"
+        titre={tr('Comptes utilisateurs')}
+        description={tr("Comptes nominatifs, rôle affecté et périmètre d'exercice")}
         actions={
           peutModifier ? (
             <Button
@@ -149,22 +150,22 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
                 setModaleOuverte(true)
               }}
             >
-              Nouveau compte
+              {tr('Nouveau compte')}
             </Button>
           ) : (
-            <StatusPill ton="neutre" taille="sm" libelle="Lecture seule" />
+            <StatusPill ton="neutre" taille="sm" libelle={tr('Lecture seule')} />
           )
         }
       >
         <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <KpiCard
-            libelle="Comptes"
+            libelle={tr('Comptes')}
             valeur={indicateurs.total}
             icone={UsersThree}
             accent="marine"
           />
           <KpiCard
-            libelle="Actifs"
+            libelle={tr('Actifs')}
             valeur={indicateurs.actifs}
             icone={UserCircle}
             accent="succes"
@@ -172,14 +173,14 @@ export function ComptesUtilisateurs({ peutModifier }: ComptesUtilisateursProps) 
         </div>
 
         <Table
-          intitule="Comptes du poste de pilotage"
+          intitule={tr('Comptes du poste de pilotage')}
           colonnes={colonnes}
           lignes={comptes}
           cleLigne={(compte) => compte.id}
           chargement={comptesEtat.statut === 'chargement' || comptesEtat.statut === 'attente'}
           triInitial={{ cle: 'identifiant', sens: 'asc' }}
           parPage={12}
-          messageVide="Aucun compte enregistré."
+          messageVide={tr('Aucun compte enregistré.')}
         />
 
         <p className="mt-4 text-xs text-texte-secondaire">

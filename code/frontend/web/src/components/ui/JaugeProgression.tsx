@@ -7,13 +7,14 @@
   par l'appelant, qui seul connaît la signification des deux niveaux.
 
   Historique : extraite du composant `BarreAvancement` du module avancement à
-  l'étape 10, lorsqu'un second module (pilotage) a eu besoin d'afficher une
+  ltr('étape 10, lorsqu')un second module (pilotage) a eu besoin d'afficher une
   progression à deux niveaux. C'était le critère de remontée inscrit dans ce
   composant à l'étape 8.
 */
 
 import { cn } from '@/lib/cn'
 import { formatPourcentage } from '@/lib/format'
+import { tr } from '@/i18n/tr'
 
 export type JaugeProgressionProps = {
   /** Part principale, affichée pleine au premier plan (0 à 100). */
@@ -40,8 +41,8 @@ function borne(valeur: number): number {
 export function JaugeProgression({
   valeur,
   valeurSecondaire,
-  libelleValeur = 'Valeur',
-  libelleValeurSecondaire = 'Référence',
+  libelleValeur = tr('Valeur'),
+  libelleValeurSecondaire = tr('Référence'),
   descriptionAccessible,
   taille = 'md',
   afficherLegende = true,

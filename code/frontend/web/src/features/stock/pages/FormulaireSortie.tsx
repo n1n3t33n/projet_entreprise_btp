@@ -15,6 +15,7 @@ import { Button, FormField, Input, Modal, Select, useToast } from '@/components/
 import { formatQuantite } from '@/lib/format'
 import { enregistrerSortie } from '@/features/stock/api'
 import type { LigneStock, LogementDestination, TypeMouvement } from '@/features/stock/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireSortieProps = {
   ouvert: boolean
@@ -75,13 +76,13 @@ export function FormulaireSortie({
 
     const prochainesErreurs: Record<string, string> = {}
     if (!articleChoisi) {
-      prochainesErreurs.article = 'Choisir un article.'
+      prochainesErreurs.article = tr('Choisir un article.')
     }
     if (!typeChoisi) {
-      prochainesErreurs.type = 'Choisir la nature de la sortie.'
+      prochainesErreurs.type = tr('Choisir la nature de la sortie.')
     }
     if (!Number.isFinite(quantiteNombre) || quantiteNombre <= 0) {
-      prochainesErreurs.quantite = 'Saisir une quantité supérieure à zéro.'
+      prochainesErreurs.quantite = tr('Saisir une quantité supérieure à zéro.')
     } else if (articleChoisi && quantiteNombre > stockDisponible) {
       // Contrôle demandé : pas de sortie au-delà du stock disponible.
       prochainesErreurs.quantite = `Quantité supérieure au stock disponible (${formatQuantite(
@@ -90,11 +91,12 @@ export function FormulaireSortie({
       )}).`
     }
     if (typeChoisi?.destinationObligatoire && !idLogement) {
-      prochainesErreurs.logement =
-        'La destination est obligatoire pour une sortie vers un logement.'
+      prochainesErreurs.logement = tr(
+        'La destination est obligatoire pour une sortie vers un logement.',
+      )
     }
     if (typeChoisi?.motifObligatoire && motif.trim() === '') {
-      prochainesErreurs.motif = 'Le motif est obligatoire pour ce type de sortie.'
+      prochainesErreurs.motif = tr('Le motif est obligatoire pour ce type de sortie.')
     }
 
     setErreurs(prochainesErreurs)
@@ -117,7 +119,7 @@ export function FormulaireSortie({
       })
       afficherToast({
         ton: 'succes',
-        titre: 'Sortie enregistrée',
+        titre: tr('Sortie enregistrée'),
         message: `${articleChoisi.designation} — mouvement horodaté et tracé.`,
       })
       fermer()
@@ -125,7 +127,7 @@ export function FormulaireSortie({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "La sortie n'a pas pu être enregistrée",
+        titre: tr("La sortie n'a pas pu être enregistrée"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -137,21 +139,21 @@ export function FormulaireSortie({
     <Modal
       ouvert={ouvert}
       onFermer={fermer}
-      titre="Nouvelle sortie"
-      description="Sortie d'articles vers un logement"
+      titre={tr('Nouvelle sortie')}
+      description={tr("Sortie d'articles vers un logement")}
       actions={
         <>
           <Button variante="secondaire" onClick={fermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button variante="primaire" type="submit" form="formulaire-sortie" enChargement={enCours}>
-            Enregistrer la sortie
+            {tr('Enregistrer la sortie')}
           </Button>
         </>
       }
     >
       <form id="formulaire-sortie" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
-        <FormField libelle="Article" requis erreur={erreurs.article}>
+        <FormField libelle={tr('Article')} requis erreur={erreurs.article}>
           {(champ) => (
             <Select
               {...champ}
@@ -169,7 +171,7 @@ export function FormulaireSortie({
           )}
         </FormField>
 
-        <FormField libelle="Nature de la sortie" requis erreur={erreurs.type}>
+        <FormField libelle={tr('Nature de la sortie')} requis erreur={erreurs.type}>
           {(champ) => (
             <Select
               {...champ}
@@ -188,7 +190,7 @@ export function FormulaireSortie({
         </FormField>
 
         <FormField
-          libelle="Quantité sortie"
+          libelle={tr('Quantité sortie')}
           requis
           erreur={erreurs.quantite}
           aide={
@@ -212,7 +214,7 @@ export function FormulaireSortie({
         </FormField>
 
         {typeChoisi?.destinationObligatoire !== false && (
-          <FormField libelle="Logement de destination" requis erreur={erreurs.logement}>
+          <FormField libelle={tr('Logement de destination')} requis erreur={erreurs.logement}>
             {(champ) => (
               <Select
                 {...champ}
@@ -231,30 +233,30 @@ export function FormulaireSortie({
           </FormField>
         )}
 
-        <FormField libelle="Corps d'état" aide="Facultatif.">
+        <FormField libelle={tr("Corps d'état")} aide="Facultatif.">
           {(champ) => (
             <Input
               {...champ}
               value={corpsEtat}
               onChange={(evenement) => setCorpsEtat(evenement.target.value)}
-              placeholder="ex. Maçonnerie"
+              placeholder={tr('ex. Maçonnerie')}
             />
           )}
         </FormField>
 
-        <FormField libelle="Bénéficiaire" aide="Facultatif.">
+        <FormField libelle={tr('Bénéficiaire')} aide="Facultatif.">
           {(champ) => (
             <Input
               {...champ}
               value={beneficiaire}
               onChange={(evenement) => setBeneficiaire(evenement.target.value)}
-              placeholder="ex. Équipe gros œuvre"
+              placeholder={tr('ex. Équipe gros œuvre')}
             />
           )}
         </FormField>
 
         <FormField
-          libelle="Motif"
+          libelle={tr('Motif')}
           requis={typeChoisi?.motifObligatoire === true}
           erreur={erreurs.motif}
           aide={typeChoisi?.motifObligatoire === true ? undefined : 'Facultatif.'}

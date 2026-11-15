@@ -11,6 +11,7 @@ import { Card, type NoeudArbre, Tree } from '@/components/ui'
 import { listerArborescenceStock } from '@/features/stock/api'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { NoeudStock } from '@/features/stock/types'
+import { tr } from '@/i18n/tr'
 
 const ICONE_PAR_TYPE: Record<NoeudStock['type'], Icon> = {
   chantier: Buildings,
@@ -47,14 +48,14 @@ export function ArborescenceMagasins() {
 
   return (
     <Card
-      titre="Magasins et familles"
-      description="Organisation du stock du chantier : magasin pilote et familles d'articles."
+      titre={tr('Magasins et familles')}
+      description={tr("Organisation du stock du chantier : magasin pilote et familles d'articles.")}
     >
       {etat.statut === 'chargement' && !etat.donnees ? (
         <div className="h-48 animate-pulse rounded-controle bg-fond-alt" />
       ) : (
         <Tree
-          intitule="Magasins et familles d'articles"
+          intitule={tr("Magasins et familles d'articles")}
           noeuds={noeuds}
           ouvertsInitiaux={ouvertsInitiaux}
         />

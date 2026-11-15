@@ -11,6 +11,7 @@ import { FormulaireParametre } from '@/features/parametrage/pages/FormulairePara
 import { LIBELLE_TYPE_VALEUR } from '@/features/parametrage/presentation/libelles'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { ParametreChantier } from '@/features/parametrage/types'
+import { tr } from '@/i18n/tr'
 
 export type ParametresChantierProps = {
   peutEditer: boolean
@@ -19,7 +20,7 @@ export type ParametresChantierProps = {
 /** Rend la valeur selon son type (un booléen en Oui/Non lisible). */
 function valeurAffichee(parametre: ParametreChantier): string {
   if (parametre.typeValeur === 'booleen') {
-    return parametre.valeur === 'true' ? 'Oui' : 'Non'
+    return parametre.valeur === 'true' ? tr('Oui') : tr('Non')
   }
   return parametre.valeur
 }
@@ -44,7 +45,7 @@ export function ParametresChantier({ peutEditer }: ParametresChantierProps) {
   const colonnes: ColonneTable<ParametreChantier>[] = [
     {
       cle: 'cle',
-      entete: 'Clé',
+      entete: tr('Clé'),
       triable: true,
       valeurTri: (parametre) => parametre.cle,
       rendu: (parametre) => (
@@ -58,7 +59,7 @@ export function ParametresChantier({ peutEditer }: ParametresChantierProps) {
     },
     {
       cle: 'valeur',
-      entete: 'Valeur',
+      entete: tr('Valeur'),
       alignement: 'droite',
       triable: true,
       valeurTri: (parametre) => parametre.valeur,
@@ -68,7 +69,7 @@ export function ParametresChantier({ peutEditer }: ParametresChantierProps) {
     },
     {
       cle: 'type',
-      entete: 'Type',
+      entete: tr('Type'),
       alignement: 'centre',
       largeur: '8rem',
       rendu: (parametre) => (
@@ -90,7 +91,7 @@ export function ParametresChantier({ peutEditer }: ParametresChantierProps) {
           icone={PencilSimple}
           onClick={() => ouvrirModification(parametre)}
         >
-          Modifier
+          {tr('Modifier')}
         </Button>
       ),
     })
@@ -109,19 +110,19 @@ export function ParametresChantier({ peutEditer }: ParametresChantierProps) {
   return (
     <>
       <PageListe
-        titre="Paramètres du chantier"
-        description="Réglages typés, lus par les règles métier du poste de pilotage"
+        titre={tr('Paramètres du chantier')}
+        description={tr('Réglages typés, lus par les règles métier du poste de pilotage')}
         lectureSeule={!peutEditer}
         actions={
           peutEditer ? (
             <Button variante="primaire" icone={Plus} onClick={ouvrirCreation}>
-              Nouveau paramètre
+              {tr('Nouveau paramètre')}
             </Button>
           ) : undefined
         }
         indicateurs={
           <KpiCard
-            libelle="Paramètres"
+            libelle={tr('Paramètres')}
             valeur={parametres.length}
             icone={SlidersHorizontal}
             accent="marine"
@@ -129,14 +130,14 @@ export function ParametresChantier({ peutEditer }: ParametresChantierProps) {
         }
       >
         <Table
-          intitule="Paramètres du chantier"
+          intitule={tr('Paramètres du chantier')}
           colonnes={colonnes}
           lignes={parametres}
           cleLigne={(parametre) => parametre.id}
           chargement={chargement}
           triInitial={{ cle: 'cle', sens: 'asc' }}
           parPage={12}
-          messageVide="Aucun paramètre défini."
+          messageVide={tr('Aucun paramètre défini.')}
         />
       </PageListe>
 

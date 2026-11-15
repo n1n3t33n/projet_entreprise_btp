@@ -34,6 +34,7 @@ import type {
   Zone,
   ZoneArbre,
 } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 export type ChantiersZonesProps = {
   peutEditer: boolean
@@ -118,7 +119,7 @@ export function ChantiersZones({ peutEditer }: ChantiersZonesProps) {
     return (
       <Card>
         <p className="text-sm text-danger">
-          {chantiersEtat.erreur ?? arbreEtat.erreur ?? 'Chargement impossible.'}
+          {chantiersEtat.erreur ?? arbreEtat.erreur ?? tr('Chargement impossible.')}
         </p>
       </Card>
     )
@@ -127,16 +128,16 @@ export function ChantiersZones({ peutEditer }: ChantiersZonesProps) {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <EnTetePage
-        titre="Chantiers & zones"
-        description="Structure des chantiers : zones et logements"
+        titre={tr('Chantiers & zones')}
+        description={tr('Structure des chantiers : zones et logements')}
         niveauTitre={2}
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
-        <Card titre="Structure" icone={Stack}>
+        <Card titre={tr('Structure')} icone={Stack}>
           {arbre ? (
             <Tree
-              intitule="Structure du chantier"
+              intitule={tr('Structure du chantier')}
               noeuds={noeuds}
               selectionne={selection ?? undefined}
               onSelectionner={setSelectionId}
@@ -146,7 +147,7 @@ export function ChantiersZones({ peutEditer }: ChantiersZonesProps) {
               ]}
             />
           ) : (
-            <p className="text-sm text-texte-secondaire">Chargement de la structure…</p>
+            <p className="text-sm text-texte-secondaire">{tr('Chargement de la structure…')}</p>
           )}
         </Card>
 
@@ -218,9 +219,9 @@ function PanneauDetail({
 }: PanneauDetailProps) {
   if (!arbre || !selection) {
     return (
-      <Card titre="Détail">
+      <Card titre={tr('Détail')}>
         <p className="text-sm text-texte-secondaire">
-          Sélectionnez un élément de la structure pour voir son détail.
+          {tr('Sélectionnez un élément de la structure pour voir son détail.')}
         </p>
       </Card>
     )
@@ -291,26 +292,26 @@ function DetailChantier({
         peutEditer ? (
           <div className="flex gap-2">
             <Button variante="secondaire" taille="sm" icone={Plus} onClick={onAjouterZone}>
-              Ajouter une zone
+              {tr('Ajouter une zone')}
             </Button>
             <Button variante="discret" taille="sm" icone={PencilSimple} onClick={onModifier}>
-              Modifier
+              {tr('Modifier')}
             </Button>
           </div>
         ) : undefined
       }
     >
       <dl className="grid grid-cols-2 gap-4">
-        <Ligne intitule="Code" valeur={chantier.code} />
+        <Ligne intitule={tr('Code')} valeur={chantier.code} />
         <Ligne
-          intitule="Statut"
+          intitule={tr('Statut')}
           valeur={
             <StatusPill ton={tonStatut(chantier.statut)} libelle={libelleStatut(chantier.statut)} />
           }
         />
-        <Ligne intitule="Programme" valeur={chantier.programme || '—'} />
-        <Ligne intitule="Date de début" valeur={formatDate(chantier.dateDebut)} />
-        <Ligne intitule="Zones" valeur={nombreZones} />
+        <Ligne intitule={tr('Programme')} valeur={chantier.programme || '—'} />
+        <Ligne intitule={tr('Date de début')} valeur={formatDate(chantier.dateDebut)} />
+        <Ligne intitule={tr('Zones')} valeur={nombreZones} />
       </dl>
     </Card>
   )
@@ -337,26 +338,26 @@ function DetailZone({
         peutEditer ? (
           <div className="flex gap-2">
             <Button variante="secondaire" taille="sm" icone={Plus} onClick={onAjouterLogement}>
-              Ajouter un logement
+              {tr('Ajouter un logement')}
             </Button>
             <Button variante="discret" taille="sm" icone={PencilSimple} onClick={onModifier}>
-              Modifier
+              {tr('Modifier')}
             </Button>
           </div>
         ) : undefined
       }
     >
       <dl className="mb-4 grid grid-cols-2 gap-4">
-        <Ligne intitule="Code" valeur={entree.zone.code} />
-        <Ligne intitule="Type" valeur={libelleTypeZone(entree.zone.typeZone)} />
-        <Ligne intitule="Logements" valeur={entree.logements.length} />
+        <Ligne intitule={tr('Code')} valeur={entree.zone.code} />
+        <Ligne intitule={tr('Type')} valeur={libelleTypeZone(entree.zone.typeZone)} />
+        <Ligne intitule={tr('Logements')} valeur={entree.logements.length} />
       </dl>
 
       <h4 className="mb-2 text-xs font-medium uppercase tracking-wide text-texte-secondaire">
-        Logements
+        {tr('Logements')}
       </h4>
       {entree.logements.length === 0 ? (
-        <p className="text-sm text-texte-secondaire">Aucun logement dans cette zone.</p>
+        <p className="text-sm text-texte-secondaire">{tr('Aucun logement dans cette zone.')}</p>
       ) : (
         <ul className="divide-y divide-bordure">
           {entree.logements.map((logement) => (
@@ -380,7 +381,7 @@ function DetailZone({
                     icone={PencilSimple}
                     onClick={() => onModifierLogement(logement)}
                   >
-                    Modifier
+                    {tr('Modifier')}
                   </Button>
                 )}
               </div>
@@ -410,22 +411,28 @@ function DetailLogement({
       actions={
         peutEditer ? (
           <Button variante="discret" taille="sm" icone={PencilSimple} onClick={onModifier}>
-            Modifier
+            {tr('Modifier')}
           </Button>
         ) : undefined
       }
     >
       <dl className="grid grid-cols-2 gap-4">
-        <Ligne intitule="Zone" valeur={zone.nom} />
-        <Ligne intitule="Type" valeur={logement.libelleType} />
-        <Ligne intitule="Surface de référence" valeur={formatSurface(logement.surfaceReference)} />
+        <Ligne intitule={tr('Zone')} valeur={zone.nom} />
+        <Ligne intitule={tr('Type')} valeur={logement.libelleType} />
         <Ligne
-          intitule="Statut"
+          intitule={tr('Surface de référence')}
+          valeur={formatSurface(logement.surfaceReference)}
+        />
+        <Ligne
+          intitule={tr('Statut')}
           valeur={
             <StatusPill ton={tonStatut(logement.statut)} libelle={libelleStatut(logement.statut)} />
           }
         />
-        <Ligne intitule="Livraison prévue" valeur={formatDate(logement.dateLivraisonPrevue)} />
+        <Ligne
+          intitule={tr('Livraison prévue')}
+          valeur={formatDate(logement.dateLivraisonPrevue)}
+        />
       </dl>
     </Card>
   )

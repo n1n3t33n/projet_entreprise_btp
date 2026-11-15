@@ -19,6 +19,7 @@ import { useCapacitesReferentiels } from '@/features/referentiels/hooks/useCapac
 import { CatalogueArticles } from '@/features/referentiels/pages/CatalogueArticles'
 import { ChantiersZones } from '@/features/referentiels/pages/ChantiersZones'
 import { MagasinsReferentiel } from '@/features/referentiels/pages/MagasinsReferentiel'
+import { tr } from '@/i18n/tr'
 
 export function PageReferentiels() {
   const capacites = useCapacitesReferentiels()
@@ -26,9 +27,9 @@ export function PageReferentiels() {
 
   if (!capacites.peutConsulter) {
     return (
-      <Card titre="Accès non autorisé">
+      <Card titre={tr('Accès non autorisé')}>
         <p className="text-sm text-texte-secondaire">
-          Ce rôle n'a pas accès aux référentiels du poste de pilotage.
+          {tr("Ce rôle n'a pas accès aux référentiels du poste de pilotage.")}
         </p>
       </Card>
     )
@@ -37,13 +38,13 @@ export function PageReferentiels() {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <Tabs
-        intitule="Référentiels"
+        intitule={tr('Référentiels')}
         actif={onglet}
         onChanger={setOnglet}
         onglets={[
-          { id: 'catalogue', libelle: 'Catalogue', icone: Package },
-          { id: 'magasins', libelle: 'Magasins', icone: Warehouse },
-          { id: 'chantiers', libelle: 'Chantiers & zones', icone: Buildings },
+          { id: 'catalogue', libelle: tr('Catalogue'), icone: Package },
+          { id: 'magasins', libelle: tr('Magasins'), icone: Warehouse },
+          { id: 'chantiers', libelle: tr('Chantiers & zones'), icone: Buildings },
         ]}
       >
         {onglet === 'catalogue' && <CatalogueArticles peutEditer={capacites.peutEditerCatalogue} />}

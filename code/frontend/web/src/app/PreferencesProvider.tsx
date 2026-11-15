@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { PreferencesContexte, type Theme } from '@/app/preferences-context'
-import { estLangue, type Langue } from '@/i18n/dictionnaires'
+import type { Langue } from '@/i18n/dictionnaires'
+import { CLE_LANGUE, LANGUE_COURANTE } from '@/i18n/tr'
 
-const CLE_LANGUE = 'chantiersync.langue'
 const CLE_THEME = 'chantiersync.theme'
 
 /** Lit une préférence ; le stockage peut être indisponible (navigation privée). */
@@ -22,22 +22,13 @@ function ecrire(cle: string, valeur: string): void {
   }
 }
 
-function langueInitiale(): Langue {
-  const enregistree = lire(CLE_LANGUE)
-  if (estLangue(enregistree)) {
-    return enregistree
-  }
-  const navigateur = window.navigator.language.slice(0, 2)
-  return estLangue(navigateur) ? navigateur : 'fr'
-}
-
 function themeInitial(): Theme {
   const enregistre = lire(CLE_THEME)
   return enregistre === 'clair' || enregistre === 'sombre' ? enregistre : 'systeme'
 }
 
 export function PreferencesProvider({ children }: { children: ReactNode }) {
-  const [langue, setLangue] = useState<Langue>(langueInitiale)
+  const [langue, setLangue] = useState<Langue>(LANGUE_COURANTE)
   const [theme, setTheme] = useState<Theme>(themeInitial)
 
   // Le thème est porté par un attribut de la racine du document : les jetons
@@ -65,6 +56,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       definirLangue: (suivante: Langue) => {
         setLangue(suivante)
         ecrire(CLE_LANGUE, suivante)
+        // Les textes des écrans sont résolus au chargement : on recharge la page.
+        if (suivante !== LANGUE_COURANTE) {
+          window.location.reload()
+        }
       },
       definirTheme: (suivant: Theme) => {
         setTheme(suivant)

@@ -14,6 +14,7 @@ import { FormulaireRegle } from '@/features/parametrage/pages/FormulaireRegle'
 import { LIBELLE_EVENEMENT, SYMBOLE_OPERATEUR } from '@/features/parametrage/presentation/libelles'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { RegleValidation } from '@/features/parametrage/types'
+import { tr } from '@/i18n/tr'
 
 export type ReglesValidationProps = {
   peutEditer: boolean
@@ -51,7 +52,7 @@ export function ReglesValidation({ peutEditer }: ReglesValidationProps) {
   const colonnes: ColonneTable<RegleValidation>[] = [
     {
       cle: 'evenement',
-      entete: 'Événement',
+      entete: tr('Événement'),
       triable: true,
       valeurTri: (regle) => LIBELLE_EVENEMENT[regle.typeEvenement],
       rendu: (regle) => (
@@ -64,7 +65,7 @@ export function ReglesValidation({ peutEditer }: ReglesValidationProps) {
     },
     {
       cle: 'condition',
-      entete: 'Condition',
+      entete: tr('Condition'),
       rendu: (regle) => <span className="font-medium text-texte">{conditionLisible(regle)}</span>,
     },
   ]
@@ -82,7 +83,7 @@ export function ReglesValidation({ peutEditer }: ReglesValidationProps) {
           icone={PencilSimple}
           onClick={() => ouvrirModification(regle)}
         >
-          Modifier
+          {tr('Modifier')}
         </Button>
       ),
     })
@@ -101,28 +102,33 @@ export function ReglesValidation({ peutEditer }: ReglesValidationProps) {
   return (
     <>
       <PageListe
-        titre="Règles de validation"
-        description="Conditions appliquées aux événements du chantier"
+        titre={tr('Règles de validation')}
+        description={tr('Conditions appliquées aux événements du chantier')}
         lectureSeule={!peutEditer}
         actions={
           peutEditer ? (
             <Button variante="primaire" icone={Plus} onClick={ouvrirCreation}>
-              Nouvelle règle
+              {tr('Nouvelle règle')}
             </Button>
           ) : undefined
         }
         indicateurs={
-          <KpiCard libelle="Règles" valeur={regles.length} icone={ShieldCheck} accent="marine" />
+          <KpiCard
+            libelle={tr('Règles')}
+            valeur={regles.length}
+            icone={ShieldCheck}
+            accent="marine"
+          />
         }
       >
         <Table
-          intitule="Règles de validation"
+          intitule={tr('Règles de validation')}
           colonnes={colonnes}
           lignes={regles}
           cleLigne={(regle) => regle.id}
           chargement={chargement}
           parPage={12}
-          messageVide="Aucune règle de validation définie."
+          messageVide={tr('Aucune règle de validation définie.')}
         />
       </PageListe>
 

@@ -13,6 +13,7 @@
 */
 
 import { useCallback, useEffect, useState } from 'react'
+import { tr } from '@/i18n/tr'
 
 export type EtatRequete<T> =
   | { statut: 'attente'; donnees: null; erreur: null }
@@ -24,7 +25,7 @@ function messageErreur(erreur: unknown): string {
   if (erreur instanceof Error && erreur.message.length > 0) {
     return erreur.message
   }
-  return 'Une erreur est survenue pendant le chargement.'
+  return tr('Une erreur est survenue pendant le chargement.')
 }
 
 /**

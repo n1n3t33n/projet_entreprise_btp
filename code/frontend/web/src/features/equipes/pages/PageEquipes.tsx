@@ -11,9 +11,9 @@
     utilisateur. Réservé au responsable technique (tableau des profils).
 
   La gestion des équipes et des membres est présentée en lecture dans cet écran :
-  la création et l'édition d'équipes et de membres (CRUD complet d'EF-REF-06) ne
-  sont pas encore outillées côté API dans le périmètre de l'étape ; l'écran
-  affiche l'état et prépare l'affectation, qui est la fonction attendue ici.
+  la création et ltr('édition d')équipes et de membres (CRUD complet d'EF-REF-06) ne
+  sont pas encore outillées côté API dans le périmètre de ltr('étape ; l')écran
+  affiche ltr('état et prépare l')affectation, qui est la fonction attendue ici.
 */
 
 import { useMemo, useState } from 'react'
@@ -26,6 +26,7 @@ import { AffectationPanneau } from '@/features/equipes/pages/AffectationPanneau'
 import { formatDate } from '@/lib/format'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { Equipe, MembreEquipe } from '@/features/equipes/types/domaine'
+import { tr } from '@/i18n/tr'
 
 function MembresEquipe() {
   const equipesEtat = useRequete(listerEquipes, [])
@@ -44,7 +45,7 @@ function MembresEquipe() {
   const colonnes: ColonneTable<MembreEquipe>[] = [
     {
       cle: 'nom',
-      entete: 'Membre',
+      entete: tr('Membre'),
       rendu: (membre) => (
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-marine">{membre.nom}</p>
@@ -56,20 +57,20 @@ function MembresEquipe() {
     },
     {
       cle: 'role',
-      entete: "Rôle dans l'équipe",
+      entete: tr("Rôle dans l'équipe"),
       largeur: '11rem',
       rendu: (membre) =>
         membre.estChefEquipe ? (
-          <StatusPill ton="information" taille="sm" libelle="Chef d'équipe" />
+          <StatusPill ton="information" taille="sm" libelle={tr("Chef d'équipe")} />
         ) : (
-          <span className="text-sm text-texte-secondaire">Membre</span>
+          <span className="text-sm text-texte-secondaire">{tr('Membre')}</span>
         ),
       triable: true,
       valeurTri: (membre) => (membre.estChefEquipe ? 0 : 1),
     },
     {
       cle: 'debut',
-      entete: 'Depuis le',
+      entete: tr('Depuis le'),
       largeur: '8rem',
       rendu: (membre) => formatDate(membre.dateDebut),
       triable: true,
@@ -85,7 +86,7 @@ function MembresEquipe() {
 
   if (equipesEtat.statut === 'erreur') {
     return (
-      <Card titre="Équipes indisponibles">
+      <Card titre={tr('Équipes indisponibles')}>
         <p className="text-sm text-danger">{equipesEtat.erreur}</p>
       </Card>
     )
@@ -93,8 +94,8 @@ function MembresEquipe() {
 
   return (
     <Card
-      titre="Équipes et membres"
-      description="Équipes du chantier et composition (MPD-1 : équipe, membre d'équipe)"
+      titre={tr('Équipes et membres')}
+      description={tr("Équipes du chantier et composition (MPD-1 : équipe, membre d'équipe)")}
     >
       <div className="mb-4 flex flex-wrap items-center gap-2">
         {equipes.map((equipe: Equipe) => (
@@ -109,14 +110,14 @@ function MembresEquipe() {
       </div>
 
       <Table
-        intitule="Membres de l'équipe sélectionnée"
+        intitule={tr("Membres de l'équipe sélectionnée")}
         colonnes={colonnes}
         lignes={membres}
         cleLigne={(membre) => membre.idUtilisateur}
         chargement={membresEtat.statut === 'chargement' || membresEtat.statut === 'attente'}
         triInitial={{ cle: 'role', sens: 'asc' }}
         parPage={10}
-        messageVide="Aucun membre dans cette équipe."
+        messageVide={tr('Aucun membre dans cette équipe.')}
         lectureSeule
       />
     </Card>
@@ -130,18 +131,18 @@ export function PageEquipes() {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <EnTetePage
-        titre="Équipes et affectation"
-        description="Composition des équipes et affectation des étapes par fiche de route"
+        titre={tr('Équipes et affectation')}
+        description={tr('Composition des équipes et affectation des étapes par fiche de route')}
         niveauTitre={2}
       />
 
       <Tabs
-        intitule="Équipes"
+        intitule={tr('Équipes')}
         actif={onglet}
         onChanger={setOnglet}
         onglets={[
-          { id: 'membres', libelle: 'Équipes et membres', icone: UsersThree },
-          { id: 'affectation', libelle: 'Affectation' },
+          { id: 'membres', libelle: tr('Équipes et membres'), icone: UsersThree },
+          { id: 'affectation', libelle: tr('Affectation') },
         ]}
       >
         {onglet === 'membres' && <MembresEquipe />}

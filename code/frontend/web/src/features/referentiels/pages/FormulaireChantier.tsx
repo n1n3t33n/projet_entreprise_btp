@@ -1,7 +1,7 @@
 /*
   Modification des informations d'un chantier (EF-REF-01).
 
-  La création d'un chantier relève d'un acte d'ouverture de programme, hors du
+  La création dtr('un chantier relève d')un acte d'ouverture de programme, hors du
   périmètre de cette étape : ce formulaire ne fait que modifier un chantier
   existant.
 */
@@ -11,6 +11,7 @@ import { Button, FormField, Input, Modal, Select, useToast } from '@/components/
 import { modifierChantier } from '@/features/referentiels/api'
 import { libelleStatut } from '@/features/referentiels/presentation/libelles'
 import type { Chantier, SaisieChantier, StatutChantier } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireChantierProps = {
   ouvert: boolean
@@ -57,13 +58,13 @@ export function FormulaireChantier({
 
     const prochaines: ErreursChantier = {}
     if (code.trim() === '') {
-      prochaines.code = 'Saisir un code chantier.'
+      prochaines.code = tr('Saisir un code chantier.')
     }
     if (nom.trim() === '') {
-      prochaines.nom = 'Saisir un nom.'
+      prochaines.nom = tr('Saisir un nom.')
     }
     if (dateDebut === '') {
-      prochaines.dateDebut = 'Choisir une date de début.'
+      prochaines.dateDebut = tr('Choisir une date de début.')
     }
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) {
@@ -81,13 +82,13 @@ export function FormulaireChantier({
     setEnCours(true)
     try {
       await modifierChantier(chantier.id, saisie)
-      afficherToast({ ton: 'succes', titre: 'Chantier modifié', message: saisie.nom })
+      afficherToast({ ton: 'succes', titre: tr('Chantier modifié'), message: saisie.nom })
       onFermer()
       onEnregistre()
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "Le chantier n'a pas pu être enregistré",
+        titre: tr("Le chantier n'a pas pu être enregistré"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -99,12 +100,12 @@ export function FormulaireChantier({
     <Modal
       ouvert={ouvert}
       onFermer={onFermer}
-      titre="Modifier le chantier"
-      description="Informations générales du chantier"
+      titre={tr('Modifier le chantier')}
+      description={tr('Informations générales du chantier')}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button
             variante="primaire"
@@ -112,7 +113,7 @@ export function FormulaireChantier({
             form="formulaire-chantier"
             enChargement={enCours}
           >
-            Enregistrer
+            {tr('Enregistrer')}
           </Button>
         </>
       }
@@ -124,7 +125,7 @@ export function FormulaireChantier({
         noValidate
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Code chantier" requis erreur={erreurs.code}>
+          <FormField libelle={tr('Code chantier')} requis erreur={erreurs.code}>
             {(champ) => (
               <Input
                 {...champ}
@@ -135,7 +136,7 @@ export function FormulaireChantier({
             )}
           </FormField>
 
-          <FormField libelle="Statut" requis>
+          <FormField libelle={tr('Statut')} requis>
             {(champ) => (
               <Select
                 {...champ}
@@ -149,7 +150,7 @@ export function FormulaireChantier({
           </FormField>
         </div>
 
-        <FormField libelle="Nom" requis erreur={erreurs.nom}>
+        <FormField libelle={tr('Nom')} requis erreur={erreurs.nom}>
           {(champ) => (
             <Input
               {...champ}
@@ -160,7 +161,7 @@ export function FormulaireChantier({
           )}
         </FormField>
 
-        <FormField libelle="Programme" aide="Nom du programme immobilier.">
+        <FormField libelle={tr('Programme')} aide={tr('Nom du programme immobilier.')}>
           {(champ) => (
             <Input
               {...champ}
@@ -170,7 +171,7 @@ export function FormulaireChantier({
           )}
         </FormField>
 
-        <FormField libelle="Date de début" requis erreur={erreurs.dateDebut}>
+        <FormField libelle={tr('Date de début')} requis erreur={erreurs.dateDebut}>
           {(champ) => (
             <Input
               {...champ}

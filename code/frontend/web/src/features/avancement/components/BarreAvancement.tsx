@@ -3,13 +3,13 @@
 
   DÉCISION (étape 10) : la mécanique d'affichage a été extraite dans
   `components/ui/JaugeProgression`, composant générique sans notion métier.
-  C'était exactement le critère de remontée inscrit ici à l'étape 8 : « si un
+  Ctr('était exactement le critère de remontée inscrit ici à l')étape 8 : « si un
   autre module affiche un jour une progression à deux niveaux, on extraira une
   jauge générique ». Le module pilotage (étape 10) est ce second module.
 
   Ce composant reste dans le module avancement : il ne porte plus que
-  l'habillage métier, c'est-à-dire les libellés « déclaré » et « validé »
-  issus des états d'étape (ET-1) et de l'avancement agrégé (CL-5). Tout autre
+  ltr('habillage métier, c')est-à-dire les libellés « déclaré » et « validé »
+  issus des états dtr('étape (ET-1) et de l')avancement agrégé (CL-5). Tout autre
   module qui doit afficher ces deux notions l'importe via l'index du module.
 
   La part validée (pleine, couleur succès) se superpose à la part déclarée
@@ -18,6 +18,7 @@
 */
 
 import { JaugeProgression } from '@/components/ui'
+import { tr } from '@/i18n/tr'
 
 export type BarreAvancementProps = {
   pourcentageDeclare: number
@@ -38,8 +39,8 @@ export function BarreAvancement({
     <JaugeProgression
       valeur={pourcentageValide}
       valeurSecondaire={pourcentageDeclare}
-      libelleValeur="Validé"
-      libelleValeurSecondaire="Déclaré"
+      libelleValeur={tr('Validé')}
+      libelleValeurSecondaire={tr('Déclaré')}
       descriptionAccessible={`Avancement validé ${Math.round(pourcentageValide)} %, déclaré ${Math.round(pourcentageDeclare)} %`}
       taille={taille}
       afficherLegende={afficherLegende}

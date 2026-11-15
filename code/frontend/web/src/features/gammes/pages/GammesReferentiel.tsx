@@ -16,6 +16,7 @@ import { LIBELLE_STATUT_GAMME, TON_STATUT_GAMME } from '@/features/gammes/presen
 import { useRequete } from '@/lib/hooks/useRequete'
 import { formatPourcentage } from '@/lib/format'
 import type { Gamme } from '@/features/gammes/types'
+import { tr } from '@/i18n/tr'
 
 export type GammesReferentielProps = {
   peutEditer: boolean
@@ -45,7 +46,7 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
   const colonnes: ColonneTable<Gamme>[] = [
     {
       cle: 'type',
-      entete: 'Type de logement',
+      entete: tr('Type de logement'),
       triable: true,
       valeurTri: (gamme) => `${gamme.libelleTypeLogement}-${100 - gamme.version}`,
       rendu: (gamme) => (
@@ -57,7 +58,7 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
     },
     {
       cle: 'version',
-      entete: 'Version',
+      entete: tr('Version'),
       alignement: 'centre',
       largeur: '6rem',
       triable: true,
@@ -66,7 +67,7 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
     },
     {
       cle: 'statut',
-      entete: 'Statut',
+      entete: tr('Statut'),
       largeur: '8rem',
       triable: true,
       valeurTri: (gamme) => gamme.statut,
@@ -80,7 +81,7 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
     },
     {
       cle: 'etapes',
-      entete: 'Étapes',
+      entete: tr('Étapes'),
       alignement: 'droite',
       largeur: '6rem',
       triable: true,
@@ -89,7 +90,7 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
     },
     {
       cle: 'poids',
-      entete: 'Poids total',
+      entete: tr('Poids total'),
       alignement: 'droite',
       largeur: '8rem',
       triable: true,
@@ -97,7 +98,7 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
       rendu: (gamme) => (
         <span
           className={gamme.poidsTotal === 100 ? 'text-texte' : 'font-medium text-or'}
-          title={gamme.poidsTotal === 100 ? undefined : 'Le poids total diffère de 100 %'}
+          title={gamme.poidsTotal === 100 ? undefined : tr('Le poids total diffère de 100 %')}
         >
           {formatPourcentage(gamme.poidsTotal)}
         </span>
@@ -110,7 +111,7 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
       largeur: '7rem',
       rendu: (gamme) => (
         <Button variante="discret" taille="sm" icone={Eye} onClick={() => ouvrirDetail(gamme)}>
-          {peutEditer && gamme.statut !== 'archivee' ? 'Gérer' : 'Voir'}
+          {peutEditer && gamme.statut !== 'archivee' ? tr('Gérer') : tr('Voir')}
         </Button>
       ),
     },
@@ -129,20 +130,25 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
   return (
     <>
       <PageListe
-        titre="Gammes opératoires"
-        description="Versions de gammes par type de logement, du brouillon à l'archive"
+        titre={tr('Gammes opératoires')}
+        description={tr("Versions de gammes par type de logement, du brouillon à l'archive")}
         lectureSeule={!peutEditer}
         indicateurs={
           <>
-            <KpiCard libelle="Gammes" valeur={indicateurs.total} icone={Stack} accent="marine" />
             <KpiCard
-              libelle="Actives"
+              libelle={tr('Gammes')}
+              valeur={indicateurs.total}
+              icone={Stack}
+              accent="marine"
+            />
+            <KpiCard
+              libelle={tr('Actives')}
               valeur={indicateurs.actives}
               icone={ListChecks}
               accent="succes"
             />
             <KpiCard
-              libelle="Brouillons"
+              libelle={tr('Brouillons')}
               valeur={indicateurs.brouillons}
               icone={ListChecks}
               accent="or"
@@ -151,14 +157,14 @@ export function GammesReferentiel({ peutEditer }: GammesReferentielProps) {
         }
       >
         <Table
-          intitule="Gammes opératoires"
+          intitule={tr('Gammes opératoires')}
           colonnes={colonnes}
           lignes={gammes}
           cleLigne={(gamme) => gamme.id}
           chargement={chargement}
           triInitial={{ cle: 'type', sens: 'asc' }}
           parPage={12}
-          messageVide="Aucune gamme enregistrée."
+          messageVide={tr('Aucune gamme enregistrée.')}
         />
       </PageListe>
 

@@ -18,6 +18,7 @@ import { ECRANS, type EntreeNavigation, type IdEcran } from '@/config/navigation
 import { enregistrerDroits } from '@/features/admin/api'
 import { ECRAN_VERROUILLE, ROLE_VERROUILLE } from '@/features/admin/config/capacites'
 import type { DroitAccorde, EtatDroits } from '@/features/admin/types/domaine'
+import { tr } from '@/i18n/tr'
 
 export type MatriceDroitsProps = {
   etat: EtatDroits
@@ -101,14 +102,14 @@ export function MatriceDroits({ etat, peutModifier }: MatriceDroitsProps) {
       await enregistrerDroits(droits)
       afficherToast({
         ton: 'succes',
-        titre: 'Droits enregistrés',
-        message: 'Les menus et les accès sont mis à jour immédiatement.',
+        titre: tr('Droits enregistrés'),
+        message: tr('Les menus et les accès sont mis à jour immédiatement.'),
       })
       recharger()
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "Les droits n'ont pas pu être enregistrés",
+        titre: tr("Les droits n'ont pas pu être enregistrés"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -119,7 +120,7 @@ export function MatriceDroits({ etat, peutModifier }: MatriceDroitsProps) {
   const colonnes: ColonneTable<EntreeNavigation>[] = [
     {
       cle: 'ecran',
-      entete: 'Écran',
+      entete: tr('Écran'),
       rendu: (ecran) => <span className="font-medium text-marine">{ecran.libelle}</span>,
     },
     ...roles.map<ColonneTable<EntreeNavigation>>((role) => ({
@@ -143,7 +144,7 @@ export function MatriceDroits({ etat, peutModifier }: MatriceDroitsProps) {
             aria-label={`${role.libelle} — accès à l'écran ${ecran.libelle}`}
             title={
               verrouille
-                ? 'Accès obligatoire : sans lui, plus personne ne pourrait modifier les droits.'
+                ? tr('Accès obligatoire : sans lui, plus personne ne pourrait modifier les droits.')
                 : undefined
             }
             className="size-4 rounded border-bordure text-marine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle disabled:cursor-not-allowed disabled:opacity-60"
@@ -155,13 +156,15 @@ export function MatriceDroits({ etat, peutModifier }: MatriceDroitsProps) {
 
   return (
     <Card
-      titre="Matrice des droits"
-      description="Cochez les écrans ouverts à chaque rôle. Le menu et les accès suivent aussitôt."
+      titre={tr('Matrice des droits')}
+      description={tr(
+        'Cochez les écrans ouverts à chaque rôle. Le menu et les accès suivent aussitôt.',
+      )}
       actions={
         peutModifier ? (
           <div className="flex items-center gap-2">
             {modifie && (
-              <StatusPill ton="alerte" taille="sm" libelle="Modifications non enregistrées" />
+              <StatusPill ton="alerte" taille="sm" libelle={tr('Modifications non enregistrées')} />
             )}
             <Button
               variante="secondaire"
@@ -170,7 +173,7 @@ export function MatriceDroits({ etat, peutModifier }: MatriceDroitsProps) {
               onClick={() => setCoches(accordesInitiaux)}
               disabled={!modifie || enCours}
             >
-              Annuler
+              {tr('Annuler')}
             </Button>
             <Button
               variante="primaire"
@@ -180,21 +183,21 @@ export function MatriceDroits({ etat, peutModifier }: MatriceDroitsProps) {
               disabled={!modifie}
               enChargement={enCours}
             >
-              Enregistrer
+              {tr('Enregistrer')}
             </Button>
           </div>
         ) : (
-          <StatusPill ton="neutre" taille="sm" libelle="Lecture seule" />
+          <StatusPill ton="neutre" taille="sm" libelle={tr('Lecture seule')} />
         )
       }
     >
       <Table
-        intitule="Matrice des droits par écran et par rôle"
+        intitule={tr('Matrice des droits par écran et par rôle')}
         colonnes={colonnes}
         lignes={ECRANS}
         cleLigne={(ecran) => ecran.id}
         parPage={ECRANS.length}
-        messageVide="Aucun écran déclaré."
+        messageVide={tr('Aucun écran déclaré.')}
       />
     </Card>
   )

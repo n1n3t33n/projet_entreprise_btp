@@ -17,6 +17,7 @@ import type {
   SaisieArticle,
   UniteMesure,
 } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireArticleProps = {
   ouvert: boolean
@@ -83,16 +84,16 @@ export function FormulaireArticle({
 
     const prochaines: ErreursArticle = {}
     if (code.trim() === '') {
-      prochaines.code = 'Saisir un code article.'
+      prochaines.code = tr('Saisir un code article.')
     }
     if (designation.trim() === '') {
-      prochaines.designation = 'Saisir une désignation.'
+      prochaines.designation = tr('Saisir une désignation.')
     }
     if (codeCategorie === '') {
-      prochaines.categorie = 'Choisir une catégorie.'
+      prochaines.categorie = tr('Choisir une catégorie.')
     }
     if (codeUnite === '') {
-      prochaines.unite = 'Choisir une unité.'
+      prochaines.unite = tr('Choisir une unité.')
     }
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) {
@@ -118,7 +119,7 @@ export function FormulaireArticle({
       }
       afficherToast({
         ton: 'succes',
-        titre: modeModification ? 'Article modifié' : 'Article créé',
+        titre: modeModification ? tr('Article modifié') : tr('Article créé'),
         message: `${saisie.code} · ${saisie.designation}`,
       })
       fermer()
@@ -126,7 +127,7 @@ export function FormulaireArticle({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "L'article n'a pas pu être enregistré",
+        titre: tr("L'article n'a pas pu être enregistré"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -138,12 +139,12 @@ export function FormulaireArticle({
     <Modal
       ouvert={ouvert}
       onFermer={fermer}
-      titre={modeModification ? "Modifier l'article" : 'Nouvel article'}
-      description="Référentiel du catalogue"
+      titre={modeModification ? tr("Modifier l'article") : tr('Nouvel article')}
+      description={tr('Référentiel du catalogue')}
       actions={
         <>
           <Button variante="secondaire" onClick={fermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button
             variante="primaire"
@@ -151,14 +152,14 @@ export function FormulaireArticle({
             form="formulaire-article"
             enChargement={enCours}
           >
-            {modeModification ? 'Enregistrer' : "Créer l'article"}
+            {modeModification ? tr('Enregistrer') : tr("Créer l'article")}
           </Button>
         </>
       }
     >
       <form id="formulaire-article" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Code article" requis erreur={erreurs.code}>
+          <FormField libelle={tr('Code article')} requis erreur={erreurs.code}>
             {(champ) => (
               <Input
                 {...champ}
@@ -170,7 +171,7 @@ export function FormulaireArticle({
             )}
           </FormField>
 
-          <FormField libelle="Origine" requis>
+          <FormField libelle={tr('Origine')} requis>
             {(champ) => (
               <Select
                 {...champ}
@@ -187,7 +188,7 @@ export function FormulaireArticle({
           </FormField>
         </div>
 
-        <FormField libelle="Désignation" requis erreur={erreurs.designation}>
+        <FormField libelle={tr('Désignation')} requis erreur={erreurs.designation}>
           {(champ) => (
             <Input
               {...champ}
@@ -200,7 +201,7 @@ export function FormulaireArticle({
         </FormField>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Catégorie" requis erreur={erreurs.categorie}>
+          <FormField libelle={tr('Catégorie')} requis erreur={erreurs.categorie}>
             {(champ) => (
               <Select
                 {...champ}
@@ -218,7 +219,7 @@ export function FormulaireArticle({
             )}
           </FormField>
 
-          <FormField libelle="Unité de mesure" requis erreur={erreurs.unite}>
+          <FormField libelle={tr('Unité de mesure')} requis erreur={erreurs.unite}>
             {(champ) => (
               <Select
                 {...champ}
@@ -237,7 +238,7 @@ export function FormulaireArticle({
           </FormField>
         </div>
 
-        <FormField libelle="Code-barres" aide="Facultatif. Unique s'il est renseigné.">
+        <FormField libelle="Code-barres" aide={tr("Facultatif. Unique s'il est renseigné.")}>
           {(champ) => (
             <Input
               {...champ}
@@ -255,7 +256,7 @@ export function FormulaireArticle({
             onChange={(evenement) => setActif(evenement.target.checked)}
             className="size-4 rounded border-bordure text-marine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
           />
-          Article actif (présent dans les listes de saisie)
+          {tr('Article actif (présent dans les listes de saisie)')}
         </label>
       </form>
     </Modal>

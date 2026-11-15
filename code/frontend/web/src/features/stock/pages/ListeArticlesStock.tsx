@@ -23,6 +23,7 @@ import type { NiveauSeuil } from '@/lib/seuils'
 import { formatQuantite } from '@/lib/format'
 import { LIBELLE_NIVEAU } from '@/features/stock/presentation/libelles'
 import type { FiltreStock, LigneStock } from '@/features/stock/types'
+import { tr } from '@/i18n/tr'
 
 const ORDRE_NIVEAU: Record<NiveauSeuil, number> = { vide: 0, critique: 1, mini: 2, plein: 3 }
 const NIVEAUX: NiveauSeuil[] = ['vide', 'critique', 'mini', 'plein']
@@ -97,7 +98,7 @@ export function ListeArticlesStock({
   const colonnes: ColonneTable<LigneStock>[] = [
     {
       cle: 'code',
-      entete: 'Code',
+      entete: tr('Code'),
       largeur: '7rem',
       rendu: (ligne) => <span className="font-medium text-marine">{ligne.code}</span>,
       triable: true,
@@ -105,21 +106,21 @@ export function ListeArticlesStock({
     },
     {
       cle: 'designation',
-      entete: 'Désignation',
+      entete: tr('Désignation'),
       rendu: (ligne) => ligne.designation,
       triable: true,
       valeurTri: (ligne) => ligne.designation,
     },
     {
       cle: 'famille',
-      entete: 'Famille',
+      entete: tr('Famille'),
       rendu: (ligne) => ligne.libelleFamille,
       triable: true,
       valeurTri: (ligne) => ligne.libelleFamille,
     },
     {
       cle: 'niveau',
-      entete: 'Niveau',
+      entete: tr('Niveau'),
       largeur: '15rem',
       rendu: (ligne) => (
         <ThresholdGauge
@@ -137,7 +138,7 @@ export function ListeArticlesStock({
     },
     {
       cle: 'quantite',
-      entete: 'Quantité',
+      entete: tr('Quantité'),
       alignement: 'droite',
       largeur: '9rem',
       rendu: (ligne) => formatQuantite(ligne.quantite, ligne.uniteLibelle),
@@ -151,7 +152,7 @@ export function ListeArticlesStock({
       largeur: '6rem',
       rendu: (ligne) => (
         <Button variante="discret" taille="sm" onClick={() => onVoirFiche(ligne)}>
-          Voir
+          {tr('Voir')}
         </Button>
       ),
     },
@@ -159,17 +160,17 @@ export function ListeArticlesStock({
 
   return (
     <PageListe
-      titre="Stock du magasin"
+      titre={tr('Stock du magasin')}
       description={`${magasinLibelle} · ${chantierLibelle}`}
       lectureSeule={lectureSeule}
       actions={
         peutSaisir ? (
           <>
             <Button variante="secondaire" icone={ArrowLineDown} onClick={onNouvelleEntree}>
-              Nouvelle entrée
+              {tr('Nouvelle entrée')}
             </Button>
             <Button variante="primaire" icone={ArrowLineUp} onClick={onNouvelleSortie}>
-              Nouvelle sortie
+              {tr('Nouvelle sortie')}
             </Button>
           </>
         ) : undefined
@@ -177,25 +178,25 @@ export function ListeArticlesStock({
       indicateurs={
         <>
           <KpiCard
-            libelle="Références suivies"
+            libelle={tr('Références suivies')}
             valeur={indicateurs.total}
             icone={Package}
             accent="marine"
           />
           <KpiCard
-            libelle="À surveiller"
+            libelle={tr('À surveiller')}
             valeur={indicateurs.aSurveiller}
             icone={Warning}
             accent="or"
           />
           <KpiCard
-            libelle="En rupture"
+            libelle={tr('En rupture')}
             valeur={indicateurs.ruptures}
             icone={WarningOctagon}
             accent="danger"
           />
           <KpiCard
-            libelle="Anomalies de stock"
+            libelle={tr('Anomalies de stock')}
             valeur={indicateurs.anomalies}
             icone={WarningOctagon}
             accent="danger"
@@ -206,15 +207,15 @@ export function ListeArticlesStock({
         <>
           <Input
             type="search"
-            aria-label="Rechercher un article"
-            placeholder="Rechercher un code ou une désignation…"
+            aria-label={tr('Rechercher un article')}
+            placeholder={tr('Rechercher un code ou une désignation…')}
             value={filtre.recherche}
             onChange={(evenement) => onFiltre({ ...filtre, recherche: evenement.target.value })}
             className="max-w-xs"
           />
 
           <select
-            aria-label="Filtrer par famille"
+            aria-label={tr('Filtrer par famille')}
             value={filtre.codeFamille}
             onChange={(evenement) =>
               onFiltre({
@@ -224,7 +225,7 @@ export function ListeArticlesStock({
             }
             className="h-10 rounded-controle border border-bordure bg-surface px-3 text-sm text-texte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
           >
-            <option value="toutes">Toutes les familles</option>
+            <option value="toutes">{tr('Toutes les familles')}</option>
             {famillesDisponibles.map((famille) => (
               <option key={famille.code} value={famille.code}>
                 {famille.libelle}
@@ -235,7 +236,7 @@ export function ListeArticlesStock({
           <span className="mx-1 h-6 w-px bg-bordure" aria-hidden />
 
           <FilterPill
-            libelle="Tous les niveaux"
+            libelle={tr('Tous les niveaux')}
             actif={filtre.niveau === 'tous'}
             onBasculer={() => onFiltre({ ...filtre, niveau: 'tous' })}
           />
@@ -259,7 +260,7 @@ export function ListeArticlesStock({
         triInitial={{ cle: 'niveau', sens: 'asc' }}
         parPage={12}
         hauteurMax="40rem"
-        messageVide="Aucun article ne correspond aux filtres."
+        messageVide={tr('Aucun article ne correspond aux filtres.')}
       />
     </PageListe>
   )

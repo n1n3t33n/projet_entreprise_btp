@@ -14,11 +14,12 @@ import type {
   TypeUnite,
   TypeZone,
 } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 const LIBELLE_ORIGINE: Record<OrigineArticle, string> = {
-  achat: 'Achat',
-  production_interne: 'Production interne',
-  recuperation: 'Récupération',
+  achat: tr('Achat'),
+  production_interne: tr('Production interne'),
+  recuperation: tr('Récupération'),
 }
 
 export function libelleOrigine(valeur: OrigineArticle): string {
@@ -33,11 +34,11 @@ export const ORIGINES: { valeur: OrigineArticle; libelle: string }[] = [
 ]
 
 const LIBELLE_TYPE_UNITE: Record<TypeUnite, string> = {
-  unite: 'Unité',
-  masse: 'Masse',
-  volume: 'Volume',
-  longueur: 'Longueur',
-  surface: 'Surface',
+  unite: tr('Unité'),
+  masse: tr('Masse'),
+  volume: tr('Volume'),
+  longueur: tr('Longueur'),
+  surface: tr('Surface'),
 }
 
 export function libelleTypeUnite(valeur: TypeUnite): string {
@@ -45,9 +46,9 @@ export function libelleTypeUnite(valeur: TypeUnite): string {
 }
 
 const LIBELLE_TYPE_ZONE: Record<TypeZone, string> = {
-  batiment: 'Bâtiment',
-  niveau: 'Niveau',
-  tranche: 'Tranche',
+  batiment: tr('Bâtiment'),
+  niveau: tr('Niveau'),
+  tranche: tr('Tranche'),
 }
 
 export function libelleTypeZone(valeur: TypeZone): string {
@@ -62,8 +63,8 @@ export const TYPES_ZONE: { valeur: TypeZone; libelle: string }[] = [
 ]
 
 const LIBELLE_STATUT: Record<StatutChantier, string> = {
-  actif: 'Actif',
-  inactif: 'Inactif',
+  actif: tr('Actif'),
+  inactif: tr('Inactif'),
 }
 
 export function libelleStatut(valeur: StatutChantier | StatutLogement): string {

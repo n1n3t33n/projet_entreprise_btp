@@ -1,6 +1,7 @@
 import { CheckCircle, type Icon, Info, Warning, WarningOctagon, X } from '@phosphor-icons/react'
 import { cn } from '@/lib/cn'
 import type { TonToast } from '@/components/ui/toast-context'
+import { tr } from '@/i18n/tr'
 
 export type ToastProps = {
   /** Phrase principale. */
@@ -75,7 +76,7 @@ export function Toast({
         <button
           type="button"
           onClick={onFermer}
-          aria-label="Fermer la notification"
+          aria-label={tr('Fermer la notification')}
           className={cn(
             'shrink-0 rounded-controle p-1 text-texte-attenue',
             'transition-colors duration-[var(--duree-bouton)] ease-out hover:bg-fond hover:text-texte',

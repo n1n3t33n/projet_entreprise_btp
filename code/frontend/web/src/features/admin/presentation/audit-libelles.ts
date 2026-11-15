@@ -8,14 +8,15 @@
 */
 
 import type { TonStatut } from '@/components/ui'
+import { tr } from '@/i18n/tr'
 
 /** Actions d'administration tracées (forme domaine, minuscule). */
 export const LIBELLE_ACTION_AUDIT: Record<string, string> = {
-  revocation_appareil: "Révocation d'appareil",
-  creation_compte: 'Création de compte',
-  modification_compte: 'Modification de compte',
-  modification_droits: 'Modification des droits',
-  import_csv: 'Import CSV',
+  revocation_appareil: tr("Révocation d'appareil"),
+  creation_compte: tr('Création de compte'),
+  modification_compte: tr('Modification de compte'),
+  modification_droits: tr('Modification des droits'),
+  import_csv: tr('Import CSV'),
 }
 
 /** Tonalité de la pastille d'action : la révocation est signalée en danger. */

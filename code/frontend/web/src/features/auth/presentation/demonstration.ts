@@ -8,6 +8,7 @@
 
 import { mocksActifs } from '@/lib/mocks'
 import { MOT_DE_PASSE_DEMONSTRATION } from '@/lib/mocks/auth-grand-bassam'
+import { tr } from '@/i18n/tr'
 
 export type CompteDemonstration = {
   identifiant: string
@@ -16,15 +17,15 @@ export type CompteDemonstration = {
 }
 
 const COMPTES: CompteDemonstration[] = [
-  { identifiant: 'a.kouassi', motDePasse: MOT_DE_PASSE_DEMONSTRATION, libelle: 'Direction' },
-  { identifiant: 'y.bamba', motDePasse: MOT_DE_PASSE_DEMONSTRATION, libelle: 'Administrateur' },
+  { identifiant: 'a.kouassi', motDePasse: MOT_DE_PASSE_DEMONSTRATION, libelle: tr('Direction') },
+  { identifiant: 'y.bamba', motDePasse: MOT_DE_PASSE_DEMONSTRATION, libelle: tr('Administrateur') },
   {
     identifiant: 'k.n-guessan',
     motDePasse: MOT_DE_PASSE_DEMONSTRATION,
-    libelle: 'Responsable technique',
+    libelle: tr('Responsable technique'),
   },
-  { identifiant: 's.traore', motDePasse: MOT_DE_PASSE_DEMONSTRATION, libelle: 'Commercial' },
-  { identifiant: 'm.diallo', motDePasse: MOT_DE_PASSE_DEMONSTRATION, libelle: 'Acquéreur' },
+  { identifiant: 's.traore', motDePasse: MOT_DE_PASSE_DEMONSTRATION, libelle: tr('Commercial') },
+  { identifiant: 'm.diallo', motDePasse: MOT_DE_PASSE_DEMONSTRATION, libelle: tr('Acquéreur') },
 ]
 
 export const COMPTES_DEMONSTRATION: CompteDemonstration[] = mocksActifs() ? COMPTES : []

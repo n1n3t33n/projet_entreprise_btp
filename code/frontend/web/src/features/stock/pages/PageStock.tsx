@@ -32,6 +32,7 @@ import { FormulaireEntree } from '@/features/stock/pages/FormulaireEntree'
 import { FormulaireSortie } from '@/features/stock/pages/FormulaireSortie'
 import { ListeArticlesStock } from '@/features/stock/pages/ListeArticlesStock'
 import type { FiltreStock, LigneStock, LogementDestination } from '@/features/stock/types'
+import { tr } from '@/i18n/tr'
 
 const FILTRE_INITIAL: FiltreStock = { recherche: '', niveau: 'tous', codeFamille: 'toutes' }
 
@@ -69,9 +70,9 @@ export function PageStock() {
 
   if (!capacites.peutConsulter) {
     return (
-      <Card titre="Accès non autorisé">
+      <Card titre={tr('Accès non autorisé')}>
         <p className="text-sm text-texte-secondaire">
-          Ce rôle n'a pas accès au stock du poste de pilotage.
+          {tr("Ce rôle n'a pas accès au stock du poste de pilotage.")}
         </p>
       </Card>
     )
@@ -80,12 +81,12 @@ export function PageStock() {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <Tabs
-        intitule="Vues du stock"
+        intitule={tr('Vues du stock')}
         actif={onglet}
         onChanger={setOnglet}
         onglets={[
-          { id: 'articles', libelle: 'Articles', icone: Package },
-          { id: 'arborescence', libelle: 'Magasins & familles', icone: TreeStructure },
+          { id: 'articles', libelle: tr('Articles'), icone: Package },
+          { id: 'arborescence', libelle: tr('Magasins & familles'), icone: TreeStructure },
         ]}
       >
         {onglet === 'articles' ? (

@@ -11,6 +11,7 @@
 import { JaugeProgression, Table, type ColonneTable } from '@/components/ui'
 import { formatPourcentage } from '@/lib/format'
 import { ecartDeclareValide, type AvancementAgrege } from '@/features/pilotage/types'
+import { tr } from '@/i18n/tr'
 
 export type TableauAgregatsProps = {
   /** Objet du tableau, lu par les lecteurs d'écran. */
@@ -27,7 +28,7 @@ export function TableauAgregats({
   enteteCible,
   lignes,
   chargement = false,
-  messageVide = 'Aucun élément à afficher.',
+  messageVide = tr('Aucun élément à afficher.'),
 }: TableauAgregatsProps) {
   const colonnes: ColonneTable<AvancementAgrege>[] = [
     {
@@ -55,7 +56,7 @@ export function TableauAgregats({
     },
     {
       cle: 'progression',
-      entete: 'Progression',
+      entete: tr('Progression'),
       largeur: '16rem',
       triable: true,
       valeurTri: (ligne) => ligne.pourcentageValide,
@@ -63,8 +64,8 @@ export function TableauAgregats({
         <JaugeProgression
           valeur={ligne.pourcentageValide}
           valeurSecondaire={ligne.pourcentageDeclare}
-          libelleValeur="Validé"
-          libelleValeurSecondaire="Déclaré"
+          libelleValeur={tr('Validé')}
+          libelleValeurSecondaire={tr('Déclaré')}
           taille="sm"
           afficherLegende={false}
           descriptionAccessible={`Validé ${Math.round(ligne.pourcentageValide)} %, déclaré ${Math.round(ligne.pourcentageDeclare)} %`}
@@ -73,7 +74,7 @@ export function TableauAgregats({
     },
     {
       cle: 'valide',
-      entete: 'Validé',
+      entete: tr('Validé'),
       alignement: 'droite',
       triable: true,
       valeurTri: (ligne) => ligne.pourcentageValide,
@@ -83,7 +84,7 @@ export function TableauAgregats({
     },
     {
       cle: 'declare',
-      entete: 'Déclaré',
+      entete: tr('Déclaré'),
       alignement: 'droite',
       triable: true,
       valeurTri: (ligne) => ligne.pourcentageDeclare,
@@ -91,7 +92,7 @@ export function TableauAgregats({
     },
     {
       cle: 'ecart',
-      entete: 'À contrôler',
+      entete: tr('À contrôler'),
       alignement: 'droite',
       triable: true,
       valeurTri: (ligne) => ecartDeclareValide(ligne),
@@ -106,7 +107,7 @@ export function TableauAgregats({
     },
     {
       cle: 'etapes',
-      entete: 'Étapes',
+      entete: tr('Étapes'),
       alignement: 'droite',
       triable: true,
       valeurTri: (ligne) => ligne.nombreEtapes,
@@ -118,7 +119,7 @@ export function TableauAgregats({
     },
     {
       cle: 'incidents',
-      entete: 'Retards · blocages',
+      entete: tr('Retards · blocages'),
       alignement: 'droite',
       triable: true,
       valeurTri: (ligne) => ligne.nombreBloquees * 100 + ligne.nombreEnRetard,

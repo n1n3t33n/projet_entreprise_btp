@@ -9,7 +9,7 @@
   suppression, ni création manuelle — seulement la consultation et le filtrage.
 
   Le filtrage (type d'action, auteur) est transmis au serveur en paramètres de
-  requête, comme pour le journal d'exécution : le journal grandit avec l'usage
+  requête, comme pour le journal dtr('exécution : le journal grandit avec l')usage
   et ne doit pas être rapatrié en entier pour être filtré côté navigateur.
 */
 
@@ -25,6 +25,7 @@ import { formatDateHeure } from '@/lib/format'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { EntreeAudit, FiltresAudit } from '@/features/admin/types/audit'
 import { FILTRES_AUDIT_VIDES } from '@/features/admin/types/audit'
+import { tr } from '@/i18n/tr'
 
 export function JournalAudit() {
   const [filtres, setFiltres] = useState<FiltresAudit>(FILTRES_AUDIT_VIDES)
@@ -53,7 +54,7 @@ export function JournalAudit() {
   const colonnes: ColonneTable<EntreeAudit>[] = [
     {
       cle: 'horodatage',
-      entete: 'Horodatage',
+      entete: tr('Horodatage'),
       largeur: '12rem',
       rendu: (entree) => (
         <span className="text-sm text-texte">{formatDateHeure(entree.horodatage)}</span>
@@ -63,7 +64,7 @@ export function JournalAudit() {
     },
     {
       cle: 'action',
-      entete: 'Action',
+      entete: tr('Action'),
       largeur: '13rem',
       rendu: (entree) => (
         <StatusPill
@@ -77,12 +78,12 @@ export function JournalAudit() {
     },
     {
       cle: 'resume',
-      entete: 'Détail',
+      entete: tr('Détail'),
       rendu: (entree) => <span className="text-sm text-texte">{entree.resume}</span>,
     },
     {
       cle: 'auteur',
-      entete: 'Auteur',
+      entete: tr('Auteur'),
       largeur: '11rem',
       rendu: (entree) => (
         <div className="min-w-0">
@@ -95,7 +96,7 @@ export function JournalAudit() {
     },
     {
       cle: 'ip',
-      entete: 'Adresse IP',
+      entete: tr('Adresse IP'),
       largeur: '9rem',
       rendu: (entree) => <span className="text-xs text-texte-secondaire">{entree.adresseIp}</span>,
     },
@@ -103,7 +104,7 @@ export function JournalAudit() {
 
   if (etat.statut === 'erreur') {
     return (
-      <Card titre="Journal d'audit indisponible">
+      <Card titre={tr("Journal d'audit indisponible")}>
         <p className="text-sm text-danger">{etat.erreur}</p>
       </Card>
     )
@@ -111,16 +112,18 @@ export function JournalAudit() {
 
   return (
     <Card
-      titre="Journal d'audit"
-      description="Actions d'administration : comptes, droits et appareils. Lecture seule, non modifiable."
+      titre={tr("Journal d'audit")}
+      description={tr(
+        "Actions d'administration : comptes, droits et appareils. Lecture seule, non modifiable.",
+      )}
     >
       <div className="mb-4 flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-texte-secondaire">
-            Action
+            {tr('Action')}
           </span>
           <FilterPill
-            libelle="Toutes"
+            libelle={tr('Toutes')}
             actif={filtres.action === null}
             onBasculer={() => changerAction(null)}
           />
@@ -137,10 +140,10 @@ export function JournalAudit() {
         {auteurs.length > 1 && (
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-wide text-texte-secondaire">
-              Auteur
+              {tr('Auteur')}
             </span>
             <FilterPill
-              libelle="Tous"
+              libelle={tr('Tous')}
               actif={filtres.idAuteur === null}
               onBasculer={() => changerAuteur(null)}
             />
@@ -157,14 +160,14 @@ export function JournalAudit() {
       </div>
 
       <Table
-        intitule="Journal d'audit des actions d'administration"
+        intitule={tr("Journal d'audit des actions d'administration")}
         colonnes={colonnes}
         lignes={entrees}
         cleLigne={(entree) => entree.id}
         chargement={etat.statut === 'chargement' || etat.statut === 'attente'}
         triInitial={{ cle: 'horodatage', sens: 'desc' }}
         parPage={15}
-        messageVide="Aucune action enregistrée pour ce filtre."
+        messageVide={tr('Aucune action enregistrée pour ce filtre.')}
         lectureSeule
       />
 

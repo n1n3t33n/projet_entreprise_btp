@@ -18,6 +18,7 @@ import type {
   StatutCompte,
   Utilisateur,
 } from '@/features/auth/types/domaine'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireCompteProps = {
   ouvert: boolean
@@ -74,16 +75,16 @@ export function FormulaireCompte({
 
     const prochaines: ErreursCompte = {}
     if (identifiant.trim() === '') {
-      prochaines.identifiant = 'Saisir un identifiant de connexion.'
+      prochaines.identifiant = tr('Saisir un identifiant de connexion.')
     }
     if (nom.trim() === '') {
-      prochaines.nom = 'Saisir un nom.'
+      prochaines.nom = tr('Saisir un nom.')
     }
     if (prenom.trim() === '') {
-      prochaines.prenom = 'Saisir un prénom.'
+      prochaines.prenom = tr('Saisir un prénom.')
     }
     if (idPerimetre === '') {
-      prochaines.perimetre = 'Choisir un périmètre.'
+      prochaines.perimetre = tr('Choisir un périmètre.')
     }
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) {
@@ -109,7 +110,7 @@ export function FormulaireCompte({
       }
       afficherToast({
         ton: 'succes',
-        titre: modeModification ? 'Compte modifié' : 'Compte créé',
+        titre: modeModification ? tr('Compte modifié') : tr('Compte créé'),
         message: `${saisie.prenom} ${saisie.nom} · ${saisie.identifiant}`,
       })
       onFermer()
@@ -117,7 +118,7 @@ export function FormulaireCompte({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "Le compte n'a pas pu être enregistré",
+        titre: tr("Le compte n'a pas pu être enregistré"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -129,22 +130,22 @@ export function FormulaireCompte({
     <Modal
       ouvert={ouvert}
       onFermer={onFermer}
-      titre={modeModification ? 'Modifier le compte' : 'Nouveau compte'}
-      description="Compte nominatif, rôle et périmètre"
+      titre={modeModification ? tr('Modifier le compte') : tr('Nouveau compte')}
+      description={tr('Compte nominatif, rôle et périmètre')}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button variante="primaire" type="submit" form="formulaire-compte" enChargement={enCours}>
-            {modeModification ? 'Enregistrer' : 'Créer le compte'}
+            {modeModification ? tr('Enregistrer') : tr('Créer le compte')}
           </Button>
         </>
       }
     >
       <form id="formulaire-compte" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Prénom" requis erreur={erreurs.prenom}>
+          <FormField libelle={tr('Prénom')} requis erreur={erreurs.prenom}>
             {(champ) => (
               <Input
                 {...champ}
@@ -155,7 +156,7 @@ export function FormulaireCompte({
             )}
           </FormField>
 
-          <FormField libelle="Nom" requis erreur={erreurs.nom}>
+          <FormField libelle={tr('Nom')} requis erreur={erreurs.nom}>
             {(champ) => (
               <Input
                 {...champ}
@@ -168,10 +169,10 @@ export function FormulaireCompte({
         </div>
 
         <FormField
-          libelle="Identifiant de connexion"
+          libelle={tr('Identifiant de connexion')}
           requis
           erreur={erreurs.identifiant}
-          aide="Unique. Sert à se connecter au poste de pilotage."
+          aide={tr('Unique. Sert à se connecter au poste de pilotage.')}
         >
           {(champ) => (
             <Input
@@ -184,7 +185,10 @@ export function FormulaireCompte({
           )}
         </FormField>
 
-        <FormField libelle="Fonction" aide="Intitulé du poste, affiché dans les journaux.">
+        <FormField
+          libelle={tr('Fonction')}
+          aide={tr('Intitulé du poste, affiché dans les journaux.')}
+        >
           {(champ) => (
             <Input
               {...champ}
@@ -196,7 +200,11 @@ export function FormulaireCompte({
         </FormField>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Rôle" requis aide="Décide des écrans accessibles, via la matrice.">
+          <FormField
+            libelle={tr('Rôle')}
+            requis
+            aide={tr('Décide des écrans accessibles, via la matrice.')}
+          >
             {(champ) => (
               <Select
                 {...champ}
@@ -212,7 +220,7 @@ export function FormulaireCompte({
             )}
           </FormField>
 
-          <FormField libelle="Périmètre" requis erreur={erreurs.perimetre}>
+          <FormField libelle={tr('Périmètre')} requis erreur={erreurs.perimetre}>
             {(champ) => (
               <Select
                 {...champ}
@@ -238,7 +246,7 @@ export function FormulaireCompte({
             onChange={(evenement) => setStatut(evenement.target.checked ? 'actif' : 'inactif')}
             className="size-4 rounded border-bordure text-marine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
           />
-          Compte actif (un compte désactivé ne peut plus se connecter)
+          {tr('Compte actif (un compte désactivé ne peut plus se connecter)')}
         </label>
       </form>
     </Modal>

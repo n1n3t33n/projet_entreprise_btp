@@ -29,6 +29,7 @@ import {
   tonActif,
 } from '@/features/referentiels/presentation/libelles'
 import type { ArticleVue } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 type FiltreActif = 'tous' | 'actifs' | 'inactifs'
 
@@ -96,7 +97,7 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
   const colonnes: ColonneTable<ArticleVue>[] = [
     {
       cle: 'code',
-      entete: 'Code',
+      entete: tr('Code'),
       largeur: '8rem',
       rendu: (article) => <span className="font-medium text-marine">{article.code}</span>,
       triable: true,
@@ -104,27 +105,27 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
     },
     {
       cle: 'designation',
-      entete: 'Désignation',
+      entete: tr('Désignation'),
       rendu: (article) => article.designation,
       triable: true,
       valeurTri: (article) => article.designation,
     },
     {
       cle: 'categorie',
-      entete: 'Catégorie',
+      entete: tr('Catégorie'),
       rendu: (article) => article.libelleCategorie,
       triable: true,
       valeurTri: (article) => article.libelleCategorie,
     },
     {
       cle: 'unite',
-      entete: 'Unité',
+      entete: tr('Unité'),
       largeur: '8rem',
       rendu: (article) => article.libelleUnite,
     },
     {
       cle: 'origine',
-      entete: 'Origine',
+      entete: tr('Origine'),
       largeur: '10rem',
       rendu: (article) => libelleOrigine(article.origine),
       triable: true,
@@ -132,11 +133,14 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
     },
     {
       cle: 'actif',
-      entete: 'Statut',
+      entete: tr('Statut'),
       alignement: 'centre',
       largeur: '7rem',
       rendu: (article) => (
-        <StatusPill ton={tonActif(article.actif)} libelle={article.actif ? 'Actif' : 'Inactif'} />
+        <StatusPill
+          ton={tonActif(article.actif)}
+          libelle={article.actif ? tr('Actif') : tr('Inactif')}
+        />
       ),
       triable: true,
       valeurTri: (article) => (article.actif ? 1 : 0),
@@ -156,7 +160,7 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
           icone={PencilSimple}
           onClick={() => ouvrirModification(article)}
         >
-          Modifier
+          {tr('Modifier')}
         </Button>
       ),
     })
@@ -184,27 +188,32 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
   return (
     <>
       <PageListe
-        titre="Catalogue d'articles"
-        description="Référentiel des articles consommés sur les chantiers"
+        titre={tr("Catalogue d'articles")}
+        description={tr('Référentiel des articles consommés sur les chantiers')}
         lectureSeule={!peutEditer}
         actions={
           peutEditer ? (
             <Button variante="primaire" icone={Plus} onClick={ouvrirCreation}>
-              Nouvel article
+              {tr('Nouvel article')}
             </Button>
           ) : undefined
         }
         indicateurs={
           <>
             <KpiCard
-              libelle="Articles"
+              libelle={tr('Articles')}
               valeur={indicateurs.total}
               icone={Package}
               accent="marine"
             />
-            <KpiCard libelle="Actifs" valeur={indicateurs.actifs} icone={Cube} accent="succes" />
             <KpiCard
-              libelle="Catégories"
+              libelle={tr('Actifs')}
+              valeur={indicateurs.actifs}
+              icone={Cube}
+              accent="succes"
+            />
+            <KpiCard
+              libelle={tr('Catégories')}
               valeur={categories.length}
               icone={Stack}
               accent="sarcelle"
@@ -215,20 +224,20 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
           <>
             <Input
               type="search"
-              aria-label="Rechercher un article"
-              placeholder="Rechercher un code ou une désignation…"
+              aria-label={tr('Rechercher un article')}
+              placeholder={tr('Rechercher un code ou une désignation…')}
               value={recherche}
               onChange={(evenement) => setRecherche(evenement.target.value)}
               className="max-w-xs"
             />
 
             <select
-              aria-label="Filtrer par catégorie"
+              aria-label={tr('Filtrer par catégorie')}
               value={codeCategorie}
               onChange={(evenement) => setCodeCategorie(evenement.target.value)}
               className="h-10 rounded-controle border border-bordure bg-surface px-3 text-sm text-texte focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle"
             >
-              <option value="toutes">Toutes les catégories</option>
+              <option value="toutes">{tr('Toutes les catégories')}</option>
               {categories.map((categorie) => (
                 <option key={categorie.code} value={categorie.code}>
                   {categorie.libelle}
@@ -239,17 +248,17 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
             <span className="mx-1 h-6 w-px bg-bordure" aria-hidden />
 
             <FilterPill
-              libelle="Tous"
+              libelle={tr('Tous')}
               actif={filtreActif === 'tous'}
               onBasculer={() => setFiltreActif('tous')}
             />
             <FilterPill
-              libelle="Actifs"
+              libelle={tr('Actifs')}
               actif={filtreActif === 'actifs'}
               onBasculer={() => setFiltreActif('actifs')}
             />
             <FilterPill
-              libelle="Inactifs"
+              libelle={tr('Inactifs')}
               actif={filtreActif === 'inactifs'}
               onBasculer={() => setFiltreActif('inactifs')}
             />
@@ -257,7 +266,7 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
         }
       >
         <Table
-          intitule="Articles du catalogue"
+          intitule={tr('Articles du catalogue')}
           colonnes={colonnes}
           lignes={lignesFiltrees}
           cleLigne={(article) => article.id}
@@ -265,11 +274,11 @@ export function CatalogueArticles({ peutEditer }: CatalogueArticlesProps) {
           triInitial={{ cle: 'code', sens: 'asc' }}
           parPage={12}
           hauteurMax="40rem"
-          messageVide="Aucun article ne correspond aux filtres."
+          messageVide={tr('Aucun article ne correspond aux filtres.')}
         />
 
         {/* Référentiels secondaires affichés en lecture : leur édition relève
-            d'EF-REF-04 (unités) et d'une gestion des catégories, prévues dans
+            dtr('EF-REF-04 (unités) et d')une gestion des catégories, prévues dans
             une étape ultérieure. */}
         <Card titre="Unités de mesure" icone={Cube} className="mt-6">
           <ul className="flex flex-wrap gap-2">

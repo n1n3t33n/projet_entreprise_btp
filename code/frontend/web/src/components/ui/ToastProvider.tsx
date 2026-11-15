@@ -7,6 +7,7 @@ import {
   type OptionsToast,
   type ToastEnregistre,
 } from '@/components/ui/toast-context'
+import { tr } from '@/i18n/tr'
 
 export type ToastProviderProps = {
   children: ReactNode
@@ -99,7 +100,7 @@ export function ToastProvider({ children, dureeParDefautMs }: ToastProviderProps
       {createPortal(
         <div
           role="region"
-          aria-label="Notifications"
+          aria-label={tr('Notifications')}
           aria-live="polite"
           className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-full max-w-sm flex-col gap-3"
         >

@@ -3,10 +3,10 @@
 
   - Chaque écran est enveloppé par `EcranProtege`, qui applique la matrice
     d'accès de `config/navigation` : l'adresse ne contourne plus le menu.
-  - La racine redirige vers l'écran d'accueil du rôle courant.
+  - La racine redirige vers ltr('écran d')accueil du rôle courant.
   - Les modules métier sont chargés à la demande (`lazy`) : le premier
     chargement n'embarque que la coquille, chaque module arrive quand on
-    l'ouvre. Cela ramène le paquet initial sous le seuil d'alerte de Vite.
+    ltr('ouvre. Cela ramène le paquet initial sous le seuil d')alerte de Vite.
 */
 
 import { lazy, Suspense, type ReactNode } from 'react'
@@ -17,6 +17,7 @@ import { ChargementModule } from '@/app/ChargementModule'
 import { EcranProtege, RedirectionAccueil } from '@/app/EcranProtege'
 import { PageEnPreparation } from '@/components/ui/PageEnPreparation'
 import type { IdEcran } from '@/config/navigation'
+import { tr } from '@/i18n/tr'
 
 const PageTableauDeBord = lazy(() =>
   import('@/features/pilotage').then((module) => ({ default: module.PageTableauDeBord })),
@@ -97,7 +98,7 @@ export const router = createBrowserRouter([
           },
           {
             path: '/synchronisation',
-            element: ecran('synchronisation', <PageEnPreparation titre="Synchronisation" />),
+            element: ecran('synchronisation', <PageEnPreparation titre={tr('Synchronisation')} />),
           },
           {
             path: '/espace-acquereur',

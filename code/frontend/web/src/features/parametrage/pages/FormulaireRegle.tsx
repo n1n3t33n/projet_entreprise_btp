@@ -17,6 +17,7 @@ import type {
   SaisieRegle,
   TypeEvenement,
 } from '@/features/parametrage/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireRegleProps = {
   ouvert: boolean
@@ -52,9 +53,9 @@ export function FormulaireRegle({ ouvert, onFermer, regle, onEnregistre }: Formu
   async function soumettre(evenement: FormEvent) {
     evenement.preventDefault()
     const prochaines: Erreurs = {}
-    if (champTeste.trim() === '') prochaines.champTeste = 'Saisir le champ testé.'
+    if (champTeste.trim() === '') prochaines.champTeste = tr('Saisir le champ testé.')
     if (valeurSeuil.trim() === '' && delaiHeures.trim() === '') {
-      prochaines.bornes = 'Renseigner au moins une valeur seuil ou un délai.'
+      prochaines.bornes = tr('Renseigner au moins une valeur seuil ou un délai.')
     }
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) return
@@ -76,14 +77,14 @@ export function FormulaireRegle({ ouvert, onFermer, regle, onEnregistre }: Formu
       }
       afficherToast({
         ton: 'succes',
-        titre: modeModification ? 'Règle modifiée' : 'Règle créée',
+        titre: modeModification ? tr('Règle modifiée') : tr('Règle créée'),
       })
       onFermer()
       onEnregistre()
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "La règle n'a pas pu être enregistrée",
+        titre: tr("La règle n'a pas pu être enregistrée"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -95,21 +96,21 @@ export function FormulaireRegle({ ouvert, onFermer, regle, onEnregistre }: Formu
     <Modal
       ouvert={ouvert}
       onFermer={onFermer}
-      titre={modeModification ? 'Modifier la règle' : 'Nouvelle règle de validation'}
-      description="Condition portant sur un événement du système"
+      titre={modeModification ? tr('Modifier la règle') : tr('Nouvelle règle de validation')}
+      description={tr('Condition portant sur un événement du système')}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button variante="primaire" type="submit" form="formulaire-regle" enChargement={enCours}>
-            {modeModification ? 'Enregistrer' : 'Créer'}
+            {modeModification ? tr('Enregistrer') : tr('Créer')}
           </Button>
         </>
       }
     >
       <form id="formulaire-regle" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
-        <FormField libelle="Type d'événement" requis>
+        <FormField libelle={tr("Type d'événement")} requis>
           {(champ) => (
             <Select
               {...champ}
@@ -127,7 +128,7 @@ export function FormulaireRegle({ ouvert, onFermer, regle, onEnregistre }: Formu
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
-            libelle="Champ testé"
+            libelle={tr('Champ testé')}
             requis
             erreur={erreurs.champTeste}
             aide="ex. ecart_pourcent, delai_validation"
@@ -142,7 +143,7 @@ export function FormulaireRegle({ ouvert, onFermer, regle, onEnregistre }: Formu
             )}
           </FormField>
 
-          <FormField libelle="Opérateur" requis>
+          <FormField libelle={tr('Opérateur')} requis>
             {(champ) => (
               <Select
                 {...champ}
@@ -160,7 +161,7 @@ export function FormulaireRegle({ ouvert, onFermer, regle, onEnregistre }: Formu
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Valeur seuil" aide="Nombre comparé au champ testé.">
+          <FormField libelle={tr('Valeur seuil')} aide={tr('Nombre comparé au champ testé.')}>
             {(champ) => (
               <Input
                 {...champ}
@@ -172,7 +173,10 @@ export function FormulaireRegle({ ouvert, onFermer, regle, onEnregistre }: Formu
             )}
           </FormField>
 
-          <FormField libelle="Délai (heures)" aide="Échéance en heures, pour une règle de délai.">
+          <FormField
+            libelle={tr('Délai (heures)')}
+            aide={tr('Échéance en heures, pour une règle de délai.')}
+          >
             {(champ) => (
               <Input
                 {...champ}
