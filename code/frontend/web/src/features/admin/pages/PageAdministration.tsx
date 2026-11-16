@@ -11,7 +11,7 @@
   - Import CSV — données initiales des référentiels (EF-ADM-02).
 
   Regrouper ces écrans sous un seul point de menu suit UC-4, qui place toutes
-  ces actions sous le même acteur. L'ACCÈS à l'écran reste décidé par la matrice
+  ces actions sous le même acteur. Ltr('ACCÈS à l')écran reste décidé par la matrice
   des droits ; les capacités d'écriture (modifier les droits, révoquer, importer)
   sont réservées au rôle système (`capacites`).
 */
@@ -34,6 +34,7 @@ import { MatriceDroits } from '@/features/admin/pages/MatriceDroits'
 import { SupervisionAppareils } from '@/features/admin/pages/SupervisionAppareils'
 import { JournalAudit } from '@/features/admin/pages/JournalAudit'
 import { ImportReferentiels } from '@/features/admin/pages/ImportReferentiels'
+import { tr } from '@/i18n/tr'
 
 export function PageAdministration() {
   const { role } = useRole()
@@ -44,21 +45,21 @@ export function PageAdministration() {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <EnTetePage
-        titre="Administration"
-        description="Comptes, droits, appareils, journal d'audit et import des référentiels"
+        titre={tr('Administration')}
+        description={tr("Comptes, droits, appareils, journal d'audit et import des référentiels")}
         niveauTitre={2}
       />
 
       <Tabs
-        intitule="Administration"
+        intitule={tr('Administration')}
         actif={onglet}
         onChanger={setOnglet}
         onglets={[
-          { id: 'comptes', libelle: 'Comptes utilisateurs', icone: UsersThree },
-          { id: 'droits', libelle: 'Matrice des droits', icone: ShieldCheck },
-          { id: 'appareils', libelle: 'Appareils', icone: DeviceMobile },
-          { id: 'audit', libelle: "Journal d'audit", icone: ListMagnifyingGlass },
-          { id: 'import', libelle: 'Import CSV', icone: FileArrowUp },
+          { id: 'comptes', libelle: tr('Comptes utilisateurs'), icone: UsersThree },
+          { id: 'droits', libelle: tr('Matrice des droits'), icone: ShieldCheck },
+          { id: 'appareils', libelle: tr('Appareils'), icone: DeviceMobile },
+          { id: 'audit', libelle: tr("Journal d'audit"), icone: ListMagnifyingGlass },
+          { id: 'import', libelle: tr('Import CSV'), icone: FileArrowUp },
         ]}
       >
         {onglet === 'comptes' && (
@@ -68,7 +69,7 @@ export function PageAdministration() {
         {onglet === 'droits' && (
           <>
             {erreur && (
-              <Card titre="Droits indisponibles">
+              <Card titre={tr('Droits indisponibles')}>
                 <p className="text-sm text-danger">{erreur}</p>
               </Card>
             )}

@@ -21,6 +21,7 @@ import { LIBELLE_STATUT_GAMME, TON_STATUT_GAMME } from '@/features/gammes/presen
 import { useRequete } from '@/lib/hooks/useRequete'
 import { formatDate, formatPourcentage } from '@/lib/format'
 import type { CorpsEtat, EtapeModele } from '@/features/gammes/types'
+import { tr } from '@/i18n/tr'
 
 export type DetailGammeProps = {
   ouvert: boolean
@@ -62,7 +63,7 @@ export function DetailGamme({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "L'action n'a pas pu aboutir",
+        titre: tr("L'action n'a pas pu aboutir"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -80,7 +81,7 @@ export function DetailGamme({
     },
     {
       cle: 'libelle',
-      entete: 'Étape',
+      entete: tr('Étape'),
       rendu: (etape) => (
         <div className="flex items-center gap-2">
           <span
@@ -97,14 +98,14 @@ export function DetailGamme({
     },
     {
       cle: 'poids',
-      entete: 'Poids',
+      entete: tr('Poids'),
       alignement: 'droite',
       largeur: '6rem',
       rendu: (etape) => formatPourcentage(etape.poids),
     },
     {
       cle: 'controle',
-      entete: 'Contrôle',
+      entete: tr('Contrôle'),
       alignement: 'centre',
       largeur: '7rem',
       rendu: (etape) =>
@@ -129,15 +130,15 @@ export function DetailGamme({
             onClick={() => setEditeurOuvert(true)}
             disabled={enCours}
           >
-            Modifier les étapes
+            {tr('Modifier les étapes')}
           </Button>
           <Button
             variante="primaire"
             icone={SealCheck}
             enChargement={enCours}
-            onClick={() => executer(() => publierGamme(gamme.id), 'Version publiée', true)}
+            onClick={() => executer(() => publierGamme(gamme.id), tr('Version publiée'), true)}
           >
-            Publier la version
+            {tr('Publier la version')}
           </Button>
         </div>
       )
@@ -149,17 +150,19 @@ export function DetailGamme({
             variante="secondaire"
             icone={Archive}
             disabled={enCours}
-            onClick={() => executer(() => archiverGamme(gamme.id), 'Gamme archivée', true)}
+            onClick={() => executer(() => archiverGamme(gamme.id), tr('Gamme archivée'), true)}
           >
-            Archiver
+            {tr('Archiver')}
           </Button>
           <Button
             variante="primaire"
             icone={CopySimple}
             enChargement={enCours}
-            onClick={() => executer(() => creerVersion(gamme.id), 'Nouvelle version créée', true)}
+            onClick={() =>
+              executer(() => creerVersion(gamme.id), tr('Nouvelle version créée'), true)
+            }
           >
-            Créer une nouvelle version
+            {tr('Créer une nouvelle version')}
           </Button>
         </div>
       )
@@ -170,9 +173,9 @@ export function DetailGamme({
           variante="secondaire"
           icone={CopySimple}
           enChargement={enCours}
-          onClick={() => executer(() => creerVersion(gamme.id), 'Nouvelle version créée', true)}
+          onClick={() => executer(() => creerVersion(gamme.id), tr('Nouvelle version créée'), true)}
         >
-          Créer une nouvelle version
+          {tr('Créer une nouvelle version')}
         </Button>
       </div>
     )
@@ -183,8 +186,12 @@ export function DetailGamme({
       <Drawer
         ouvert={ouvert}
         onFermer={onFermer}
-        titre={gamme ? gamme.libelle : 'Gamme'}
-        description={gamme ? `${gamme.libelleTypeLogement} · version ${gamme.version}` : undefined}
+        titre={gamme ? gamme.libelle : tr('Gamme')}
+        description={
+          gamme
+            ? tr('{0} · version {1}', { 0: gamme.libelleTypeLogement, 1: gamme.version })
+            : undefined
+        }
         largeur="lg"
         pied={pied}
       >
@@ -213,23 +220,24 @@ export function DetailGamme({
             {gamme.statut === 'active' && (
               <div className="rounded-lg border border-marine/20 bg-encre/5 p-3">
                 <p className="text-sm text-texte-secondaire">
-                  Cette version est en service : ses étapes sont figées. Pour la faire évoluer,
-                  créez une nouvelle version, modifiez ses étapes, puis publiez-la.
+                  {tr(
+                    'Cette version est en service : ses étapes sont figées. Pour la faire évoluer, créez une nouvelle version, modifiez ses étapes, puis publiez-la.',
+                  )}
                 </p>
               </div>
             )}
 
             <Table
-              intitule={`Étapes de ${gamme.libelle}`}
+              intitule={tr('Étapes de {0}', { 0: gamme.libelle })}
               colonnes={colonnes}
               lignes={etapes}
               cleLigne={(etape) => etape.id}
-              messageVide="Aucune étape. Ajoutez-en avant de publier."
+              messageVide={tr('Aucune étape. Ajoutez-en avant de publier.')}
               lectureSeule
             />
           </div>
         ) : (
-          <p className="text-sm text-texte-secondaire">Chargement…</p>
+          <p className="text-sm text-texte-secondaire">{tr('Chargement…')}</p>
         )}
       </Drawer>
 

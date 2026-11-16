@@ -11,6 +11,7 @@ import { useState, type FormEvent } from 'react'
 import { Button, FormField, Input, Modal, Select, useToast } from '@/components/ui'
 import { enregistrerEntree } from '@/features/stock/api'
 import type { LigneStock, TypeMouvement } from '@/features/stock/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireEntreeProps = {
   ouvert: boolean
@@ -61,13 +62,13 @@ export function FormulaireEntree({
 
     const prochainesErreurs: typeof erreurs = {}
     if (!articleChoisi) {
-      prochainesErreurs.article = 'Choisir un article.'
+      prochainesErreurs.article = tr('Choisir un article.')
     }
     if (!codeType) {
-      prochainesErreurs.type = "Choisir la nature de l'entrée."
+      prochainesErreurs.type = tr("Choisir la nature de l'entrée.")
     }
     if (!Number.isFinite(quantiteNombre) || quantiteNombre <= 0) {
-      prochainesErreurs.quantite = 'Saisir une quantité supérieure à zéro.'
+      prochainesErreurs.quantite = tr('Saisir une quantité supérieure à zéro.')
     }
     setErreurs(prochainesErreurs)
     if (Object.keys(prochainesErreurs).length > 0 || !articleChoisi) {
@@ -86,15 +87,15 @@ export function FormulaireEntree({
       })
       afficherToast({
         ton: 'succes',
-        titre: 'Entrée enregistrée',
-        message: `${articleChoisi.designation} — mouvement horodaté et tracé.`,
+        titre: tr('Entrée enregistrée'),
+        message: tr('{0} — mouvement horodaté et tracé.', { 0: articleChoisi.designation }),
       })
       fermer()
       onEnregistre()
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "L'entrée n'a pas pu être enregistrée",
+        titre: tr("L'entrée n'a pas pu être enregistrée"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -106,21 +107,21 @@ export function FormulaireEntree({
     <Modal
       ouvert={ouvert}
       onFermer={fermer}
-      titre="Nouvelle entrée"
-      description="Réception d'articles au magasin"
+      titre={tr('Nouvelle entrée')}
+      description={tr("Réception d'articles au magasin")}
       actions={
         <>
           <Button variante="secondaire" onClick={fermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button variante="primaire" type="submit" form="formulaire-entree" enChargement={enCours}>
-            Enregistrer l'entrée
+            {tr("Enregistrer l'entrée")}
           </Button>
         </>
       }
     >
       <form id="formulaire-entree" onSubmit={soumettre} className="flex flex-col gap-4" noValidate>
-        <FormField libelle="Article" requis erreur={erreurs.article}>
+        <FormField libelle={tr('Article')} requis erreur={erreurs.article}>
           {(champ) => (
             <Select
               {...champ}
@@ -138,7 +139,7 @@ export function FormulaireEntree({
           )}
         </FormField>
 
-        <FormField libelle="Nature de l'entrée" requis erreur={erreurs.type}>
+        <FormField libelle={tr("Nature de l'entrée")} requis erreur={erreurs.type}>
           {(champ) => (
             <Select
               {...champ}
@@ -157,10 +158,10 @@ export function FormulaireEntree({
         </FormField>
 
         <FormField
-          libelle="Quantité reçue"
+          libelle={tr('Quantité reçue')}
           requis
           erreur={erreurs.quantite}
-          aide={articleChoisi ? `Unité : ${articleChoisi.uniteLibelle}` : undefined}
+          aide={articleChoisi ? tr('Unité : {0}', { 0: articleChoisi.uniteLibelle }) : undefined}
         >
           {(champ) => (
             <Input
@@ -177,8 +178,8 @@ export function FormulaireEntree({
         </FormField>
 
         <FormField
-          libelle="Référence de bon de livraison ou de conteneur"
-          aide="Texte libre, facultatif."
+          libelle={tr('Référence de bon de livraison ou de conteneur')}
+          aide={tr('Texte libre, facultatif.')}
         >
           {(champ) => (
             <Input

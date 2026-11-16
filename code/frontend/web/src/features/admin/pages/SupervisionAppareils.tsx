@@ -11,7 +11,7 @@
   métier : elle est confirmée par une modale au ton « danger », et SQ-5 (étape
   12) précise qu'elle entraîne côté serveur un blocage immédiat, une
   journalisation (EF-AUT-08) puis, à la prochaine synchronisation, l'effacement
-  de la base locale chiffrée (ET-4). L'écran se contente d'émettre l'ordre et de
+  de la base locale chiffrée (ET-4). Ltr('écran se contente d')émettre l'ordre et de
   recharger la liste.
 
   Comme pour la matrice des droits, la MODIFICATION (ici la révocation) est
@@ -42,6 +42,7 @@ import {
 import { formatDateHeure } from '@/lib/format'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { Appareil } from '@/features/admin/types/appareils'
+import { tr } from '@/i18n/tr'
 
 export type SupervisionAppareilsProps = {
   /** Autorise la révocation. Réservé au rôle système, comme la matrice des droits. */
@@ -88,16 +89,17 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
       await revoquerAppareil(aRevoquer.id)
       afficherToast({
         ton: 'succes',
-        titre: 'Appareil révoqué',
-        message:
+        titre: tr('Appareil révoqué'),
+        message: tr(
           "L'accès est bloqué immédiatement ; la base locale sera effacée à la prochaine connexion.",
+        ),
       })
       setARevoquer(null)
       etat.recharger()
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "L'appareil n'a pas pu être révoqué",
+        titre: tr("L'appareil n'a pas pu être révoqué"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -108,7 +110,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
   const colonnes: ColonneTable<Appareil>[] = [
     {
       cle: 'empreinte',
-      entete: 'Appareil',
+      entete: tr('Appareil'),
       rendu: (appareil) => (
         <div className="min-w-0">
           <p className="truncate font-medium text-marine">{appareil.empreinteMateriel}</p>
@@ -122,7 +124,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
     },
     {
       cle: 'proprietaire',
-      entete: 'Propriétaire',
+      entete: tr('Propriétaire'),
       rendu: (appareil) => (
         <div className="min-w-0">
           <p className="truncate text-sm text-texte">{appareil.nomUtilisateur}</p>
@@ -136,7 +138,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
     },
     {
       cle: 'synchro',
-      entete: 'Dernière synchro',
+      entete: tr('Dernière synchro'),
       largeur: '13rem',
       rendu: (appareil) => {
         const fraicheur = fraicheurSynchro(appareil.derniereSynchronisation, maintenant)
@@ -160,7 +162,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
     },
     {
       cle: 'statut',
-      entete: 'Statut',
+      entete: tr('Statut'),
       alignement: 'centre',
       largeur: '8rem',
       rendu: (appareil) => (
@@ -190,7 +192,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
             icone={ShieldSlash}
             onClick={() => setARevoquer(appareil)}
           >
-            Révoquer
+            {tr('Révoquer')}
           </Button>
         ),
     })
@@ -198,7 +200,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
 
   if (etat.statut === 'erreur') {
     return (
-      <Card titre="Appareils indisponibles">
+      <Card titre={tr('Appareils indisponibles')}>
         <p className="text-sm text-danger">{etat.erreur}</p>
       </Card>
     )
@@ -207,15 +209,17 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
   return (
     <>
       <Card
-        titre="Supervision des appareils"
-        description="Appareils enrôlés, dernière synchronisation et révocation"
+        titre={tr('Supervision des appareils')}
+        description={tr('Appareils enrôlés, dernière synchronisation et révocation')}
         actions={
-          peutModifier ? undefined : <StatusPill ton="neutre" taille="sm" libelle="Lecture seule" />
+          peutModifier ? undefined : (
+            <StatusPill ton="neutre" taille="sm" libelle={tr('Lecture seule')} />
+          )
         }
       >
         <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <KpiCard
-            libelle="Appareils actifs"
+            libelle={tr('Appareils actifs')}
             valeur={indicateurs.actifs}
             icone={DeviceMobile}
             accent="succes"
@@ -227,7 +231,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
             accent={indicateurs.enRetard > 0 ? 'or' : 'sarcelle'}
           />
           <KpiCard
-            libelle="Révoqués"
+            libelle={tr('Révoqués')}
             valeur={indicateurs.revoques}
             icone={ShieldSlash}
             accent="danger"
@@ -235,14 +239,14 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
         </div>
 
         <Table
-          intitule="Appareils enrôlés"
+          intitule={tr('Appareils enrôlés')}
           colonnes={colonnes}
           lignes={appareils}
           cleLigne={(appareil) => appareil.id}
           chargement={etat.statut === 'chargement' || etat.statut === 'attente'}
           triInitial={{ cle: 'synchro', sens: 'asc' }}
           parPage={12}
-          messageVide="Aucun appareil enrôlé."
+          messageVide={tr('Aucun appareil enrôlé.')}
         />
 
         <p className="mt-4 text-xs text-texte-secondaire">
@@ -256,7 +260,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
       <Modal
         ouvert={aRevoquer !== null}
         onFermer={() => (enCours ? undefined : setARevoquer(null))}
-        titre="Révoquer cet appareil ?"
+        titre={tr('Révoquer cet appareil ?')}
         description={
           aRevoquer ? `${aRevoquer.empreinteMateriel} — ${aRevoquer.nomUtilisateur}` : undefined
         }
@@ -265,7 +269,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
         actions={
           <>
             <Button variante="secondaire" onClick={() => setARevoquer(null)} disabled={enCours}>
-              Annuler
+              {tr('Annuler')}
             </Button>
             <Button
               variante="danger"
@@ -273,7 +277,7 @@ export function SupervisionAppareils({ peutModifier }: SupervisionAppareilsProps
               onClick={confirmerRevocation}
               enChargement={enCours}
             >
-              Révoquer
+              {tr('Révoquer')}
             </Button>
           </>
         }

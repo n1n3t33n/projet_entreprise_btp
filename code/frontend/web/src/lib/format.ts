@@ -8,23 +8,25 @@
   formatage générique (nombres, dates, unités) est mutualisé ici.
 */
 
-const FORMAT_QUANTITE = new Intl.NumberFormat('fr-FR', {
+import { LOCALE_COURANTE } from '@/i18n/tr'
+
+const FORMAT_QUANTITE = new Intl.NumberFormat(LOCALE_COURANTE, {
   minimumFractionDigits: 0,
   maximumFractionDigits: 3,
 })
 
-const FORMAT_SURFACE = new Intl.NumberFormat('fr-FR', {
+const FORMAT_SURFACE = new Intl.NumberFormat(LOCALE_COURANTE, {
   minimumFractionDigits: 0,
   maximumFractionDigits: 2,
 })
 
-const FORMAT_DATE = new Intl.DateTimeFormat('fr-FR', {
+const FORMAT_DATE = new Intl.DateTimeFormat(LOCALE_COURANTE, {
   day: '2-digit',
   month: '2-digit',
   year: 'numeric',
 })
 
-const FORMAT_DATE_HEURE = new Intl.DateTimeFormat('fr-FR', {
+const FORMAT_DATE_HEURE = new Intl.DateTimeFormat(LOCALE_COURANTE, {
   day: '2-digit',
   month: '2-digit',
   year: 'numeric',
@@ -35,7 +37,20 @@ const FORMAT_DATE_HEURE = new Intl.DateTimeFormat('fr-FR', {
 /** Quantité avec son unité, par exemple « 12,5 sac » (trois décimales au plus, comme `numeric(14,3)`). */
 export function formatQuantite(valeur: number, unite?: string): string {
   const nombre = FORMAT_QUANTITE.format(valeur)
-  return unite ? `${nombre} ${unite}` : nombre
+  return unite ? `${nombre} ${accorderUnite(unite, valeur)}` : nombre
+}
+
+/**
+ * Accorde une unité écrite en toutes lettres : « 1 sac », « 12 sacs »,
+ * « 3 rouleaux ». Les symboles (kg, m², ml) et les mots déjà au pluriel ne
+ * changent pas.
+ */
+export function accorderUnite(unite: string, valeur: number): string {
+  const estMot = /^[a-zà-ÿ]{3,}$/i.test(unite)
+  if (!estMot || Math.abs(valeur) < 2 || /[sxz]$/i.test(unite)) {
+    return unite
+  }
+  return /(eau|eu|au)$/i.test(unite) ? `${unite}x` : `${unite}s`
 }
 
 /** Surface en m², par exemple « 72,5 m² ». */

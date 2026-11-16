@@ -24,6 +24,7 @@ import {
   TON_STATUT_LOGEMENT,
 } from '@/features/avancement/presentation/libelles'
 import type { FiltreAvancement, LigneLogement, Zone } from '@/features/avancement/types'
+import { tr } from '@/i18n/tr'
 
 export type SuiviLogementsProps = {
   lignes: LigneLogement[]
@@ -68,7 +69,7 @@ export function SuiviLogements({
   const colonnes: ColonneTable<LigneLogement>[] = [
     {
       cle: 'numero',
-      entete: 'Logement',
+      entete: tr('Logement'),
       largeur: '8rem',
       rendu: (ligne) => <span className="font-medium text-marine">{ligne.numero}</span>,
       triable: true,
@@ -76,19 +77,19 @@ export function SuiviLogements({
     },
     {
       cle: 'zone',
-      entete: 'Zone',
+      entete: tr('Zone'),
       rendu: (ligne) => ligne.libelleZone,
       triable: true,
       valeurTri: (ligne) => ligne.libelleZone,
     },
     {
       cle: 'type',
-      entete: 'Type',
+      entete: tr('Type'),
       rendu: (ligne) => ligne.libelleType,
     },
     {
       cle: 'avancement',
-      entete: 'Avancement',
+      entete: tr('Avancement'),
       largeur: '17rem',
       rendu: (ligne) => (
         <BarreAvancement
@@ -102,14 +103,14 @@ export function SuiviLogements({
     },
     {
       cle: 'etapes',
-      entete: 'Étapes',
+      entete: tr('Étapes'),
       alignement: 'droite',
       largeur: '6rem',
       rendu: (ligne) => `${ligne.nombreValidees}/${ligne.nombreEtapes}`,
     },
     {
       cle: 'alertes',
-      entete: 'Points d’attention',
+      entete: tr('Points d’attention'),
       largeur: '12rem',
       rendu: (ligne) => (
         <div className="flex flex-wrap gap-1">
@@ -117,7 +118,9 @@ export function SuiviLogements({
             <StatusPill
               taille="sm"
               ton="danger"
-              libelle={`${ligne.nombreBloquees} bloquée${ligne.nombreBloquees > 1 ? 's' : ''}`}
+              libelle={tr(ligne.nombreBloquees > 1 ? '{0} bloquées' : '{0} bloquée', {
+                0: ligne.nombreBloquees,
+              })}
             />
           )}
           {ligne.nombreEnRetard > 0 && (
@@ -131,7 +134,7 @@ export function SuiviLogements({
     },
     {
       cle: 'statut',
-      entete: 'Statut',
+      entete: tr('Statut'),
       largeur: '7rem',
       rendu: (ligne) => (
         <StatusPill
@@ -148,7 +151,7 @@ export function SuiviLogements({
       largeur: '6rem',
       rendu: (ligne) => (
         <Button variante="discret" taille="sm" onClick={() => onVoirLogement(ligne)}>
-          Détail
+          {tr('Détail')}
         </Button>
       ),
     },
@@ -167,15 +170,15 @@ export function SuiviLogements({
       <div className="flex flex-wrap items-center gap-2 border-b border-bordure p-4">
         <Input
           type="search"
-          aria-label="Rechercher un logement"
-          placeholder="Rechercher un logement…"
+          aria-label={tr('Rechercher un logement')}
+          placeholder={tr('Rechercher un logement…')}
           value={filtre.recherche}
           onChange={(evenement) => onFiltre({ ...filtre, recherche: evenement.target.value })}
           className="max-w-xs"
         />
         <span className="mx-1 h-6 w-px bg-bordure" aria-hidden />
         <FilterPill
-          libelle="Toutes les zones"
+          libelle={tr('Toutes les zones')}
           actif={filtre.idZone === 'toutes'}
           onBasculer={() => onFiltre({ ...filtre, idZone: 'toutes' })}
         />
@@ -190,14 +193,14 @@ export function SuiviLogements({
       </div>
 
       <Table
-        intitule="Suivi de l'avancement par logement"
+        intitule={tr("Suivi de l'avancement par logement")}
         colonnes={colonnes}
         lignes={lignesFiltrees}
         cleLigne={(ligne) => ligne.idLogement}
         chargement={chargement}
         triInitial={{ cle: 'avancement', sens: 'asc' }}
         parPage={12}
-        messageVide="Aucun logement ne correspond aux filtres."
+        messageVide={tr('Aucun logement ne correspond aux filtres.')}
       />
     </Card>
   )

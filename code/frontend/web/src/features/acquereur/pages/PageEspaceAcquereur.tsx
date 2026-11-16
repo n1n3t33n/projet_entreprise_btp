@@ -1,7 +1,7 @@
 /*
   Espace acquéreur (UC-5, EF-ACQ-01/02). Charte § 9.2, phase 2, LECTURE SEULE.
 
-  L'acquéreur voit l'avancement de SON logement (EF-ACQ-01) et les étapes
+  Ltr('acquéreur voit l')avancement de SON logement (EF-ACQ-01) et les étapes
   franchies qui lui ont été notifiées (EF-ACQ-02). Rien n'est modifiable : le
   rôle consulte sans jamais saisir. La vue est simplifiée (UC-5 : « avancement
   simplifié d'un logement ») — pas de charge de contrôle, pas de détail
@@ -20,6 +20,7 @@ import { LIBELLE_STATUT_ETAPE, TON_STATUT_ETAPE } from '@/features/avancement/pr
 import { formatDate } from '@/lib/format'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { EtapeAcquereur } from '@/features/acquereur/types/domaine'
+import { tr } from '@/i18n/tr'
 
 export function PageEspaceAcquereur() {
   const logementEtat = useRequete(chargerAvancementLogement, [])
@@ -31,7 +32,7 @@ export function PageEspaceAcquereur() {
   const colonnes: ColonneTable<EtapeAcquereur>[] = [
     {
       cle: 'etape',
-      entete: 'Étape',
+      entete: tr('Étape'),
       rendu: (etape) => (
         <div className="flex items-center gap-2">
           <span
@@ -48,7 +49,7 @@ export function PageEspaceAcquereur() {
     },
     {
       cle: 'statut',
-      entete: 'État',
+      entete: tr('État'),
       alignement: 'centre',
       largeur: '11rem',
       rendu: (etape) => (
@@ -60,7 +61,7 @@ export function PageEspaceAcquereur() {
     },
     {
       cle: 'franchissement',
-      entete: 'Franchie le',
+      entete: tr('Franchie le'),
       largeur: '9rem',
       rendu: (etape) => formatDate(etape.dateFranchissement),
     },
@@ -69,8 +70,8 @@ export function PageEspaceAcquereur() {
   if (logementEtat.statut === 'erreur') {
     return (
       <div className="flex min-w-0 flex-col gap-6">
-        <EnTetePage titre="Mon logement" niveauTitre={2} />
-        <Card titre="Avancement indisponible">
+        <EnTetePage titre={tr('Mon logement')} niveauTitre={2} />
+        <Card titre={tr('Avancement indisponible')}>
           <p className="text-sm text-danger">{logementEtat.erreur}</p>
         </Card>
       </div>
@@ -82,8 +83,8 @@ export function PageEspaceAcquereur() {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <EnTetePage
-        titre="Mon logement"
-        description="Suivez l'avancement de votre logement"
+        titre={tr('Mon logement')}
+        description={tr("Suivez l'avancement de votre logement")}
         niveauTitre={2}
         etiquette={
           logement ? (
@@ -98,10 +99,10 @@ export function PageEspaceAcquereur() {
       />
 
       <Card
-        titre="Avancement global"
+        titre={tr('Avancement global')}
         description={
           logement?.dateLivraisonPrevue
-            ? `Livraison prévue : ${formatDate(logement.dateLivraisonPrevue)}`
+            ? tr('Livraison prévue : {0}', { 0: formatDate(logement.dateLivraisonPrevue) })
             : undefined
         }
       >
@@ -111,34 +112,34 @@ export function PageEspaceAcquereur() {
           <JaugeProgression
             valeur={logement.pourcentageValide}
             valeurSecondaire={logement.pourcentageDeclare}
-            libelleValeur="Validé"
-            libelleValeurSecondaire="Annoncé"
+            libelleValeur={tr('Validé')}
+            libelleValeurSecondaire={tr('Annoncé')}
           />
         )}
       </Card>
 
-      <Card titre="Les étapes de votre logement" sansRemplissage>
+      <Card titre={tr('Les étapes de votre logement')} sansRemplissage>
         <div className="px-5 py-5">
           <Table
-            intitule="Étapes du logement"
+            intitule={tr('Étapes du logement')}
             colonnes={colonnes}
             lignes={logement?.etapes ?? []}
             cleLigne={(etape) => etape.idEtape}
             chargement={chargement}
-            messageVide="Aucune étape à afficher pour le moment."
+            messageVide={tr('Aucune étape à afficher pour le moment.')}
             lectureSeule
           />
         </div>
       </Card>
 
       <Card
-        titre="Étapes franchies"
-        description="Les jalons de votre logement, au fur et à mesure (EF-ACQ-02)"
+        titre={tr('Étapes franchies')}
+        description={tr('Les jalons de votre logement, au fur et à mesure')}
         icone={BellRinging}
       >
         {notifications.length === 0 ? (
           <p className="text-sm text-texte-secondaire">
-            Vous serez informé ici à chaque étape franchie de votre logement.
+            {tr('Vous serez informé ici à chaque étape franchie de votre logement.')}
           </p>
         ) : (
           <ul className="flex flex-col gap-3">
@@ -156,7 +157,7 @@ export function PageEspaceAcquereur() {
                   </p>
                 </div>
                 {!notification.lue && (
-                  <StatusPill ton="information" taille="sm" libelle="Nouveau" />
+                  <StatusPill ton="information" taille="sm" libelle={tr('Nouveau')} />
                 )}
               </li>
             ))}

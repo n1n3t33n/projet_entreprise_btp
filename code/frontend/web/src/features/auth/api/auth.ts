@@ -3,7 +3,7 @@
 
   La couche traduit les erreurs HTTP de connexion en un échec typé
   (`EchecConnexion`) plutôt qu'en exception brute : l'écran doit distinguer un
-  mot de passe erroné d'un compte désactivé ou d'un verrouillage temporaire
+  mot de passe erroné dtr('un compte désactivé ou d')un verrouillage temporaire
   (EF-AUT-04), et afficher l'attente restante.
 */
 
@@ -25,6 +25,7 @@ import type {
   SessionDto,
   UtilisateurDto,
 } from '@/features/auth/api/dto'
+import { tr } from '@/i18n/tr'
 
 /** Erreur de connexion portant le motif qualifié par le serveur. */
 export class ErreurConnexion extends Error {
@@ -104,7 +105,7 @@ export async function seConnecter(identifiants: IdentifiantsConnexion): Promise<
     }
     throw new ErreurConnexion({
       motif: 'identifiants',
-      message: 'La connexion a échoué. Réessayez dans un instant.',
+      message: tr('La connexion a échoué. Réessayez dans un instant.'),
     })
   }
 }

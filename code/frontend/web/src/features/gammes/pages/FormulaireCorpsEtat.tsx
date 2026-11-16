@@ -1,14 +1,15 @@
 /*
   Création et modification d'un corps d'état (EF-REF-05).
 
-  Le code sert d'identifiant stable (clé primaire côté MPD) : il n'est pas
-  modifiable une fois le corps d'état créé, car des étapes-modèles s'y réfèrent.
+  Le code sert dtr('identifiant stable (clé primaire côté MPD) : il n')est pas
+  modifiable une fois le corps dtr('état créé, car des étapes-modèles s')y réfèrent.
 */
 
 import { useEffect, useState, type FormEvent } from 'react'
 import { Button, FormField, Input, Modal, useToast } from '@/components/ui'
 import { creerCorpsEtat, modifierCorpsEtat } from '@/features/gammes/api'
 import type { CorpsEtat, SaisieCorpsEtat } from '@/features/gammes/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireCorpsEtatProps = {
   ouvert: boolean
@@ -51,8 +52,8 @@ export function FormulaireCorpsEtat({
   async function soumettre(evenement: FormEvent) {
     evenement.preventDefault()
     const prochaines: Erreurs = {}
-    if (!modeModification && code.trim() === '') prochaines.code = 'Saisir un code.'
-    if (libelle.trim() === '') prochaines.libelle = 'Saisir un libellé.'
+    if (!modeModification && code.trim() === '') prochaines.code = tr('Saisir un code.')
+    if (libelle.trim() === '') prochaines.libelle = tr('Saisir un libellé.')
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) return
 
@@ -72,7 +73,7 @@ export function FormulaireCorpsEtat({
       }
       afficherToast({
         ton: 'succes',
-        titre: modeModification ? "Corps d'état modifié" : "Corps d'état créé",
+        titre: modeModification ? tr("Corps d'état modifié") : tr("Corps d'état créé"),
         message: `${saisie.code} · ${saisie.libelle}`,
       })
       onFermer()
@@ -80,7 +81,7 @@ export function FormulaireCorpsEtat({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "Le corps d'état n'a pas pu être enregistré",
+        titre: tr("Le corps d'état n'a pas pu être enregistré"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -92,12 +93,12 @@ export function FormulaireCorpsEtat({
     <Modal
       ouvert={ouvert}
       onFermer={onFermer}
-      titre={modeModification ? "Modifier le corps d'état" : "Nouveau corps d'état"}
-      description="Métier auquel se rattachent les étapes"
+      titre={modeModification ? tr("Modifier le corps d'état") : tr("Nouveau corps d'état")}
+      description={tr('Métier auquel se rattachent les étapes')}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button
             variante="primaire"
@@ -105,7 +106,7 @@ export function FormulaireCorpsEtat({
             form="formulaire-corps-etat"
             enChargement={enCours}
           >
-            {modeModification ? 'Enregistrer' : 'Créer'}
+            {modeModification ? tr('Enregistrer') : tr('Créer')}
           </Button>
         </>
       }
@@ -117,7 +118,7 @@ export function FormulaireCorpsEtat({
         noValidate
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Code" requis={!modeModification} erreur={erreurs.code}>
+          <FormField libelle={tr('Code')} requis={!modeModification} erreur={erreurs.code}>
             {(champ) => (
               <Input
                 {...champ}
@@ -130,7 +131,7 @@ export function FormulaireCorpsEtat({
             )}
           </FormField>
 
-          <FormField libelle="Ordre d'affichage" requis>
+          <FormField libelle={tr("Ordre d'affichage")} requis>
             {(champ) => (
               <Input
                 {...champ}
@@ -143,7 +144,7 @@ export function FormulaireCorpsEtat({
           </FormField>
         </div>
 
-        <FormField libelle="Libellé" requis erreur={erreurs.libelle}>
+        <FormField libelle={tr('Libellé')} requis erreur={erreurs.libelle}>
           {(champ) => (
             <Input
               {...champ}
@@ -156,8 +157,8 @@ export function FormulaireCorpsEtat({
         </FormField>
 
         <FormField
-          libelle="Couleur"
-          aide="Utilisée pour repérer le corps d'état dans les tableaux."
+          libelle={tr('Couleur')}
+          aide={tr("Utilisée pour repérer le corps d'état dans les tableaux.")}
         >
           {(champ) => (
             <div className="flex items-center gap-3">

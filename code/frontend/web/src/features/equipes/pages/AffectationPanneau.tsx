@@ -1,5 +1,5 @@
 /*
-  Panneau d'affectation (EF-REF-06). Affecte des étapes à un membre d'équipe au
+  Panneau dtr('affectation (EF-REF-06). Affecte des étapes à un membre d')équipe au
   moyen d'une fiche de route (MPD-5 `fiche_route` + `ligne_fiche_route`) : c'est
   le seul rattachement du travail à une personne permis par le modèle. Affecter
   « à une équipe » revient donc à affecter à l'un de ses membres.
@@ -42,6 +42,7 @@ import type {
   FicheRouteAffectation,
   MembreEquipe,
 } from '@/features/equipes/types/domaine'
+import { tr } from '@/i18n/tr'
 
 export type AffectationPanneauProps = {
   peutAffecter: boolean
@@ -103,15 +104,17 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
       })
       afficherToast({
         ton: 'succes',
-        titre: 'Affectation créée',
-        message: `${idsEtapes.length} étape(s) inscrite(s) sur une nouvelle fiche de route.`,
+        titre: tr('Affectation créée'),
+        message: tr('{0} étape(s) inscrite(s) sur une nouvelle fiche de route.', {
+          0: idsEtapes.length,
+        }),
       })
       setIdsEtapes([])
       fichesEtat.recharger()
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "L'affectation a échoué",
+        titre: tr("L'affectation a échoué"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -122,7 +125,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
   const colonnesEtapes: ColonneTable<EtapeAffectable>[] = [
     {
       cle: 'etape',
-      entete: 'Étape',
+      entete: tr('Étape'),
       rendu: (etape) => (
         <span className="text-sm font-medium text-marine">{etape.libelleEtape}</span>
       ),
@@ -131,7 +134,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
     },
     {
       cle: 'logement',
-      entete: 'Logement',
+      entete: tr('Logement'),
       largeur: '8rem',
       rendu: (etape) => (
         <span className="text-sm text-texte">
@@ -144,7 +147,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
     },
     {
       cle: 'corps',
-      entete: "Corps d'état",
+      entete: tr("Corps d'état"),
       largeur: '10rem',
       rendu: (etape) => (
         <span className="text-sm text-texte-secondaire">{etape.libelleCorpsEtat}</span>
@@ -157,25 +160,25 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
   const colonnesFiches: ColonneTable<FicheRouteAffectation>[] = [
     {
       cle: 'fiche',
-      entete: 'Fiche',
+      entete: tr('Fiche'),
       largeur: '8rem',
       rendu: (fiche) => <span className="font-medium text-marine">{fiche.idFiche}</span>,
     },
     {
       cle: 'cycle',
-      entete: 'Cycle',
+      entete: tr('Cycle'),
       largeur: '9rem',
       rendu: (fiche) => LIBELLE_CYCLE[fiche.typeCycle],
     },
     {
       cle: 'debut',
-      entete: 'Début',
+      entete: tr('Début'),
       largeur: '8rem',
       rendu: (fiche) => formatDate(fiche.dateDebut),
     },
     {
       cle: 'etapes',
-      entete: 'Étapes',
+      entete: tr('Étapes'),
       rendu: (fiche) => (
         <span className="text-sm text-texte">
           {fiche.idsEtapes.length === 0
@@ -186,7 +189,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
     },
     {
       cle: 'statut',
-      entete: 'Statut',
+      entete: tr('Statut'),
       alignement: 'centre',
       largeur: '7rem',
       rendu: (fiche) => (
@@ -202,11 +205,13 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
   return (
     <div className="flex flex-col gap-6">
       <Card
-        titre="Choisir un membre"
-        description="Affecter le travail se fait membre par membre (une fiche de route appartient à un technicien)"
+        titre={tr('Choisir un membre')}
+        description={tr(
+          'Affecter le travail se fait membre par membre (une fiche de route appartient à un technicien)',
+        )}
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Équipe">
+          <FormField libelle={tr('Équipe')}>
             {(champ) => (
               <Select
                 {...champ}
@@ -225,7 +230,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
             )}
           </FormField>
 
-          <FormField libelle="Membre">
+          <FormField libelle={tr('Membre')}>
             {(champ) => (
               <Select
                 {...champ}
@@ -244,27 +249,27 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
       </Card>
 
       <Card
-        titre="Fiches de route du membre"
-        description="Affectations déjà confiées à ce membre (MPD-5 fiche de route)"
+        titre={tr('Fiches de route du membre')}
+        description={tr('Affectations déjà confiées à ce membre')}
       >
         <Table
-          intitule="Fiches de route du membre"
+          intitule={tr('Fiches de route du membre')}
           colonnes={colonnesFiches}
           lignes={fiches}
           cleLigne={(fiche) => fiche.idFiche}
           chargement={fichesEtat.statut === 'chargement' || fichesEtat.statut === 'attente'}
-          messageVide="Aucune fiche de route pour ce membre."
+          messageVide={tr('Aucune fiche de route pour ce membre.')}
           lectureSeule
         />
       </Card>
 
       {peutAffecter ? (
         <Card
-          titre="Nouvelle affectation"
-          description="Composer une fiche de route : cycle, date de début et étapes à confier"
+          titre={tr('Nouvelle affectation')}
+          description={tr('Composer une fiche de route : cycle, date de début et étapes à confier')}
         >
           <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField libelle="Cycle">
+            <FormField libelle={tr('Cycle')}>
               {(champ) => (
                 <Select
                   {...champ}
@@ -280,7 +285,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
               )}
             </FormField>
 
-            <FormField libelle="Date de début">
+            <FormField libelle={tr('Date de début')}>
               {(champ) => (
                 <input
                   {...champ}
@@ -294,7 +299,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
           </div>
 
           <Table
-            intitule="Étapes à affecter"
+            intitule={tr('Étapes à affecter')}
             colonnes={colonnesEtapes}
             lignes={etapes}
             cleLigne={(etape) => etape.idEtape}
@@ -302,7 +307,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
             selectionnable
             onSelectionChanger={setIdsEtapes}
             parPage={10}
-            messageVide="Aucune étape affectable."
+            messageVide={tr('Aucune étape affectable.')}
           />
 
           <div className="mt-4 flex items-center justify-end gap-3">
@@ -316,15 +321,16 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
               disabled={idsEtapes.length === 0 || !membreActif}
               enChargement={enCours}
             >
-              Affecter sur une fiche de route
+              {tr('Affecter sur une fiche de route')}
             </Button>
           </div>
         </Card>
       ) : (
-        <Card titre="Affectation">
+        <Card titre={tr('Affectation')}>
           <p className="text-sm text-texte-secondaire">
-            Seul le responsable technique affecte les étapes aux membres. Vous consultez les
-            affectations existantes en lecture seule.
+            {tr(
+              'Seul le responsable technique affecte les étapes aux membres. Vous consultez les affectations existantes en lecture seule.',
+            )}
           </p>
         </Card>
       )}

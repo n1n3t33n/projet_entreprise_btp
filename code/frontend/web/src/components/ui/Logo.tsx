@@ -1,6 +1,7 @@
 import embleme from '@/assets/logo/schiavone-embleme.svg'
 import logoComplet from '@/assets/logo/schiavone-logo.svg'
 import { useT } from '@/app/preferences-context'
+import { tr } from '@/i18n/tr'
 
 type LogoProps = {
   variant?: 'sur-marine' | 'sur-clair'
@@ -22,7 +23,7 @@ export function Logo({ variant = 'sur-clair', avecSousTitre = true }: LogoProps)
         <span className="rounded-carte bg-white px-5 py-3 shadow-douce">
           <img
             src={logoComplet}
-            alt="Schiavone Group"
+            alt={tr('Schiavone Group')}
             width={176}
             height={86}
             className="h-[86px] w-auto"

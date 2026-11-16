@@ -7,6 +7,7 @@ import {
   type NiveauSeuil,
   type ParametresSeuil,
 } from '@/lib/seuils'
+import { tr } from '@/i18n/tr'
 
 export type ThresholdGaugeProps = ParametresSeuil & {
   /** Unité de la quantité, par exemple « sac » ou « m³ ». */
@@ -24,10 +25,10 @@ export type ThresholdGaugeProps = ParametresSeuil & {
 }
 
 const LIBELLE_PAR_NIVEAU: Record<NiveauSeuil, string> = {
-  vide: 'Vide',
-  critique: 'Critique',
-  mini: 'Mini',
-  plein: 'Plein',
+  vide: tr('Vide'),
+  critique: tr('Critique'),
+  mini: tr('Mini'),
+  plein: tr('Plein'),
 }
 
 /*
@@ -37,7 +38,7 @@ const LIBELLE_PAR_NIVEAU: Record<NiveauSeuil, string> = {
   « vide » comme en base — mais prend sa place à l'affichage, pour qu'une
   quantité négative ne se confonde jamais avec un stock épuisé à zéro.
 */
-const LIBELLE_ANOMALIE = 'Stock négatif'
+const LIBELLE_ANOMALIE = tr('Stock négatif')
 
 const ICONE_PAR_NIVEAU: Record<NiveauSeuil, Icon> = {
   vide: WarningOctagon,
@@ -105,7 +106,7 @@ export function ThresholdGauge({
 
       <div
         role="meter"
-        aria-label={`Niveau de stock : ${libelle}`}
+        aria-label={tr('Niveau de stock : {0}', { 0: libelle })}
         aria-valuemin={0}
         aria-valuemax={reference}
         aria-valuenow={remplissage}
@@ -135,7 +136,7 @@ export function ThresholdGauge({
         >
           {valeur}
           {unite ? ` ${unite}` : ''} · alerte à {seuilMini} · confort à {seuilConfort}
-          {capacite !== undefined ? ` · capacité ${capacite}` : ''}
+          {capacite !== undefined ? tr(' · capacité {0}', { 0: capacite }) : ''}
         </p>
       )}
     </div>

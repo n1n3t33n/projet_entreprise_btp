@@ -5,7 +5,7 @@
   événement immuable : qui, quand (appareil et serveur), pour le compte de qui,
   statut avant et après, motif. On ne modifie ni ne supprime : on corrige par
   un nouvel événement. » L'écran est donc strictement en lecture, et il affiche
-  les deux horodatages : l'écart entre la saisie sur l'appareil et la réception
+  les deux horodatages : ltr('écart entre la saisie sur l')appareil et la réception
   par le serveur est la trace du travail fait hors connexion, information que
   le pilotage doit pouvoir constater.
 
@@ -31,6 +31,7 @@ import {
 } from '@/features/pilotage/types'
 import { useRequete } from '@/lib/hooks/useRequete'
 import { formatDateHeure } from '@/lib/format'
+import { tr } from '@/i18n/tr'
 
 const STATUTS: StatutEtape[] = ['a_faire', 'en_cours', 'terminee_declaree', 'validee', 'bloquee']
 
@@ -43,7 +44,7 @@ function minutesDeDecalage(evenement: EvenementJournal): number {
 }
 
 function libelleDecalage(minutes: number): string {
-  if (minutes < 1) return 'Immédiat'
+  if (minutes < 1) return tr('Immédiat')
   if (minutes < 60) return `+${minutes} min`
   const heures = Math.floor(minutes / 60)
   const reste = minutes % 60
@@ -75,9 +76,9 @@ export function PageJournalExecution() {
 
   if (!capacites.peutVoirJournal) {
     return (
-      <Card titre="Accès non autorisé">
+      <Card titre={tr('Accès non autorisé')}>
         <p className="text-sm text-texte-secondaire">
-          Ce rôle n'a pas accès au journal d'exécution du chantier.
+          {tr("Ce rôle n'a pas accès au journal d'exécution du chantier.")}
         </p>
       </Card>
     )
@@ -86,7 +87,7 @@ export function PageJournalExecution() {
   const colonnes: ColonneTable<EvenementJournal>[] = [
     {
       cle: 'serveur',
-      entete: 'Reçu par le serveur',
+      entete: tr('Reçu par le serveur'),
       triable: true,
       valeurTri: (ligne) => ligne.horodatageServeur,
       largeur: '13rem',
@@ -101,7 +102,7 @@ export function PageJournalExecution() {
     },
     {
       cle: 'decalage',
-      entete: 'Décalage',
+      entete: tr('Décalage'),
       alignement: 'droite',
       triable: true,
       valeurTri: minutesDeDecalage,
@@ -116,7 +117,7 @@ export function PageJournalExecution() {
     },
     {
       cle: 'ou',
-      entete: 'Logement',
+      entete: tr('Logement'),
       triable: true,
       valeurTri: (ligne) => ligne.numeroLogement,
       rendu: (ligne) => (
@@ -128,7 +129,7 @@ export function PageJournalExecution() {
     },
     {
       cle: 'etape',
-      entete: 'Étape',
+      entete: tr('Étape'),
       triable: true,
       valeurTri: (ligne) => ligne.libelleEtape,
       rendu: (ligne) => (
@@ -140,7 +141,7 @@ export function PageJournalExecution() {
     },
     {
       cle: 'transition',
-      entete: 'Changement de statut',
+      entete: tr('Changement de statut'),
       largeur: '16rem',
       rendu: (ligne) => (
         <div className="flex flex-wrap items-center gap-1.5">
@@ -151,7 +152,7 @@ export function PageJournalExecution() {
               taille="sm"
             />
           ) : (
-            <StatusPill libelle="Création" ton="neutre" taille="sm" />
+            <StatusPill libelle={tr('Création')} ton="neutre" taille="sm" />
           )}
           <ArrowRight size={14} className="text-texte-secondaire" aria-hidden />
           <StatusPill
@@ -164,7 +165,7 @@ export function PageJournalExecution() {
     },
     {
       cle: 'auteur',
-      entete: 'Auteur',
+      entete: tr('Auteur'),
       triable: true,
       valeurTri: (ligne) => ligne.nomAuteur,
       rendu: (ligne) => (
@@ -173,7 +174,7 @@ export function PageJournalExecution() {
           {ligne.estDelegation && (
             <span className="inline-flex items-center gap-1 text-xs text-or">
               <Repeat size={12} aria-hidden />
-              Pour le compte d'un tiers
+              {tr("Pour le compte d'un tiers")}
             </span>
           )}
         </div>
@@ -181,7 +182,7 @@ export function PageJournalExecution() {
     },
     {
       cle: 'motif',
-      entete: 'Motif et commentaire',
+      entete: tr('Motif et commentaire'),
       rendu: (ligne) => {
         if (!ligne.libelleMotifBlocage && !ligne.commentaire) {
           return <span className="text-texte-secondaire">—</span>
@@ -203,12 +204,16 @@ export function PageJournalExecution() {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <EnTetePage
-        titre="Journal d'exécution"
-        description="Historique immuable des changements de statut : aucune ligne ne peut être modifiée ni supprimée."
+        titre={tr("Journal d'exécution")}
+        description={tr(
+          'Historique immuable des changements de statut : aucune ligne ne peut être modifiée ni supprimée.',
+        )}
         niveauTitre={1}
         etiquette={
           <StatusPill
-            libelle={`${evenements.length} événement${evenements.length > 1 ? 's' : ''}`}
+            libelle={tr(evenements.length > 1 ? '{0} événements' : '{0} événement', {
+              0: evenements.length,
+            })}
             ton="neutre"
             taille="sm"
           />
@@ -216,7 +221,7 @@ export function PageJournalExecution() {
       />
 
       <Card
-        titre="Filtres"
+        titre={tr('Filtres')}
         icone={FunnelSimple}
         actions={
           nombreFiltresActifs > 0 ? (
@@ -231,7 +236,7 @@ export function PageJournalExecution() {
         }
       >
         <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-5">
-          <FormField libelle="Intervenant">
+          <FormField libelle={tr('Intervenant')}>
             {(champ) => (
               <Select
                 {...champ}
@@ -243,7 +248,7 @@ export function PageJournalExecution() {
                   }))
                 }
               >
-                <option value="">Tous les intervenants</option>
+                <option value="">{tr('Tous les intervenants')}</option>
                 {intervenants.map((intervenant) => (
                   <option key={intervenant.idUtilisateur} value={intervenant.idUtilisateur}>
                     {intervenant.nom}
@@ -253,7 +258,7 @@ export function PageJournalExecution() {
             )}
           </FormField>
 
-          <FormField libelle="Zone">
+          <FormField libelle={tr('Zone')}>
             {(champ) => (
               <Select
                 {...champ}
@@ -265,7 +270,7 @@ export function PageJournalExecution() {
                   }))
                 }
               >
-                <option value="">Toutes les zones</option>
+                <option value="">{tr('Toutes les zones')}</option>
                 {zones.map((zone) => (
                   <option key={zone.idZone} value={zone.idZone}>
                     {zone.nom}
@@ -275,7 +280,7 @@ export function PageJournalExecution() {
             )}
           </FormField>
 
-          <FormField libelle="Statut atteint">
+          <FormField libelle={tr('Statut atteint')}>
             {(champ) => (
               <Select
                 {...champ}
@@ -287,7 +292,7 @@ export function PageJournalExecution() {
                   }))
                 }
               >
-                <option value="">Tous les statuts</option>
+                <option value="">{tr('Tous les statuts')}</option>
                 {STATUTS.map((statut) => (
                   <option key={statut} value={statut}>
                     {LIBELLE_STATUT_ETAPE[statut]}
@@ -297,7 +302,7 @@ export function PageJournalExecution() {
             )}
           </FormField>
 
-          <FormField libelle="À partir du">
+          <FormField libelle={tr('À partir du')}>
             {(champ) => (
               <Input
                 {...champ}
@@ -336,13 +341,13 @@ export function PageJournalExecution() {
           <p className="p-5 text-sm text-danger">{journalEtat.erreur}</p>
         ) : (
           <Table
-            intitule="Journal d'exécution du chantier"
+            intitule={tr("Journal d'exécution du chantier")}
             colonnes={colonnes}
             lignes={evenements}
             cleLigne={(ligne) => ligne.uuid}
             triInitial={{ cle: 'serveur', sens: 'desc' }}
             chargement={journalEtat.statut === 'chargement'}
-            messageVide="Aucun événement ne correspond à ces filtres."
+            messageVide={tr('Aucun événement ne correspond à ces filtres.')}
             lectureSeule
             parPage={20}
           />

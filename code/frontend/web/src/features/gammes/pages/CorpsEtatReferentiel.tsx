@@ -1,7 +1,7 @@
 /*
   Corps d'état — consultation et édition (EF-REF-05).
 
-  Liste les corps d'état dans leur ordre d'affichage, avec leur pastille de
+  Liste les corps dtr('état dans leur ordre d')affichage, avec leur pastille de
   couleur, et ouvre le formulaire de création ou de modification.
 */
 
@@ -13,6 +13,7 @@ import { listerCorpsEtat } from '@/features/gammes/api'
 import { FormulaireCorpsEtat } from '@/features/gammes/pages/FormulaireCorpsEtat'
 import { useRequete } from '@/lib/hooks/useRequete'
 import type { CorpsEtat } from '@/features/gammes/types'
+import { tr } from '@/i18n/tr'
 
 export type CorpsEtatReferentielProps = {
   peutEditer: boolean
@@ -42,7 +43,7 @@ export function CorpsEtatReferentiel({ peutEditer }: CorpsEtatReferentielProps) 
   const colonnes: ColonneTable<CorpsEtat>[] = [
     {
       cle: 'ordre',
-      entete: 'Ordre',
+      entete: tr('Ordre'),
       largeur: '6rem',
       alignement: 'centre',
       triable: true,
@@ -51,7 +52,7 @@ export function CorpsEtatReferentiel({ peutEditer }: CorpsEtatReferentielProps) 
     },
     {
       cle: 'corps',
-      entete: "Corps d'état",
+      entete: tr("Corps d'état"),
       triable: true,
       valeurTri: (corps) => corps.libelle,
       rendu: (corps) => (
@@ -67,7 +68,7 @@ export function CorpsEtatReferentiel({ peutEditer }: CorpsEtatReferentielProps) 
     },
     {
       cle: 'code',
-      entete: 'Code',
+      entete: tr('Code'),
       largeur: '8rem',
       rendu: (corps) => <span className="font-medium text-marine">{corps.code}</span>,
     },
@@ -86,7 +87,7 @@ export function CorpsEtatReferentiel({ peutEditer }: CorpsEtatReferentielProps) 
           icone={PencilSimple}
           onClick={() => ouvrirModification(corps)}
         >
-          Modifier
+          {tr('Modifier')}
         </Button>
       ),
     })
@@ -105,28 +106,33 @@ export function CorpsEtatReferentiel({ peutEditer }: CorpsEtatReferentielProps) 
   return (
     <>
       <PageListe
-        titre="Corps d'état"
-        description="Métiers du chantier, ordonnés du gros œuvre aux finitions"
+        titre={tr("Corps d'état")}
+        description={tr('Métiers du chantier, ordonnés du gros œuvre aux finitions')}
         lectureSeule={!peutEditer}
         actions={
           peutEditer ? (
             <Button variante="primaire" icone={Plus} onClick={ouvrirCreation}>
-              Nouveau corps d'état
+              {tr("Nouveau corps d'état")}
             </Button>
           ) : undefined
         }
         indicateurs={
-          <KpiCard libelle="Corps d'état" valeur={liste.length} icone={HardHat} accent="marine" />
+          <KpiCard
+            libelle={tr("Corps d'état")}
+            valeur={liste.length}
+            icone={HardHat}
+            accent="marine"
+          />
         }
       >
         <Table
-          intitule="Corps d'état"
+          intitule={tr("Corps d'état")}
           colonnes={colonnes}
           lignes={liste}
           cleLigne={(corps) => corps.code}
           chargement={chargement}
           triInitial={{ cle: 'ordre', sens: 'asc' }}
-          messageVide="Aucun corps d'état enregistré."
+          messageVide={tr("Aucun corps d'état enregistré.")}
         />
       </PageListe>
 

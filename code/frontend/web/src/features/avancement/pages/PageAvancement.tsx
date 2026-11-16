@@ -1,7 +1,7 @@
 /*
   Écran /avancement du poste de pilotage : point d'entrée du module.
 
-  Orchestre les trois écrans de l'étape : le suivi de l'avancement par logement,
+  Orchestre les trois écrans de ltr('étape : le suivi de l')avancement par logement,
   le détail et la validation d'une étape (en tiroir), et la déclaration de
   blocage (en ligne dans le détail). Porte l'état partagé — données chargées,
   filtre, onglet, logement ouvert — et applique le filtrage par rôle.
@@ -28,6 +28,7 @@ import {
 } from '@/features/avancement/pages/FicheLogementTiroir'
 import { SuiviLogements } from '@/features/avancement/pages/SuiviLogements'
 import type { FiltreAvancement } from '@/features/avancement/types'
+import { tr } from '@/i18n/tr'
 
 const FILTRE_INITIAL: FiltreAvancement = { recherche: '', idZone: 'toutes' }
 
@@ -58,9 +59,9 @@ export function PageAvancement() {
 
   if (!capacites.peutConsulter) {
     return (
-      <Card titre="Accès non autorisé">
+      <Card titre={tr('Accès non autorisé')}>
         <p className="text-sm text-texte-secondaire">
-          Ce rôle n'a pas accès au suivi de l'avancement.
+          {tr("Ce rôle n'a pas accès au suivi de l'avancement.")}
         </p>
       </Card>
     )
@@ -69,12 +70,12 @@ export function PageAvancement() {
   return (
     <div className="flex min-w-0 flex-col gap-6">
       <EnTetePage
-        titre="Avancement des travaux"
-        description="Chantier de Grand-Bassam — poste de pilotage"
+        titre={tr('Avancement des travaux')}
+        description={tr('Chantier de Grand-Bassam — poste de pilotage')}
         niveauTitre={1}
       />
 
-      <Card titre="Avancement du chantier">
+      <Card titre={tr('Avancement du chantier')}>
         <BarreAvancement
           pourcentageDeclare={synthese?.pourcentageDeclare ?? 0}
           pourcentageValide={synthese?.pourcentageValide ?? 0}
@@ -83,25 +84,25 @@ export function PageAvancement() {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <KpiCard
-          libelle="Logements"
+          libelle={tr('Logements')}
           valeur={synthese?.nombreLogements ?? '—'}
           icone={Buildings}
           accent="marine"
         />
         <KpiCard
-          libelle="À valider"
+          libelle={tr('À valider')}
           valeur={synthese?.nombreEtapesAValider ?? '—'}
           icone={ClipboardText}
           accent="or"
         />
         <KpiCard
-          libelle="Étapes bloquées"
+          libelle={tr('Étapes bloquées')}
           valeur={synthese?.nombreEtapesBloquees ?? '—'}
           icone={Prohibit}
           accent="danger"
         />
         <KpiCard
-          libelle="Étapes en retard"
+          libelle={tr('Étapes en retard')}
           valeur={synthese?.nombreEtapesEnRetard ?? '—'}
           icone={Clock}
           accent="or"
@@ -109,14 +110,15 @@ export function PageAvancement() {
       </div>
 
       <Tabs
-        intitule="Vues de l'avancement"
+        intitule={tr("Vues de l'avancement")}
         actif={onglet}
         onChanger={setOnglet}
         onglets={[
-          { id: 'suivi', libelle: 'Suivi par logement', icone: Buildings },
+          { id: 'suivi', libelle: tr('Suivi par logement'), icone: Buildings },
           {
             id: 'a-valider',
-            libelle: aValider.length > 0 ? `À valider (${aValider.length})` : 'À valider',
+            libelle:
+              aValider.length > 0 ? tr('À valider ({0})', { 0: aValider.length }) : tr('À valider'),
             icone: ClipboardText,
           },
         ]}

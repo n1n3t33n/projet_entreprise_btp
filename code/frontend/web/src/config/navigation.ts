@@ -7,7 +7,7 @@
   Qui accède à quoi est une DONNÉE, pas du code : la modélisation range les
   rôles et les permissions parmi « les référentiels appelés à vivre [qui] ne
   sont pas des énumérations du tout : ce sont des tables, conformément à la
-  décision "données en base et non du code" » (README § 6.5), et CL-1 donne à
+  décision tr('données en base et non du code') » (README § 6.5), et CL-1 donne à
   `Role` les opérations `accorder(permission)` et `retirer(permission)`. La
   matrice est donc chargée depuis l'API (`features/admin/api`), exposée par
   `app/droits-context`, et modifiable par l'administrateur depuis l'écran
@@ -28,6 +28,7 @@ import {
   Stack,
   UsersThree,
 } from '@phosphor-icons/react'
+import { tr } from '@/i18n/tr'
 
 export type IdEcran =
   | 'tableau-de-bord'
@@ -53,37 +54,42 @@ export type EntreeNavigation = {
 export const ECRANS: EntreeNavigation[] = [
   {
     id: 'tableau-de-bord',
-    libelle: 'Tableau de bord',
+    libelle: tr('Tableau de bord'),
     icone: SquaresFour,
     chemin: '/tableau-de-bord',
   },
-  { id: 'avancement', libelle: 'Avancement', icone: ChartLineUp, chemin: '/avancement' },
+  { id: 'avancement', libelle: tr('Avancement'), icone: ChartLineUp, chemin: '/avancement' },
   {
     id: 'journal',
-    libelle: "Journal d'exécution",
+    libelle: tr("Journal d'exécution"),
     icone: ClockCounterClockwise,
     chemin: '/journal',
   },
-  { id: 'stock', libelle: 'Stock', icone: Package, chemin: '/stock' },
-  { id: 'referentiels', libelle: 'Référentiels', icone: Stack, chemin: '/referentiels' },
-  { id: 'gammes', libelle: 'Gammes', icone: ListChecks, chemin: '/gammes' },
-  { id: 'equipes', libelle: 'Équipes', icone: UsersThree, chemin: '/equipes' },
-  { id: 'parametrage', libelle: 'Paramétrage', icone: SlidersHorizontal, chemin: '/parametrage' },
+  { id: 'stock', libelle: tr('Stock'), icone: Package, chemin: '/stock' },
+  { id: 'referentiels', libelle: tr('Référentiels'), icone: Stack, chemin: '/referentiels' },
+  { id: 'gammes', libelle: tr('Gammes'), icone: ListChecks, chemin: '/gammes' },
+  { id: 'equipes', libelle: tr('Équipes'), icone: UsersThree, chemin: '/equipes' },
+  {
+    id: 'parametrage',
+    libelle: tr('Paramétrage'),
+    icone: SlidersHorizontal,
+    chemin: '/parametrage',
+  },
   {
     id: 'administration',
-    libelle: 'Administration',
+    libelle: tr('Administration'),
     icone: ShieldCheck,
     chemin: '/administration',
   },
   {
     id: 'synchronisation',
-    libelle: 'Synchronisation',
+    libelle: tr('Synchronisation'),
     icone: ArrowsClockwise,
     chemin: '/synchronisation',
   },
   {
     id: 'espace-acquereur',
-    libelle: 'Espace acquéreur',
+    libelle: tr('Espace acquéreur'),
     icone: HouseLine,
     chemin: '/espace-acquereur',
   },

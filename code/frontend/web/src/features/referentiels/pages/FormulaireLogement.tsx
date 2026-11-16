@@ -16,6 +16,7 @@ import type {
   StatutLogement,
   TypeLogement,
 } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 export type FormulaireLogementProps = {
   ouvert: boolean
@@ -64,10 +65,10 @@ export function FormulaireLogement({
 
     const prochaines: ErreursLogement = {}
     if (numero.trim() === '') {
-      prochaines.numero = 'Saisir un numéro de logement.'
+      prochaines.numero = tr('Saisir un numéro de logement.')
     }
     if (codeType === '') {
-      prochaines.type = 'Choisir un type de logement.'
+      prochaines.type = tr('Choisir un type de logement.')
     }
     setErreurs(prochaines)
     if (Object.keys(prochaines).length > 0) {
@@ -91,7 +92,7 @@ export function FormulaireLogement({
       }
       afficherToast({
         ton: 'succes',
-        titre: modeModification ? 'Logement modifié' : 'Logement créé',
+        titre: modeModification ? tr('Logement modifié') : tr('Logement créé'),
         message: saisie.numero,
       })
       onFermer()
@@ -99,7 +100,7 @@ export function FormulaireLogement({
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "Le logement n'a pas pu être enregistré",
+        titre: tr("Le logement n'a pas pu être enregistré"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -111,12 +112,12 @@ export function FormulaireLogement({
     <Modal
       ouvert={ouvert}
       onFermer={onFermer}
-      titre={modeModification ? 'Modifier le logement' : 'Nouveau logement'}
-      description="Logement de la zone"
+      titre={modeModification ? tr('Modifier le logement') : tr('Nouveau logement')}
+      description={tr('Logement de la zone')}
       actions={
         <>
           <Button variante="secondaire" onClick={onFermer} disabled={enCours}>
-            Annuler
+            {tr('Annuler')}
           </Button>
           <Button
             variante="primaire"
@@ -124,7 +125,7 @@ export function FormulaireLogement({
             form="formulaire-logement"
             enChargement={enCours}
           >
-            {modeModification ? 'Enregistrer' : 'Créer le logement'}
+            {modeModification ? tr('Enregistrer') : tr('Créer le logement')}
           </Button>
         </>
       }
@@ -136,7 +137,7 @@ export function FormulaireLogement({
         noValidate
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Numéro" requis erreur={erreurs.numero}>
+          <FormField libelle={tr('Numéro')} requis erreur={erreurs.numero}>
             {(champ) => (
               <Input
                 {...champ}
@@ -148,7 +149,7 @@ export function FormulaireLogement({
             )}
           </FormField>
 
-          <FormField libelle="Type de logement" requis erreur={erreurs.type}>
+          <FormField libelle={tr('Type de logement')} requis erreur={erreurs.type}>
             {(champ) => (
               <Select
                 {...champ}
@@ -168,7 +169,7 @@ export function FormulaireLogement({
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormField libelle="Statut" requis>
+          <FormField libelle={tr('Statut')} requis>
             {(champ) => (
               <Select
                 {...champ}
@@ -181,7 +182,7 @@ export function FormulaireLogement({
             )}
           </FormField>
 
-          <FormField libelle="Livraison prévue" aide="Facultatif.">
+          <FormField libelle={tr('Livraison prévue')} aide="Facultatif.">
             {(champ) => (
               <Input
                 {...champ}

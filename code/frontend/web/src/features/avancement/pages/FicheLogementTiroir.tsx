@@ -40,6 +40,7 @@ import {
 import { formatDate, formatDateHeure } from '@/lib/format'
 import { LIBELLE_STATUT_ETAPE, TON_STATUT_ETAPE } from '@/features/avancement/presentation/libelles'
 import type { EvenementExecution, LigneEtape, MotifBlocage } from '@/features/avancement/types'
+import { tr } from '@/i18n/tr'
 
 export type CibleLogement = {
   idLogement: string
@@ -67,12 +68,12 @@ export function FicheLogementTiroir({
     <Drawer
       ouvert={cible !== null}
       onFermer={onFermer}
-      titre={cible ? `Logement ${cible.numero}` : ''}
-      description="Avancement et étapes"
+      titre={cible ? tr('Logement {0}', { 0: cible.numero }) : ''}
+      description={tr('Avancement et étapes')}
       largeur="lg"
       pied={
         <Button variante="secondaire" onClick={onFermer}>
-          Fermer
+          {tr('Fermer')}
         </Button>
       }
     >
@@ -184,7 +185,7 @@ function ListeEtapes({
     },
     {
       cle: 'etape',
-      entete: 'Étape',
+      entete: tr('Étape'),
       rendu: (etape) => (
         <div className="flex flex-col">
           <span className="font-medium text-texte">{etape.libelleEtape}</span>
@@ -194,7 +195,7 @@ function ListeEtapes({
     },
     {
       cle: 'statut',
-      entete: 'Statut',
+      entete: tr('Statut'),
       largeur: '11rem',
       rendu: (etape) => (
         <div className="flex flex-col gap-1">
@@ -203,7 +204,7 @@ function ListeEtapes({
             ton={TON_STATUT_ETAPE[etape.statut]}
             libelle={LIBELLE_STATUT_ETAPE[etape.statut]}
           />
-          {etape.enRetard && <StatusPill taille="sm" ton="alerte" libelle="En retard" />}
+          {etape.enRetard && <StatusPill taille="sm" ton="alerte" libelle={tr('En retard')} />}
         </div>
       ),
     },
@@ -214,7 +215,7 @@ function ListeEtapes({
       largeur: '6rem',
       rendu: (etape) => (
         <Button variante="discret" taille="sm" onClick={() => onVoir(etape)}>
-          Détail
+          {tr('Détail')}
         </Button>
       ),
     },
@@ -222,12 +223,12 @@ function ListeEtapes({
 
   return (
     <Table
-      intitule="Étapes du logement"
+      intitule={tr('Étapes du logement')}
       colonnes={colonnes}
       lignes={etapes}
       cleLigne={(etape) => etape.idEtape}
       chargement={chargement}
-      messageVide="Aucune étape pour ce logement."
+      messageVide={tr('Aucune étape pour ce logement.')}
     />
   )
 }
@@ -259,12 +260,12 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
     setEnCours(true)
     try {
       await validerEtape({ idEtape: etape.idEtape, decision: 'valider', motif: null })
-      afficherToast({ ton: 'succes', titre: 'Étape validée' })
+      afficherToast({ ton: 'succes', titre: tr('Étape validée') })
       onAction()
     } catch (erreurAppel) {
       afficherToast({
         ton: 'danger',
-        titre: 'La validation a échoué',
+        titre: tr('La validation a échoué'),
         message: erreurAppel instanceof Error ? erreurAppel.message : undefined,
       })
     } finally {
@@ -275,19 +276,23 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
   async function confirmerRejet(evenement: FormEvent) {
     evenement.preventDefault()
     if (motifRejet.trim() === '') {
-      setErreur('Le motif du rejet est obligatoire.')
+      setErreur(tr('Le motif du rejet est obligatoire.'))
       return
     }
     setErreur(null)
     setEnCours(true)
     try {
       await validerEtape({ idEtape: etape.idEtape, decision: 'rejeter', motif: motifRejet.trim() })
-      afficherToast({ ton: 'succes', titre: 'Étape rejetée', message: 'Renvoyée en cours.' })
+      afficherToast({
+        ton: 'succes',
+        titre: tr('Étape rejetée'),
+        message: tr('Renvoyée en cours.'),
+      })
       onAction()
     } catch (erreurAppel) {
       afficherToast({
         ton: 'danger',
-        titre: 'Le rejet a échoué',
+        titre: tr('Le rejet a échoué'),
         message: erreurAppel instanceof Error ? erreurAppel.message : undefined,
       })
     } finally {
@@ -298,7 +303,7 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
   async function confirmerBlocage(evenement: FormEvent) {
     evenement.preventDefault()
     if (codeBlocage === '') {
-      setErreur('Choisir un motif de blocage.')
+      setErreur(tr('Choisir un motif de blocage.'))
       return
     }
     setErreur(null)
@@ -309,12 +314,12 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
         codeMotif: codeBlocage,
         commentaire: commentaireBlocage.trim() === '' ? null : commentaireBlocage.trim(),
       })
-      afficherToast({ ton: 'succes', titre: 'Étape déclarée bloquée' })
+      afficherToast({ ton: 'succes', titre: tr('Étape déclarée bloquée') })
       onAction()
     } catch (erreurAppel) {
       afficherToast({
         ton: 'danger',
-        titre: 'La déclaration a échoué',
+        titre: tr('La déclaration a échoué'),
         message: erreurAppel instanceof Error ? erreurAppel.message : undefined,
       })
     } finally {
@@ -329,7 +334,7 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
         onClick={onRetour}
         className="self-start text-sm font-medium text-sarcelle hover:underline"
       >
-        ← Retour aux étapes
+        {tr('← Retour aux étapes')}
       </button>
 
       <div className="flex flex-col gap-3">
@@ -345,15 +350,18 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
         </div>
 
         <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-          <Donnee intitule="Date prévue" valeur={formatDate(etape.datePrevue)} />
-          <Donnee intitule="Déclarée terminée le" valeur={formatDate(etape.dateFinDeclaree)} />
-          <Donnee intitule="Validée le" valeur={formatDate(etape.dateValidation)} />
-          <Donnee intitule="Déclarée par" valeur={etape.nomAuteurDeclaration ?? '—'} />
+          <Donnee intitule={tr('Date prévue')} valeur={formatDate(etape.datePrevue)} />
+          <Donnee
+            intitule={tr('Déclarée terminée le')}
+            valeur={formatDate(etape.dateFinDeclaree)}
+          />
+          <Donnee intitule={tr('Validée le')} valeur={formatDate(etape.dateValidation)} />
+          <Donnee intitule={tr('Déclarée par')} valeur={etape.nomAuteurDeclaration ?? '—'} />
         </dl>
 
         {etape.enRetard && (
           <p className="rounded-controle bg-or-clair px-3 py-2 text-sm text-or">
-            Date prévue dépassée : étape en retard.
+            {tr('Date prévue dépassée : étape en retard.')}
           </p>
         )}
       </div>
@@ -363,12 +371,13 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
         <div className="rounded-carte border border-bordure p-4">
           {estAuteur ? (
             <p className="text-sm text-texte-secondaire">
-              Vous avez déclaré cette étape terminée : vous ne pouvez pas la valider vous-même
-              (séparation des tâches). Un autre responsable doit la contrôler.
+              {tr(
+                'Vous avez déclaré cette étape terminée : vous ne pouvez pas la valider vous-même (séparation des tâches). Un autre responsable doit la contrôler.',
+              )}
             </p>
           ) : mode === 'rejet' ? (
             <form onSubmit={confirmerRejet} className="flex flex-col gap-3" noValidate>
-              <FormField libelle="Motif du rejet" requis erreur={erreur ?? undefined}>
+              <FormField libelle={tr('Motif du rejet')} requis erreur={erreur ?? undefined}>
                 {(champ) => (
                   <Input
                     {...champ}
@@ -380,22 +389,22 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
               </FormField>
               <div className="flex gap-2">
                 <Button variante="danger" type="submit" enChargement={enCours}>
-                  Confirmer le rejet
+                  {tr('Confirmer le rejet')}
                 </Button>
                 <Button variante="secondaire" onClick={() => setMode('aucun')} disabled={enCours}>
-                  Annuler
+                  {tr('Annuler')}
                 </Button>
               </div>
             </form>
           ) : (
             <div className="flex flex-col gap-2">
-              <p className="text-sm font-medium text-texte">Étape à contrôler</p>
+              <p className="text-sm font-medium text-texte">{tr('Étape à contrôler')}</p>
               <div className="flex gap-2">
                 <Button variante="primaire" onClick={valider} enChargement={enCours}>
-                  Valider l'étape
+                  {tr("Valider l'étape")}
                 </Button>
                 <Button variante="secondaire" onClick={() => setMode('rejet')} disabled={enCours}>
-                  Rejeter
+                  {tr('Rejeter')}
                 </Button>
               </div>
             </div>
@@ -407,7 +416,7 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
         <div className="rounded-carte border border-bordure p-4">
           {mode === 'blocage' ? (
             <form onSubmit={confirmerBlocage} className="flex flex-col gap-3" noValidate>
-              <FormField libelle="Motif du blocage" requis erreur={erreur ?? undefined}>
+              <FormField libelle={tr('Motif du blocage')} requis erreur={erreur ?? undefined}>
                 {(champ) => (
                   <Select
                     {...champ}
@@ -424,7 +433,7 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
                   </Select>
                 )}
               </FormField>
-              <FormField libelle="Commentaire" aide="Facultatif.">
+              <FormField libelle={tr('Commentaire')} aide="Facultatif.">
                 {(champ) => (
                   <Input
                     {...champ}
@@ -435,16 +444,16 @@ function DetailEtape({ etape, capacites, motifs, onRetour, onAction }: DetailEta
               </FormField>
               <div className="flex gap-2">
                 <Button variante="danger" type="submit" enChargement={enCours}>
-                  Déclarer bloquée
+                  {tr('Déclarer bloquée')}
                 </Button>
                 <Button variante="secondaire" onClick={() => setMode('aucun')} disabled={enCours}>
-                  Annuler
+                  {tr('Annuler')}
                 </Button>
               </div>
             </form>
           ) : (
             <Button variante="secondaire" onClick={() => setMode('blocage')}>
-              Déclarer cette étape bloquée
+              {tr('Déclarer cette étape bloquée')}
             </Button>
           )}
         </div>
@@ -478,11 +487,11 @@ function HistoriqueEtape({
 
   return (
     <section className="flex flex-col gap-2">
-      <h4 className="text-sm font-semibold text-texte">Historique de l'étape</h4>
+      <h4 className="text-sm font-semibold text-texte">{tr("Historique de l'étape")}</h4>
       {etat.statut === 'chargement' && evenements.length === 0 ? (
         <div className="h-24 animate-pulse rounded-controle bg-fond-alt" />
       ) : evenements.length === 0 ? (
-        <p className="text-sm text-texte-secondaire">Aucun événement.</p>
+        <p className="text-sm text-texte-secondaire">{tr('Aucun événement.')}</p>
       ) : (
         <ol className="flex flex-col gap-3 border-l border-bordure pl-4">
           {evenements.map((evenement) => (
@@ -495,7 +504,7 @@ function HistoriqueEtape({
                 {evenement.statutAvant
                   ? `${LIBELLE_STATUT_ETAPE[evenement.statutAvant]} → ${LIBELLE_STATUT_ETAPE[evenement.statutApres]}`
                   : LIBELLE_STATUT_ETAPE[evenement.statutApres]}
-                {evenement.estDelegation && ' (délégation)'}
+                {evenement.estDelegation && tr(' (délégation)')}
               </p>
               <p className="text-xs text-texte-secondaire">
                 {formatDateHeure(evenement.horodatageServeur)} · {evenement.nomAuteur}

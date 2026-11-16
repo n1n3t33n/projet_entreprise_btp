@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { DUREE_SORTIE_MS } from '@/components/ui/motion'
 import { useFocusPiege, usePresence, useVerrouScroll } from '@/components/ui/useOverlay'
 import { cn } from '@/lib/cn'
+import { tr } from '@/i18n/tr'
 
 export type LargeurDrawer = 'sm' | 'md' | 'lg'
 
@@ -97,7 +98,13 @@ export function Drawer({
               </p>
             )}
           </div>
-          <Button variante="discret" taille="sm" icone={X} aria-label="Fermer" onClick={onFermer} />
+          <Button
+            variante="discret"
+            taille="sm"
+            icone={X}
+            aria-label={tr('Fermer')}
+            onClick={onFermer}
+          />
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">{children}</div>

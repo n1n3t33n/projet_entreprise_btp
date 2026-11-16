@@ -7,6 +7,7 @@
 import { Button, Card, type ColonneTable, StatusPill, Table } from '@/components/ui'
 import { formatDate } from '@/lib/format'
 import type { LigneEtape } from '@/features/avancement/types'
+import { tr } from '@/i18n/tr'
 
 export type EtapesAValiderProps = {
   etapes: LigneEtape[]
@@ -18,7 +19,7 @@ export function EtapesAValider({ etapes, chargement, onExaminer }: EtapesAValide
   const colonnes: ColonneTable<LigneEtape>[] = [
     {
       cle: 'logement',
-      entete: 'Logement',
+      entete: tr('Logement'),
       largeur: '8rem',
       rendu: (etape) => <span className="font-medium text-marine">{etape.numeroLogement}</span>,
       triable: true,
@@ -26,7 +27,7 @@ export function EtapesAValider({ etapes, chargement, onExaminer }: EtapesAValide
     },
     {
       cle: 'etape',
-      entete: 'Étape',
+      entete: tr('Étape'),
       rendu: (etape) => (
         <span className="inline-flex items-center gap-1.5">
           <span
@@ -41,7 +42,7 @@ export function EtapesAValider({ etapes, chargement, onExaminer }: EtapesAValide
     },
     {
       cle: 'declaree',
-      entete: 'Déclarée le',
+      entete: tr('Déclarée le'),
       largeur: '8rem',
       rendu: (etape) => formatDate(etape.dateFinDeclaree),
       triable: true,
@@ -49,7 +50,7 @@ export function EtapesAValider({ etapes, chargement, onExaminer }: EtapesAValide
     },
     {
       cle: 'auteur',
-      entete: 'Déclarée par',
+      entete: tr('Déclarée par'),
       rendu: (etape) => etape.nomAuteurDeclaration ?? '—',
     },
     {
@@ -57,7 +58,7 @@ export function EtapesAValider({ etapes, chargement, onExaminer }: EtapesAValide
       entete: '',
       largeur: '7rem',
       rendu: (etape) =>
-        etape.enRetard ? <StatusPill taille="sm" ton="alerte" libelle="En retard" /> : null,
+        etape.enRetard ? <StatusPill taille="sm" ton="alerte" libelle={tr('En retard')} /> : null,
     },
     {
       cle: 'action',
@@ -66,7 +67,7 @@ export function EtapesAValider({ etapes, chargement, onExaminer }: EtapesAValide
       largeur: '7rem',
       rendu: (etape) => (
         <Button variante="secondaire" taille="sm" onClick={() => onExaminer(etape)}>
-          Examiner
+          {tr('Examiner')}
         </Button>
       ),
     },
@@ -74,19 +75,19 @@ export function EtapesAValider({ etapes, chargement, onExaminer }: EtapesAValide
 
   return (
     <Card
-      titre="Étapes à valider"
-      description="Étapes à contrôle déclarées terminées, en attente de décision."
+      titre={tr('Étapes à valider')}
+      description={tr('Étapes à contrôle déclarées terminées, en attente de décision.')}
       sansRemplissage
     >
       <Table
-        intitule="Étapes à valider"
+        intitule={tr('Étapes à valider')}
         colonnes={colonnes}
         lignes={etapes}
         cleLigne={(etape) => etape.idEtape}
         chargement={chargement}
         triInitial={{ cle: 'declaree', sens: 'asc' }}
         parPage={10}
-        messageVide="Aucune étape en attente de validation."
+        messageVide={tr('Aucune étape en attente de validation.')}
       />
     </Card>
   )

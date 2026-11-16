@@ -20,11 +20,12 @@
 
 import type { TonStatut } from '@/components/ui'
 import type { StatutAppareil } from '@/features/admin/types/appareils'
+import { tr } from '@/i18n/tr'
 
 export const LIBELLE_STATUT_APPAREIL: Record<StatutAppareil, string> = {
-  actif: 'Actif',
-  revoque: 'Révoqué',
-  inactif: 'Inactif',
+  actif: tr('Actif'),
+  revoque: tr('Révoqué'),
+  inactif: tr('Inactif'),
 }
 
 export const TON_STATUT_APPAREIL: Record<StatutAppareil, TonStatut> = {
@@ -61,9 +62,9 @@ export function fraicheurSynchro(
 }
 
 export const LIBELLE_FRAICHEUR: Record<FraicheurSynchro, string> = {
-  jamais: 'Jamais synchronisé',
-  a_jour: 'À jour',
-  en_retard: `Plus de ${SEUIL_SYNCHRO_HEURES} h`,
+  jamais: tr('Jamais synchronisé'),
+  a_jour: tr('À jour'),
+  en_retard: tr('Plus de {0} h', { 0: SEUIL_SYNCHRO_HEURES }),
 }
 
 export const TON_FRAICHEUR: Record<FraicheurSynchro, TonStatut> = {

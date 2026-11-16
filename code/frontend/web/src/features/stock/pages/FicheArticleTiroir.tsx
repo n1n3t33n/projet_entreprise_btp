@@ -30,6 +30,7 @@ import {
 } from '@/features/stock/presentation/libelles'
 import type { CapacitesStock } from '@/features/stock/config/capacites'
 import type { LigneStock, MouvementStock } from '@/features/stock/types'
+import { tr } from '@/i18n/tr'
 
 export type FicheArticleTiroirProps = {
   ligne: LigneStock | null
@@ -56,7 +57,7 @@ export function FicheArticleTiroir({
       largeur="lg"
       pied={
         <Button variante="secondaire" onClick={onFermer}>
-          Fermer
+          {tr('Fermer')}
         </Button>
       }
     >
@@ -86,13 +87,13 @@ function FicheContenu({ ligne, idMagasin, capacites, onMiseAJour }: FicheContenu
   return (
     <div className="flex flex-col gap-5">
       <Tabs
-        intitule="Détail de l'article"
+        intitule={tr("Détail de l'article")}
         actif={onglet}
         onChanger={setOnglet}
         onglets={[
-          { id: 'etat', libelle: 'État du stock' },
-          { id: 'seuils', libelle: 'Seuils' },
-          { id: 'historique', libelle: 'Historique' },
+          { id: 'etat', libelle: tr('État du stock') },
+          { id: 'seuils', libelle: tr('Seuils') },
+          { id: 'historique', libelle: tr('Historique') },
         ]}
       >
         {onglet === 'etat' && <OngletEtat ligne={ligne} />}
@@ -123,21 +124,22 @@ function OngletEtat({ ligne }: { ligne: LigneStock }) {
 
       {ligne.quantite < 0 && (
         <p className="rounded-controle bg-danger/10 px-3 py-2 text-sm text-danger">
-          Stock négatif : anomalie à régulariser par un inventaire. La valeur est conservée telle
-          quelle, elle ne bloque pas la consultation.
+          {tr(
+            'Stock négatif : anomalie à régulariser par un inventaire. La valeur est conservée telle quelle, elle ne bloque pas la consultation.',
+          )}
         </p>
       )}
 
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
         <Donnee
-          intitule="Quantité en stock"
+          intitule={tr('Quantité en stock')}
           valeur={formatQuantite(ligne.quantite, ligne.uniteLibelle)}
         />
-        <Donnee intitule="Unité de base" valeur={ligne.uniteLibelle} />
-        <Donnee intitule="Famille" valeur={ligne.libelleFamille} />
-        <Donnee intitule="Code article" valeur={ligne.code} />
+        <Donnee intitule={tr('Unité de base')} valeur={ligne.uniteLibelle} />
+        <Donnee intitule={tr('Famille')} valeur={ligne.libelleFamille} />
+        <Donnee intitule={tr('Code article')} valeur={ligne.code} />
         <Donnee intitule="Code-barres" valeur={ligne.codeBarre ?? '—'} />
-        <Donnee intitule="Article actif" valeur={ligne.actif ? 'Oui' : 'Non'} />
+        <Donnee intitule={tr('Article actif')} valeur={ligne.actif ? tr('Oui') : tr('Non')} />
       </dl>
     </div>
   )
@@ -174,15 +176,15 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
   async function soumettre(evenement: FormEvent) {
     evenement.preventDefault()
     if (!Number.isFinite(minimalNombre) || !Number.isFinite(critiqueNombre)) {
-      setErreur('Saisir deux seuils numériques.')
+      setErreur(tr('Saisir deux seuils numériques.'))
       return
     }
     if (minimalNombre < 0 || critiqueNombre < 0) {
-      setErreur('Les seuils ne peuvent pas être négatifs.')
+      setErreur(tr('Les seuils ne peuvent pas être négatifs.'))
       return
     }
     if (critiqueNombre > minimalNombre) {
-      setErreur('Le seuil critique doit rester inférieur ou égal au seuil minimal.')
+      setErreur(tr('Le seuil critique doit rester inférieur ou égal au seuil minimal.'))
       return
     }
     setErreur(null)
@@ -192,12 +194,12 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
         seuilMinimal: minimalNombre,
         seuilCritique: critiqueNombre,
       })
-      afficherToast({ ton: 'succes', titre: 'Seuils enregistrés' })
+      afficherToast({ ton: 'succes', titre: tr('Seuils enregistrés') })
       onMiseAJour()
     } catch (erreurAppel) {
       afficherToast({
         ton: 'danger',
-        titre: "Les seuils n'ont pas pu être enregistrés",
+        titre: tr("Les seuils n'ont pas pu être enregistrés"),
         message: erreurAppel instanceof Error ? erreurAppel.message : undefined,
       })
     } finally {
@@ -209,11 +211,11 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
     return (
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
         <Donnee
-          intitule="Seuil minimal"
+          intitule={tr('Seuil minimal')}
           valeur={formatQuantite(ligne.seuilMinimal, ligne.uniteLibelle)}
         />
         <Donnee
-          intitule="Seuil critique"
+          intitule={tr('Seuil critique')}
           valeur={formatQuantite(ligne.seuilCritique, ligne.uniteLibelle)}
         />
       </dl>
@@ -227,7 +229,11 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
         « mini » ; en dessous du seuil critique, « critique ».
       </p>
 
-      <FormField libelle="Seuil minimal" requis aide={`Unité : ${ligne.uniteLibelle}`}>
+      <FormField
+        libelle={tr('Seuil minimal')}
+        requis
+        aide={tr('Unité : {0}', { 0: ligne.uniteLibelle })}
+      >
         {(champ) => (
           <Input
             {...champ}
@@ -242,10 +248,10 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
       </FormField>
 
       <FormField
-        libelle="Seuil critique"
+        libelle={tr('Seuil critique')}
         requis
         erreur={erreur ?? undefined}
-        aide={erreur ? undefined : `Unité : ${ligne.uniteLibelle}`}
+        aide={erreur ? undefined : tr('Unité : {0}', { 0: ligne.uniteLibelle })}
       >
         {(champ) => (
           <Input
@@ -263,7 +269,7 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
 
       <div>
         <Button variante="primaire" type="submit" enChargement={enCours}>
-          Enregistrer les seuils
+          {tr('Enregistrer les seuils')}
         </Button>
       </div>
     </form>
@@ -273,19 +279,19 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
 const COLONNES_HISTORIQUE: ColonneTable<MouvementStock>[] = [
   {
     cle: 'date',
-    entete: 'Date',
+    entete: tr('Date'),
     rendu: (mouvement) => formatDateHeure(mouvement.dateOperation),
     triable: true,
     valeurTri: (mouvement) => mouvement.dateOperation,
   },
   {
     cle: 'sens',
-    entete: 'Sens',
+    entete: tr('Sens'),
     rendu: (mouvement) => LIBELLE_SENS[mouvement.sens],
   },
   {
     cle: 'quantite',
-    entete: 'Quantité',
+    entete: tr('Quantité'),
     alignement: 'droite',
     rendu: (mouvement) => formatQuantite(mouvement.quantiteSaisie),
     triable: true,
@@ -293,7 +299,7 @@ const COLONNES_HISTORIQUE: ColonneTable<MouvementStock>[] = [
   },
   {
     cle: 'statut',
-    entete: 'Statut',
+    entete: tr('Statut'),
     rendu: (mouvement) => (
       <StatusPill
         taille="sm"
@@ -304,7 +310,7 @@ const COLONNES_HISTORIQUE: ColonneTable<MouvementStock>[] = [
   },
   {
     cle: 'auteur',
-    entete: 'Auteur',
+    entete: tr('Auteur'),
     rendu: (mouvement) => mouvement.nomAuteur,
   },
 ]
@@ -321,13 +327,13 @@ function OngletHistorique({ ligne, idMagasin }: { ligne: LigneStock; idMagasin: 
 
   return (
     <Table
-      intitule={`Historique des mouvements de ${ligne.designation}`}
+      intitule={tr('Historique des mouvements de {0}', { 0: ligne.designation })}
       colonnes={COLONNES_HISTORIQUE}
       lignes={etat.donnees ?? []}
       cleLigne={(mouvement) => mouvement.uuid}
       chargement={etat.statut === 'chargement'}
       triInitial={{ cle: 'date', sens: 'desc' }}
-      messageVide="Aucun mouvement enregistré pour cet article."
+      messageVide={tr('Aucun mouvement enregistré pour cet article.')}
       parPage={8}
     />
   )

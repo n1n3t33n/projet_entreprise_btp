@@ -2,6 +2,7 @@ import { CaretDown, CaretLeft, CaretRight, CaretUp, CaretUpDown, X } from '@phos
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
+import { tr } from '@/i18n/tr'
 
 /** Alignement du contenu d'une colonne. */
 export type AlignementColonne = 'gauche' | 'centre' | 'droite'
@@ -89,7 +90,7 @@ export function Table<T>({
   onSelectionChanger,
   actionsGroupees,
   parPage,
-  messageVide = 'Aucune ligne à afficher.',
+  messageVide = tr('Aucune ligne à afficher.'),
   chargement = false,
   lectureSeule = false,
   hauteurMax,
@@ -226,7 +227,7 @@ export function Table<T>({
             onClick={viderSelection}
             className="ml-auto"
           >
-            Tout désélectionner
+            {tr('Tout désélectionner')}
           </Button>
         </div>
       )}
@@ -249,7 +250,7 @@ export function Table<T>({
                     type="checkbox"
                     checked={toutesVisiblesSelectionnees}
                     onChange={basculerPageEntiere}
-                    aria-label="Sélectionner toutes les lignes de la page"
+                    aria-label={tr('Sélectionner toutes les lignes de la page')}
                     className="size-4 cursor-pointer accent-marine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle focus-visible:ring-offset-2"
                   />
                 </th>
@@ -286,7 +287,7 @@ export function Table<T>({
                       >
                         <span>{colonne.entete}</span>
                         <IconeTri size={14} weight="bold" aria-hidden />
-                        <span className="sr-only">Trier par cette colonne</span>
+                        <span className="sr-only">{tr('Trier par cette colonne')}</span>
                       </button>
                     ) : (
                       colonne.entete
@@ -339,7 +340,7 @@ export function Table<T>({
                           type="checkbox"
                           checked={selectionnee}
                           onChange={() => basculerLigne(cle)}
-                          aria-label={`Sélectionner la ligne ${cle}`}
+                          aria-label={tr('Sélectionner la ligne {0}', { 0: cle })}
                           className="size-4 cursor-pointer accent-marine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle focus-visible:ring-offset-2"
                         />
                       </td>
@@ -367,8 +368,12 @@ export function Table<T>({
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-texte-secondaire" aria-live="polite">
             {lignesTriees.length === 0
-              ? 'Aucune ligne'
-              : `Lignes ${premiereLigneAffichee} à ${derniereLigneAffichee} sur ${lignesTriees.length}`}
+              ? tr('Aucune ligne')
+              : tr('Lignes {0} à {1} sur {2}', {
+                  0: premiereLigneAffichee,
+                  1: derniereLigneAffichee,
+                  2: lignesTriees.length,
+                })}
           </p>
 
           <div className="flex items-center gap-2">
@@ -379,7 +384,7 @@ export function Table<T>({
               disabled={page === 0}
               onClick={() => setPage((precedente) => Math.max(0, precedente - 1))}
             >
-              Précédent
+              {tr('Précédent')}
             </Button>
             <span className="text-sm text-texte-secondaire">
               Page {page + 1} sur {nombrePages}
@@ -392,7 +397,7 @@ export function Table<T>({
               disabled={page >= nombrePages - 1}
               onClick={() => setPage((precedente) => Math.min(nombrePages - 1, precedente + 1))}
             >
-              Suivant
+              {tr('Suivant')}
             </Button>
           </div>
         </div>

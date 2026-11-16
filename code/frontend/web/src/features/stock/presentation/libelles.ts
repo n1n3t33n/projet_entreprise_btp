@@ -12,13 +12,14 @@
 import type { NiveauSeuil } from '@/lib/seuils'
 import type { TonStatut } from '@/components/ui'
 import type { SensMouvement, StatutValidationMouvement } from '@/features/stock/types'
+import { tr } from '@/i18n/tr'
 
 /** Libellé affiché d'un niveau de stock. */
 export const LIBELLE_NIVEAU: Record<NiveauSeuil, string> = {
-  vide: 'Vide',
-  critique: 'Critique',
-  mini: 'Mini',
-  plein: 'Plein',
+  vide: tr('Vide'),
+  critique: tr('Critique'),
+  mini: tr('Mini'),
+  plein: tr('Plein'),
 }
 
 /** Tonalité de pilule associée à un niveau de stock. */
@@ -37,12 +38,12 @@ export const TON_NIVEAU: Record<NiveauSeuil, TonStatut> = {
  * le niveau de stock.
  */
 export const LIBELLE_STATUT_VALIDATION: Record<StatutValidationMouvement, string> = {
-  enregistre: 'Enregistré',
-  a_valider: 'À valider',
-  en_alerte: 'À valider — délai dépassé',
-  valide: 'Validé',
-  rejete: 'Refusé',
-  annule: 'Annulé',
+  enregistre: tr('Enregistré'),
+  a_valider: tr('À valider'),
+  en_alerte: tr('À valider — délai dépassé'),
+  valide: tr('Validé'),
+  rejete: tr('Refusé'),
+  annule: tr('Annulé'),
 }
 
 /** Tonalité de pilule associée à un statut de validation. */
@@ -57,6 +58,6 @@ export const TON_STATUT_VALIDATION: Record<StatutValidationMouvement, TonStatut>
 
 /** Libellé du sens d'un mouvement. */
 export const LIBELLE_SENS: Record<SensMouvement, string> = {
-  entree: 'Entrée',
-  sortie: 'Sortie',
+  entree: tr('Entrée'),
+  sortie: tr('Sortie'),
 }

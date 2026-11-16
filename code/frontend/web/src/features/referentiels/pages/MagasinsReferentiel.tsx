@@ -15,6 +15,7 @@ import { FormulaireMagasin } from '@/features/referentiels/pages/FormulaireMagas
 import { useRequete } from '@/lib/hooks/useRequete'
 import { tonActif } from '@/features/referentiels/presentation/libelles'
 import type { MagasinVue } from '@/features/referentiels/types'
+import { tr } from '@/i18n/tr'
 
 export type MagasinsReferentielProps = {
   peutEditer: boolean
@@ -48,7 +49,7 @@ export function MagasinsReferentiel({ peutEditer }: MagasinsReferentielProps) {
   const colonnes: ColonneTable<MagasinVue>[] = [
     {
       cle: 'code',
-      entete: 'Code',
+      entete: tr('Code'),
       largeur: '9rem',
       rendu: (magasin) => <span className="font-medium text-marine">{magasin.code}</span>,
       triable: true,
@@ -56,25 +57,28 @@ export function MagasinsReferentiel({ peutEditer }: MagasinsReferentielProps) {
     },
     {
       cle: 'nom',
-      entete: 'Nom',
+      entete: tr('Nom'),
       rendu: (magasin) => magasin.nom,
       triable: true,
       valeurTri: (magasin) => magasin.nom,
     },
     {
       cle: 'chantier',
-      entete: 'Chantier',
+      entete: tr('Chantier'),
       rendu: (magasin) => magasin.libelleChantier,
       triable: true,
       valeurTri: (magasin) => magasin.libelleChantier,
     },
     {
       cle: 'actif',
-      entete: 'Statut',
+      entete: tr('Statut'),
       alignement: 'centre',
       largeur: '7rem',
       rendu: (magasin) => (
-        <StatusPill ton={tonActif(magasin.actif)} libelle={magasin.actif ? 'Actif' : 'Inactif'} />
+        <StatusPill
+          ton={tonActif(magasin.actif)}
+          libelle={magasin.actif ? tr('Actif') : tr('Inactif')}
+        />
       ),
       triable: true,
       valeurTri: (magasin) => (magasin.actif ? 1 : 0),
@@ -94,7 +98,7 @@ export function MagasinsReferentiel({ peutEditer }: MagasinsReferentielProps) {
           icone={PencilSimple}
           onClick={() => ouvrirModification(magasin)}
         >
-          Modifier
+          {tr('Modifier')}
         </Button>
       ),
     })
@@ -113,26 +117,26 @@ export function MagasinsReferentiel({ peutEditer }: MagasinsReferentielProps) {
   return (
     <>
       <PageListe
-        titre="Magasins"
-        description="Lieux de stockage rattachés aux chantiers"
+        titre={tr('Magasins')}
+        description={tr('Lieux de stockage rattachés aux chantiers')}
         lectureSeule={!peutEditer}
         actions={
           peutEditer ? (
             <Button variante="primaire" icone={Plus} onClick={ouvrirCreation}>
-              Nouveau magasin
+              {tr('Nouveau magasin')}
             </Button>
           ) : undefined
         }
         indicateurs={
           <>
             <KpiCard
-              libelle="Magasins"
+              libelle={tr('Magasins')}
               valeur={indicateurs.total}
               icone={Warehouse}
               accent="marine"
             />
             <KpiCard
-              libelle="Actifs"
+              libelle={tr('Actifs')}
               valeur={indicateurs.actifs}
               icone={Buildings}
               accent="succes"
@@ -141,14 +145,14 @@ export function MagasinsReferentiel({ peutEditer }: MagasinsReferentielProps) {
         }
       >
         <Table
-          intitule="Magasins"
+          intitule={tr('Magasins')}
           colonnes={colonnes}
           lignes={magasins}
           cleLigne={(magasin) => magasin.id}
           chargement={chargement}
           triInitial={{ cle: 'code', sens: 'asc' }}
           parPage={12}
-          messageVide="Aucun magasin enregistré."
+          messageVide={tr('Aucun magasin enregistré.')}
         />
       </PageListe>
 

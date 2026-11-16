@@ -30,6 +30,7 @@ import {
 } from '@/components/ui'
 import { analyserImport, confirmerImport } from '@/features/admin/api/import-csv'
 import type { CibleImport, LigneImport, RapportImport } from '@/features/admin/types/import-csv'
+import { tr } from '@/i18n/tr'
 
 export type ImportReferentielsProps = {
   /** Autorise l'analyse et l'import. Réservé au rôle système. */
@@ -37,9 +38,9 @@ export type ImportReferentielsProps = {
 }
 
 const LIBELLE_CIBLE: Record<CibleImport, string> = {
-  articles: 'Catalogue des articles',
-  magasins: 'Magasins',
-  chantiers: 'Chantiers et zones',
+  articles: tr('Catalogue des articles'),
+  magasins: tr('Magasins'),
+  chantiers: tr('Chantiers et zones'),
 }
 
 export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
@@ -74,7 +75,7 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "L'analyse a échoué",
+        titre: tr("L'analyse a échoué"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -88,15 +89,18 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
       const resultat = await confirmerImport(cible, contenu)
       afficherToast({
         ton: 'succes',
-        titre: 'Import effectué',
-        message: `${resultat.nombreImportees} ligne(s) importée(s) dans « ${LIBELLE_CIBLE[cible]} ».`,
+        titre: tr('Import effectué'),
+        message: tr('{0} ligne(s) importée(s) dans « {1} ».', {
+          0: resultat.nombreImportees,
+          1: LIBELLE_CIBLE[cible],
+        }),
       })
       setContenu('')
       setRapport(null)
     } catch (erreur) {
       afficherToast({
         ton: 'danger',
-        titre: "L'import a échoué",
+        titre: tr("L'import a échoué"),
         message: erreur instanceof Error ? erreur.message : undefined,
       })
     } finally {
@@ -116,20 +120,20 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
     return [
       {
         cle: 'numero',
-        entete: 'Ligne',
+        entete: tr('Ligne'),
         largeur: '5rem',
         rendu: (ligne) => <span className="text-xs text-texte-secondaire">{ligne.numero}</span>,
       },
       ...colonnesDonnees,
       {
         cle: 'etat',
-        entete: 'État',
+        entete: tr('État'),
         largeur: '16rem',
         rendu: (ligne) =>
           ligne.erreur ? (
             <StatusPill ton="danger" taille="sm" libelle={ligne.erreur} />
           ) : (
-            <StatusPill ton="succes" taille="sm" libelle="Valide" />
+            <StatusPill ton="succes" taille="sm" libelle={tr('Valide')} />
           ),
       },
     ]
@@ -137,15 +141,19 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
 
   return (
     <Card
-      titre="Import CSV des référentiels"
-      description="Charger en une fois les données initiales d'un référentiel, après contrôle ligne par ligne"
+      titre={tr('Import CSV des référentiels')}
+      description={tr(
+        "Charger en une fois les données initiales d'un référentiel, après contrôle ligne par ligne",
+      )}
       actions={
-        peutImporter ? undefined : <StatusPill ton="neutre" taille="sm" libelle="Lecture seule" />
+        peutImporter ? undefined : (
+          <StatusPill ton="neutre" taille="sm" libelle={tr('Lecture seule')} />
+        )
       }
     >
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[18rem,1fr]">
         <div className="flex flex-col gap-4">
-          <FormField libelle="Référentiel à importer">
+          <FormField libelle={tr('Référentiel à importer')}>
             {(champ) => (
               <Select
                 {...champ}
@@ -171,7 +179,7 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
               enChargement={analyseEnCours}
               pleineLargeur
             >
-              Analyser le fichier
+              {tr('Analyser le fichier')}
             </Button>
             <Button
               variante="primaire"
@@ -182,14 +190,14 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
               pleineLargeur
             >
               {rapport && rapport.nombreValides > 0
-                ? `Importer ${rapport.nombreValides} ligne(s)`
-                : 'Importer'}
+                ? tr('Importer {0} ligne(s)', { 0: rapport.nombreValides })
+                : tr('Importer')}
             </Button>
           </div>
         </div>
 
         <FormField
-          libelle="Contenu CSV"
+          libelle={tr('Contenu CSV')}
           aide="Première ligne = en-tête (ignorée). Séparateur « ; » ou « , ». Une ligne par enregistrement."
         >
           {(champ) => (
@@ -217,18 +225,18 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
             )}
             {rapport.nombreErreurs > 0 && (
               <span className="text-xs text-texte-secondaire">
-                Les lignes en erreur ne seront pas importées.
+                {tr('Les lignes en erreur ne seront pas importées.')}
               </span>
             )}
           </div>
 
           <Table
-            intitule="Aperçu de l'import"
+            intitule={tr("Aperçu de l'import")}
             colonnes={colonnes}
             lignes={rapport.lignes}
             cleLigne={(ligne) => String(ligne.numero)}
             parPage={10}
-            messageVide="Aucune ligne de données dans le fichier."
+            messageVide={tr('Aucune ligne de données dans le fichier.')}
             lectureSeule
           />
         </div>
