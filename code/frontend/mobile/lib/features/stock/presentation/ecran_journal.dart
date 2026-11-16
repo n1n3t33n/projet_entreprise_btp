@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../components/boutons.dart';
 import '../../../components/en_tetes.dart';
+import '../../../core/appareil/materiel.dart';
 import '../../../components/saisie.dart';
 import '../../../components/surfaces.dart';
 import '../../../core/providers.dart';
@@ -34,6 +36,31 @@ class EcranJournal extends ConsumerStatefulWidget {
 class _EcranJournalState extends ConsumerState<EcranJournal> {
   _Sens _sens = _Sens.tous;
   String _recherche = '';
+
+  /// Exporte les mouvements affichés dans un fichier CSV, partagé par le
+  /// système (courriel, messagerie, enregistrement).
+  Future<void> _exporter(List<MouvementStock> mouvements) async {
+    final t = context.t;
+    final lignes = [
+      'date;bon;type;article;quantite;unite;auteur;statut',
+      for (final m in mouvements)
+        [
+          m.date.toIso8601String(),
+          m.numero,
+          libelleType(t, m.type),
+          m.designation,
+          m.quantiteSignee,
+          m.unite,
+          m.nomAuteur,
+          libelleStatut(t, m.statut),
+        ].map(celluleCsv).join(';'),
+    ];
+    final partage = await partagerCsv(
+      nomFichier: 'journal-mouvements.csv',
+      contenu: lignes.join(String.fromCharCode(10)),
+    );
+    if (!partage && mounted) notifier(context, t.exportIndisponible);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,9 +215,18 @@ class _EcranJournalState extends ConsumerState<EcranJournal> {
               texte: t.aucunMouvementAide,
             ),
           ...elements,
+          if (visibles.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            BoutonSecondaire(
+              libelle: t.exporterJournal,
+              icone: PhosphorIconsRegular.export,
+              compact: true,
+              onPressed: () => _exporter(visibles),
+            ),
+          ],
           if (visibles.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 6),
+              padding: const EdgeInsets.only(top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

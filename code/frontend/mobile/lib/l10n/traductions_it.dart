@@ -1285,4 +1285,35 @@ class TraductionsIt extends Traductions {
   @override
   String get resolutionArbitrageDetail =>
       'La decisione è rimessa al direttore dei lavori.';
+
+  @override
+  String get scanTitre => 'Leggi un codice a barre';
+
+  @override
+  String get scanAide => 'Inquadra il codice nel riquadro';
+
+  @override
+  String get scanIndisponible =>
+      'Fotocamera non disponibile. Consenti la fotocamera nelle impostazioni del telefono.';
+
+  @override
+  String codeInconnu(String code) {
+    return 'Nessun articolo ha il codice $code.';
+  }
+
+  @override
+  String get photoJustificative => 'Foto giustificativa';
+
+  @override
+  String get prendrePhoto => 'Scatta una foto';
+
+  @override
+  String get photoIndisponible => 'Foto non scattata.';
+
+  @override
+  String get exporterJournal => 'Esporta il registro mostrato';
+
+  @override
+  String get exportIndisponible =>
+      'Esportazione non possibile su questo dispositivo.';
 }

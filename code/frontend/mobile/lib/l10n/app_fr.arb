@@ -687,5 +687,21 @@
   "resolutionLocale": "Garder la saisie du terrain",
   "resolutionLocaleDetail": "Le stock deviendra négatif et sera signalé.",
   "resolutionArbitrage": "Demander un arbitrage",
-  "resolutionArbitrageDetail": "La décision est renvoyée au conducteur de travaux."
+  "resolutionArbitrageDetail": "La décision est renvoyée au conducteur de travaux.",
+  "scanTitre": "Lire un code-barres",
+  "scanAide": "Présentez le code dans le cadre",
+  "scanIndisponible": "Caméra indisponible. Autorisez la caméra dans les réglages du téléphone.",
+  "codeInconnu": "Aucun article ne porte le code {code}.",
+  "@codeInconnu": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "photoJustificative": "Photo justificative",
+  "prendrePhoto": "Prendre une photo",
+  "photoIndisponible": "Photo non prise.",
+  "exporterJournal": "Exporter le journal affiché",
+  "exportIndisponible": "Export impossible sur cet appareil."
 }

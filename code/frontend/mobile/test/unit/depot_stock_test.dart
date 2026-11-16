@@ -58,6 +58,21 @@ void main() {
     });
   });
 
+  group('accord des unités', () {
+    test('une unité en toutes lettres prend le pluriel à partir de deux', () {
+      expect(formaterQuantite(1, 'sac'), '1 sac');
+      expect(formaterQuantite(12, 'sac'), '12 sacs');
+      expect(formaterQuantite(3, 'rouleau'), '3 rouleaux');
+      expect(formaterQuantite(-12, 'barre'), '-12 barres');
+    });
+
+    test('un symbole ne change pas', () {
+      expect(formaterQuantite(38, 'm³'), '38 m³');
+      expect(formaterQuantite(64, 'kg'), '64 kg');
+      expect(formaterQuantite(180, 'ml'), '180 ml');
+    });
+  });
+
   group('mouvements', () {
     test(
       'une sortie diminue le stock, attend une validation et part en file',

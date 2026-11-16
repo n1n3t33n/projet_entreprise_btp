@@ -1275,4 +1275,34 @@ class TraductionsEn extends Traductions {
   @override
   String get resolutionArbitrageDetail =>
       'The decision is sent to the site supervisor.';
+
+  @override
+  String get scanTitre => 'Scan a barcode';
+
+  @override
+  String get scanAide => 'Hold the code inside the frame';
+
+  @override
+  String get scanIndisponible =>
+      'Camera unavailable. Allow the camera in the phone settings.';
+
+  @override
+  String codeInconnu(String code) {
+    return 'No item has the code $code.';
+  }
+
+  @override
+  String get photoJustificative => 'Supporting photo';
+
+  @override
+  String get prendrePhoto => 'Take a photo';
+
+  @override
+  String get photoIndisponible => 'No photo taken.';
+
+  @override
+  String get exporterJournal => 'Export the displayed log';
+
+  @override
+  String get exportIndisponible => 'Export is not possible on this device.';
 }

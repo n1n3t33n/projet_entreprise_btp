@@ -2283,6 +2283,60 @@ abstract class Traductions {
   /// In fr, this message translates to:
   /// **'La décision est renvoyée au conducteur de travaux.'**
   String get resolutionArbitrageDetail;
+
+  /// No description provided for @scanTitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire un code-barres'**
+  String get scanTitre;
+
+  /// No description provided for @scanAide.
+  ///
+  /// In fr, this message translates to:
+  /// **'Présentez le code dans le cadre'**
+  String get scanAide;
+
+  /// No description provided for @scanIndisponible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Caméra indisponible. Autorisez la caméra dans les réglages du téléphone.'**
+  String get scanIndisponible;
+
+  /// No description provided for @codeInconnu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun article ne porte le code {code}.'**
+  String codeInconnu(String code);
+
+  /// No description provided for @photoJustificative.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo justificative'**
+  String get photoJustificative;
+
+  /// No description provided for @prendrePhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre une photo'**
+  String get prendrePhoto;
+
+  /// No description provided for @photoIndisponible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo non prise.'**
+  String get photoIndisponible;
+
+  /// No description provided for @exporterJournal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter le journal affiché'**
+  String get exporterJournal;
+
+  /// No description provided for @exportIndisponible.
+  ///
+  /// In fr, this message translates to:
+  /// **'Export impossible sur cet appareil.'**
+  String get exportIndisponible;
 }
 
 class _TraductionsDelegate extends LocalizationsDelegate<Traductions> {

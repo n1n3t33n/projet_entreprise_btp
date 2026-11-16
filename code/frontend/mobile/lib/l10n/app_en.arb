@@ -363,5 +363,14 @@
   "resolutionLocale": "Keep the field entry",
   "resolutionLocaleDetail": "Stock will become negative and will be flagged.",
   "resolutionArbitrage": "Ask for a decision",
-  "resolutionArbitrageDetail": "The decision is sent to the site supervisor."
+  "resolutionArbitrageDetail": "The decision is sent to the site supervisor.",
+  "scanTitre": "Scan a barcode",
+  "scanAide": "Hold the code inside the frame",
+  "scanIndisponible": "Camera unavailable. Allow the camera in the phone settings.",
+  "codeInconnu": "No item has the code {code}.",
+  "photoJustificative": "Supporting photo",
+  "prendrePhoto": "Take a photo",
+  "photoIndisponible": "No photo taken.",
+  "exporterJournal": "Export the displayed log",
+  "exportIndisponible": "Export is not possible on this device."
 }

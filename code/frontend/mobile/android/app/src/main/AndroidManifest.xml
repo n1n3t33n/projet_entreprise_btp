@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Lecture de code-barres et photo justificative. -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:label="ChantierSync"
         android:name="${applicationName}"
