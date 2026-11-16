@@ -229,7 +229,11 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
         « mini » ; en dessous du seuil critique, « critique ».
       </p>
 
-      <FormField libelle={tr('Seuil minimal')} requis aide={`Unité : ${ligne.uniteLibelle}`}>
+      <FormField
+        libelle={tr('Seuil minimal')}
+        requis
+        aide={tr('Unité : {0}', { 0: ligne.uniteLibelle })}
+      >
         {(champ) => (
           <Input
             {...champ}
@@ -247,7 +251,7 @@ function OngletSeuils({ ligne, idMagasin, modifiable, onMiseAJour }: OngletSeuil
         libelle={tr('Seuil critique')}
         requis
         erreur={erreur ?? undefined}
-        aide={erreur ? undefined : `Unité : ${ligne.uniteLibelle}`}
+        aide={erreur ? undefined : tr('Unité : {0}', { 0: ligne.uniteLibelle })}
       >
         {(champ) => (
           <Input
@@ -323,7 +327,7 @@ function OngletHistorique({ ligne, idMagasin }: { ligne: LigneStock; idMagasin: 
 
   return (
     <Table
-      intitule={`Historique des mouvements de ${ligne.designation}`}
+      intitule={tr('Historique des mouvements de {0}', { 0: ligne.designation })}
       colonnes={COLONNES_HISTORIQUE}
       lignes={etat.donnees ?? []}
       cleLigne={(mouvement) => mouvement.uuid}

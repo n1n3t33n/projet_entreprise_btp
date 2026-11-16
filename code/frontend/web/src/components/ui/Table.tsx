@@ -340,7 +340,7 @@ export function Table<T>({
                           type="checkbox"
                           checked={selectionnee}
                           onChange={() => basculerLigne(cle)}
-                          aria-label={`Sélectionner la ligne ${cle}`}
+                          aria-label={tr('Sélectionner la ligne {0}', { 0: cle })}
                           className="size-4 cursor-pointer accent-marine focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle focus-visible:ring-offset-2"
                         />
                       </td>
@@ -369,7 +369,11 @@ export function Table<T>({
           <p className="text-sm text-texte-secondaire" aria-live="polite">
             {lignesTriees.length === 0
               ? tr('Aucune ligne')
-              : `Lignes ${premiereLigneAffichee} à ${derniereLigneAffichee} sur ${lignesTriees.length}`}
+              : tr('Lignes {0} à {1} sur {2}', {
+                  0: premiereLigneAffichee,
+                  1: derniereLigneAffichee,
+                  2: lignesTriees.length,
+                })}
           </p>
 
           <div className="flex items-center gap-2">

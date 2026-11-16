@@ -90,7 +90,10 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
       afficherToast({
         ton: 'succes',
         titre: tr('Import effectué'),
-        message: `${resultat.nombreImportees} ligne(s) importée(s) dans « ${LIBELLE_CIBLE[cible]} ».`,
+        message: tr('{0} ligne(s) importée(s) dans « {1} ».', {
+          0: resultat.nombreImportees,
+          1: LIBELLE_CIBLE[cible],
+        }),
       })
       setContenu('')
       setRapport(null)
@@ -187,7 +190,7 @@ export function ImportReferentiels({ peutImporter }: ImportReferentielsProps) {
               pleineLargeur
             >
               {rapport && rapport.nombreValides > 0
-                ? `Importer ${rapport.nombreValides} ligne(s)`
+                ? tr('Importer {0} ligne(s)', { 0: rapport.nombreValides })
                 : tr('Importer')}
             </Button>
           </div>

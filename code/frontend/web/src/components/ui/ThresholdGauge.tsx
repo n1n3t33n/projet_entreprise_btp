@@ -106,7 +106,7 @@ export function ThresholdGauge({
 
       <div
         role="meter"
-        aria-label={`Niveau de stock : ${libelle}`}
+        aria-label={tr('Niveau de stock : {0}', { 0: libelle })}
         aria-valuemin={0}
         aria-valuemax={reference}
         aria-valuenow={remplissage}
@@ -136,7 +136,7 @@ export function ThresholdGauge({
         >
           {valeur}
           {unite ? ` ${unite}` : ''} · alerte à {seuilMini} · confort à {seuilConfort}
-          {capacite !== undefined ? ` · capacité ${capacite}` : ''}
+          {capacite !== undefined ? tr(' · capacité {0}', { 0: capacite }) : ''}
         </p>
       )}
     </div>

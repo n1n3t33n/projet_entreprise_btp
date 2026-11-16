@@ -141,7 +141,7 @@ export function MatriceDroits({ etat, peutModifier }: MatriceDroitsProps) {
             checked={coche}
             disabled={!peutModifier || verrouille}
             onChange={() => basculer(ecran.id, role.code)}
-            aria-label={`${role.libelle} — accès à l'écran ${ecran.libelle}`}
+            aria-label={tr("{0} — accès à l'écran {1}", { 0: role.libelle, 1: ecran.libelle })}
             title={
               verrouille
                 ? tr('Accès obligatoire : sans lui, plus personne ne pourrait modifier les droits.')

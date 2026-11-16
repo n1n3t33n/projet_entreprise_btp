@@ -102,7 +102,7 @@ export function PageEspaceAcquereur() {
         titre={tr('Avancement global')}
         description={
           logement?.dateLivraisonPrevue
-            ? `Livraison prévue : ${formatDate(logement.dateLivraisonPrevue)}`
+            ? tr('Livraison prévue : {0}', { 0: formatDate(logement.dateLivraisonPrevue) })
             : undefined
         }
       >
@@ -134,7 +134,7 @@ export function PageEspaceAcquereur() {
 
       <Card
         titre={tr('Étapes franchies')}
-        description={tr('Les jalons de votre logement, au fur et à mesure (EF-ACQ-02)')}
+        description={tr('Les jalons de votre logement, au fur et à mesure')}
         icone={BellRinging}
       >
         {notifications.length === 0 ? (

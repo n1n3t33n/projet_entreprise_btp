@@ -105,7 +105,9 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
       afficherToast({
         ton: 'succes',
         titre: tr('Affectation créée'),
-        message: `${idsEtapes.length} étape(s) inscrite(s) sur une nouvelle fiche de route.`,
+        message: tr('{0} étape(s) inscrite(s) sur une nouvelle fiche de route.', {
+          0: idsEtapes.length,
+        }),
       })
       setIdsEtapes([])
       fichesEtat.recharger()
@@ -248,7 +250,7 @@ export function AffectationPanneau({ peutAffecter }: AffectationPanneauProps) {
 
       <Card
         titre={tr('Fiches de route du membre')}
-        description={tr('Affectations déjà confiées à ce membre (MPD-5 fiche de route)')}
+        description={tr('Affectations déjà confiées à ce membre')}
       >
         <Table
           intitule={tr('Fiches de route du membre')}

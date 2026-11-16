@@ -122,7 +122,13 @@ export function EditeurEtapes({
       afficherToast({
         ton: 'succes',
         titre: tr('Étapes enregistrées'),
-        message: `${saisies.length} étape${saisies.length > 1 ? 's' : ''} · poids total ${poidsTotal}`,
+        message: tr(
+          saisies.length > 1 ? '{0} étapes · poids total {1}' : '{0} étape · poids total {1}',
+          {
+            0: saisies.length,
+            1: poidsTotal,
+          },
+        ),
       })
       onFermer()
       onEnregistre()
@@ -173,7 +179,7 @@ export function EditeurEtapes({
                 variante="discret"
                 taille="sm"
                 icone={Trash}
-                aria-label={`Retirer l'étape ${index + 1}`}
+                aria-label={tr("Retirer l'étape {0}", { 0: index + 1 })}
                 onClick={() => retirer(ligne.cleLocale)}
               />
             </div>

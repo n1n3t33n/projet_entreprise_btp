@@ -118,7 +118,9 @@ export function SuiviLogements({
             <StatusPill
               taille="sm"
               ton="danger"
-              libelle={`${ligne.nombreBloquees} bloquée${ligne.nombreBloquees > 1 ? 's' : ''}`}
+              libelle={tr(ligne.nombreBloquees > 1 ? '{0} bloquées' : '{0} bloquée', {
+                0: ligne.nombreBloquees,
+              })}
             />
           )}
           {ligne.nombreEnRetard > 0 && (

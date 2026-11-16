@@ -37,7 +37,20 @@ const FORMAT_DATE_HEURE = new Intl.DateTimeFormat(LOCALE_COURANTE, {
 /** Quantité avec son unité, par exemple « 12,5 sac » (trois décimales au plus, comme `numeric(14,3)`). */
 export function formatQuantite(valeur: number, unite?: string): string {
   const nombre = FORMAT_QUANTITE.format(valeur)
-  return unite ? `${nombre} ${unite}` : nombre
+  return unite ? `${nombre} ${accorderUnite(unite, valeur)}` : nombre
+}
+
+/**
+ * Accorde une unité écrite en toutes lettres : « 1 sac », « 12 sacs »,
+ * « 3 rouleaux ». Les symboles (kg, m², ml) et les mots déjà au pluriel ne
+ * changent pas.
+ */
+export function accorderUnite(unite: string, valeur: number): string {
+  const estMot = /^[a-zà-ÿ]{3,}$/i.test(unite)
+  if (!estMot || Math.abs(valeur) < 2 || /[sxz]$/i.test(unite)) {
+    return unite
+  }
+  return /(eau|eu|au)$/i.test(unite) ? `${unite}x` : `${unite}s`
 }
 
 /** Surface en m², par exemple « 72,5 m² ». */

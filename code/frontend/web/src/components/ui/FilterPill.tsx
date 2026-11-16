@@ -1,5 +1,6 @@
 import { type Icon, X } from '@phosphor-icons/react'
 import { cn } from '@/lib/cn'
+import { tr } from '@/i18n/tr'
 
 export type FilterPillProps = {
   /** Critère filtré, par exemple « Corps d'état ». */
@@ -70,7 +71,7 @@ export function FilterPill({
           type="button"
           onClick={onRetirer}
           disabled={desactive}
-          aria-label={`Retirer le filtre ${libelle}`}
+          aria-label={tr('Retirer le filtre {0}', { 0: libelle })}
           className={cn(
             'mr-1 rounded-full p-1 transition-colors duration-[var(--duree-bouton)] ease-out',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sarcelle',

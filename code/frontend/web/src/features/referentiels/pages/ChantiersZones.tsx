@@ -406,7 +406,7 @@ function DetailLogement({
 }) {
   return (
     <Card
-      titre={`Logement ${logement.numero}`}
+      titre={tr('Logement {0}', { 0: logement.numero })}
       icone={HouseLine}
       actions={
         peutEditer ? (

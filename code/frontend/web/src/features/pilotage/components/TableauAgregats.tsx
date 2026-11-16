@@ -68,7 +68,10 @@ export function TableauAgregats({
           libelleValeurSecondaire={tr('Déclaré')}
           taille="sm"
           afficherLegende={false}
-          descriptionAccessible={`Validé ${Math.round(ligne.pourcentageValide)} %, déclaré ${Math.round(ligne.pourcentageDeclare)} %`}
+          descriptionAccessible={tr('Validé {0} %, déclaré {1} %', {
+            0: Math.round(ligne.pourcentageValide),
+            1: Math.round(ligne.pourcentageDeclare),
+          })}
         />
       ),
     },

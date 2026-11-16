@@ -131,7 +131,7 @@ export function PageTableauDeBord() {
         etiquette={
           chantier ? (
             <StatusPill
-              libelle={`Calculé le ${formatDate(chantier.dateCalcul)}`}
+              libelle={tr('Calculé le {0}', { 0: formatDate(chantier.dateCalcul) })}
               ton="neutre"
               taille="sm"
             />

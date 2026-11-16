@@ -88,7 +88,7 @@ export function FormulaireEntree({
       afficherToast({
         ton: 'succes',
         titre: tr('Entrée enregistrée'),
-        message: `${articleChoisi.designation} — mouvement horodaté et tracé.`,
+        message: tr('{0} — mouvement horodaté et tracé.', { 0: articleChoisi.designation }),
       })
       fermer()
       onEnregistre()
@@ -161,7 +161,7 @@ export function FormulaireEntree({
           libelle={tr('Quantité reçue')}
           requis
           erreur={erreurs.quantite}
-          aide={articleChoisi ? `Unité : ${articleChoisi.uniteLibelle}` : undefined}
+          aide={articleChoisi ? tr('Unité : {0}', { 0: articleChoisi.uniteLibelle }) : undefined}
         >
           {(champ) => (
             <Input

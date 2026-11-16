@@ -211,7 +211,9 @@ export function PageJournalExecution() {
         niveauTitre={1}
         etiquette={
           <StatusPill
-            libelle={`${evenements.length} événement${evenements.length > 1 ? 's' : ''}`}
+            libelle={tr(evenements.length > 1 ? '{0} événements' : '{0} événement', {
+              0: evenements.length,
+            })}
             ton="neutre"
             taille="sm"
           />

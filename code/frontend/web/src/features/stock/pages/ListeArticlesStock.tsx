@@ -252,7 +252,7 @@ export function ListeArticlesStock({
       }
     >
       <Table
-        intitule={`Articles en stock — ${magasinLibelle}`}
+        intitule={tr('Articles en stock — {0}', { 0: magasinLibelle })}
         colonnes={colonnes}
         lignes={lignesFiltrees}
         cleLigne={(ligne) => ligne.idArticle}

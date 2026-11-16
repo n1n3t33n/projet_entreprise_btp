@@ -64,7 +64,7 @@ export function fraicheurSynchro(
 export const LIBELLE_FRAICHEUR: Record<FraicheurSynchro, string> = {
   jamais: tr('Jamais synchronisé'),
   a_jour: tr('À jour'),
-  en_retard: `Plus de ${SEUIL_SYNCHRO_HEURES} h`,
+  en_retard: tr('Plus de {0} h', { 0: SEUIL_SYNCHRO_HEURES }),
 }
 
 export const TON_FRAICHEUR: Record<FraicheurSynchro, TonStatut> = {

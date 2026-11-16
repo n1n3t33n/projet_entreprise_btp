@@ -117,7 +117,8 @@ export function PageAvancement() {
           { id: 'suivi', libelle: tr('Suivi par logement'), icone: Buildings },
           {
             id: 'a-valider',
-            libelle: aValider.length > 0 ? `À valider (${aValider.length})` : tr('À valider'),
+            libelle:
+              aValider.length > 0 ? tr('À valider ({0})', { 0: aValider.length }) : tr('À valider'),
             icone: ClipboardText,
           },
         ]}

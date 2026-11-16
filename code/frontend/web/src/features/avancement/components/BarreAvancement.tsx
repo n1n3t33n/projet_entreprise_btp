@@ -41,7 +41,10 @@ export function BarreAvancement({
       valeurSecondaire={pourcentageDeclare}
       libelleValeur={tr('Validé')}
       libelleValeurSecondaire={tr('Déclaré')}
-      descriptionAccessible={`Avancement validé ${Math.round(pourcentageValide)} %, déclaré ${Math.round(pourcentageDeclare)} %`}
+      descriptionAccessible={tr('Avancement validé {0} %, déclaré {1} %', {
+        0: Math.round(pourcentageValide),
+        1: Math.round(pourcentageDeclare),
+      })}
       taille={taille}
       afficherLegende={afficherLegende}
       className={className}

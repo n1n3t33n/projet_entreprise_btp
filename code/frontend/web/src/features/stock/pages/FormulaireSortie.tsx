@@ -120,7 +120,7 @@ export function FormulaireSortie({
       afficherToast({
         ton: 'succes',
         titre: tr('Sortie enregistrée'),
-        message: `${articleChoisi.designation} — mouvement horodaté et tracé.`,
+        message: tr('{0} — mouvement horodaté et tracé.', { 0: articleChoisi.designation }),
       })
       fermer()
       onEnregistre()
@@ -195,7 +195,9 @@ export function FormulaireSortie({
           erreur={erreurs.quantite}
           aide={
             articleChoisi
-              ? `Disponible : ${formatQuantite(stockDisponible, articleChoisi.uniteLibelle)}`
+              ? tr('Disponible : {0}', {
+                  0: formatQuantite(stockDisponible, articleChoisi.uniteLibelle),
+                })
               : undefined
           }
         >

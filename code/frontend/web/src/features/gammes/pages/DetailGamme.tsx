@@ -187,7 +187,11 @@ export function DetailGamme({
         ouvert={ouvert}
         onFermer={onFermer}
         titre={gamme ? gamme.libelle : tr('Gamme')}
-        description={gamme ? `${gamme.libelleTypeLogement} · version ${gamme.version}` : undefined}
+        description={
+          gamme
+            ? tr('{0} · version {1}', { 0: gamme.libelleTypeLogement, 1: gamme.version })
+            : undefined
+        }
         largeur="lg"
         pied={pied}
       >
@@ -224,7 +228,7 @@ export function DetailGamme({
             )}
 
             <Table
-              intitule={`Étapes de ${gamme.libelle}`}
+              intitule={tr('Étapes de {0}', { 0: gamme.libelle })}
               colonnes={colonnes}
               lignes={etapes}
               cleLigne={(etape) => etape.id}

@@ -27,7 +27,7 @@ function conditionLisible(regle: RegleValidation): string {
     parties.push(SYMBOLE_OPERATEUR[regle.operateur], String(regle.valeurSeuil))
   }
   if (regle.delaiHeures !== null) {
-    parties.push(`· délai ${regle.delaiHeures} h`)
+    parties.push(tr('· délai {0} h', { 0: regle.delaiHeures }))
   }
   return parties.join(' ')
 }

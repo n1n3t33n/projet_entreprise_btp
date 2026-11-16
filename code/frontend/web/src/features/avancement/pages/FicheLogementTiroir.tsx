@@ -68,7 +68,7 @@ export function FicheLogementTiroir({
     <Drawer
       ouvert={cible !== null}
       onFermer={onFermer}
-      titre={cible ? `Logement ${cible.numero}` : ''}
+      titre={cible ? tr('Logement {0}', { 0: cible.numero }) : ''}
       description={tr('Avancement et étapes')}
       largeur="lg"
       pied={
