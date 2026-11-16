@@ -6,6 +6,7 @@ import '../../../components/boutons.dart';
 import '../../../components/en_tetes.dart';
 import '../../../components/saisie.dart';
 import '../../../components/surfaces.dart';
+import '../../../core/appareil/materiel.dart';
 import '../../../core/navigation/transitions.dart';
 import '../../../core/providers.dart';
 import '../../../theme/animations.dart';
@@ -118,6 +119,19 @@ class _EcranRegistreState extends ConsumerState<EcranRegistre> {
     _Filtre.negatif => a.estNegatif,
   };
 
+  Future<void> _scanner(List<ArticleStock> articles) async {
+    final code = await scannerCode(context);
+    if (code == null || !mounted) return;
+    final article = articles
+        .where((a) => a.codeBarre == code || a.code == code)
+        .firstOrNull;
+    if (article == null) {
+      notifier(context, context.t.codeInconnu(code));
+      return;
+    }
+    await ouvrirEcran<void>(context, EcranFicheArticle(code: article.code));
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
@@ -217,6 +231,11 @@ class _EcranRegistreState extends ConsumerState<EcranRegistre> {
             decoration: InputDecoration(
               hintText: t.rechercherArticle,
               prefixIcon: const Icon(PhosphorIconsRegular.magnifyingGlass),
+              suffixIcon: IconButton(
+                tooltip: t.scanTitre,
+                icon: const Icon(PhosphorIconsRegular.barcode),
+                onPressed: () => _scanner(articles),
+              ),
             ),
           ),
           const SizedBox(height: 12),

@@ -336,10 +336,23 @@ class Inventaire {
   };
 }
 
+/// Accorde une unité écrite en toutes lettres : « 1 sac », « 12 sacs »,
+/// « 3 rouleaux ». Les symboles (kg, m², ml) ne changent pas.
+String accorderUnite(String unite, num valeur) {
+  final estMot = RegExp(
+    r'^[a-zà-ÿ]{3,}$',
+    caseSensitive: false,
+  ).hasMatch(unite);
+  if (!estMot || valeur.abs() < 2 || RegExp(r'[sxz]$').hasMatch(unite)) {
+    return unite;
+  }
+  return RegExp(r'(eau|eu|au)$').hasMatch(unite) ? '${unite}x' : '${unite}s';
+}
+
 /// Quantité lisible : entier sans décimale, sinon une décimale.
 String formaterQuantite(num valeur, [String? unite]) {
   final nombre = valeur == valeur.roundToDouble()
       ? valeur.round().toString()
       : valeur.toStringAsFixed(1).replaceAll('.', ',');
-  return unite == null ? nombre : '$nombre $unite';
+  return unite == null ? nombre : '$nombre ${accorderUnite(unite, valeur)}';
 }

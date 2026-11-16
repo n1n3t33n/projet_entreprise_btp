@@ -1283,4 +1283,34 @@ class TraductionsFr extends Traductions {
   @override
   String get resolutionArbitrageDetail =>
       'La décision est renvoyée au conducteur de travaux.';
+
+  @override
+  String get scanTitre => 'Lire un code-barres';
+
+  @override
+  String get scanAide => 'Présentez le code dans le cadre';
+
+  @override
+  String get scanIndisponible =>
+      'Caméra indisponible. Autorisez la caméra dans les réglages du téléphone.';
+
+  @override
+  String codeInconnu(String code) {
+    return 'Aucun article ne porte le code $code.';
+  }
+
+  @override
+  String get photoJustificative => 'Photo justificative';
+
+  @override
+  String get prendrePhoto => 'Prendre une photo';
+
+  @override
+  String get photoIndisponible => 'Photo non prise.';
+
+  @override
+  String get exporterJournal => 'Exporter le journal affiché';
+
+  @override
+  String get exportIndisponible => 'Export impossible sur cet appareil.';
 }

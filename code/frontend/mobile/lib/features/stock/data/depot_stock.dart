@@ -63,6 +63,7 @@ class DepotStock {
     String? destination,
     String? reference,
     String? motif,
+    List<String> photos = const [],
   }) async {
     final maintenant = _horloge();
     final existants = await mouvements();
@@ -96,6 +97,7 @@ class DepotStock {
       chargeUtile: {
         ...mouvement.toJson(),
         'cree_le': maintenant.toIso8601String(),
+        'photos': photos,
         'resume':
             '${mouvement.numero} · ${article.designation} · '
             '${formaterQuantite(quantite, article.unite)}',

@@ -41,6 +41,9 @@ dependencies:
 
   # Traductions (français, anglais, italien) et formats de date/nombre.
   intl: any
+  mobile_scanner: ^7.5.0
+  image_picker: ^1.2.1
+  share_plus: ^12.0.2
 
 dev_dependencies:
   flutter_test:

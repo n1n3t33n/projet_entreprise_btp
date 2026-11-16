@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,7 @@ import '../../../components/boutons.dart';
 import '../../../components/en_tetes.dart';
 import '../../../components/saisie.dart';
 import '../../../components/surfaces.dart';
+import '../../../core/appareil/materiel.dart';
 import '../../../core/providers.dart';
 import '../../../theme/animations.dart';
 import '../../../theme/jetons.dart';
@@ -45,6 +48,7 @@ class _EcranMouvementState extends ConsumerState<EcranMouvement> {
   bool _conforme = true;
   _NatureRetour _nature = _NatureRetour.retour;
   bool _enCours = false;
+  final List<String> _photos = [];
   final _bon = TextEditingController();
   final _observations = TextEditingController();
 
@@ -130,6 +134,7 @@ class _EcranMouvementState extends ConsumerState<EcranMouvement> {
           destination: destination,
           reference: reference,
           motif: motif == null || motif.isEmpty ? null : motif,
+          photos: List.unmodifiable(_photos),
         );
     rafraichirStock(ref);
     HapticFeedback.mediumImpact();
@@ -169,6 +174,7 @@ class _EcranMouvementState extends ConsumerState<EcranMouvement> {
         _sectionEtat(),
       ],
       if (article != null && widget.mode == ModeSaisie.retour) _sectionMotif(),
+      if (article != null && widget.mode != ModeSaisie.sortie) _sectionPhoto(),
       if (article != null && _complet)
         _Recapitulatif(article: article, variation: _variation(article)),
     ];
@@ -463,6 +469,59 @@ class _EcranMouvementState extends ConsumerState<EcranMouvement> {
         ],
       ),
     );
+  }
+
+  Widget _sectionPhoto() {
+    final t = context.t;
+    return Carte(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TitreSection(
+            t.photoJustificative,
+            icone: PhosphorIconsRegular.camera,
+            complement: Pastille(libelle: t.facultatif),
+          ),
+          const SizedBox(height: 12),
+          if (_photos.isNotEmpty) ...[
+            SizedBox(
+              height: 84,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _photos.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 8),
+                itemBuilder: (_, i) => ClipRRect(
+                  borderRadius: BorderRadius.circular(Jetons.rayonChamp),
+                  child: Image.file(
+                    File(_photos[i]),
+                    width: 84,
+                    height: 84,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+          BoutonSecondaire(
+            libelle: t.prendrePhoto,
+            icone: PhosphorIconsRegular.camera,
+            compact: true,
+            onPressed: _ajouterPhoto,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _ajouterPhoto() async {
+    final chemin = await prendrePhoto();
+    if (!mounted) return;
+    if (chemin == null) {
+      notifier(context, context.t.photoIndisponible);
+      return;
+    }
+    setState(() => _photos.add(chemin));
   }
 
   Widget _sectionMotif() {
