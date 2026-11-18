@@ -6,28 +6,22 @@ relancer ne crée rien de plus et ne fait que réaffirmer les droits. Elle
 passe par la fonction SQL ``socle_creer_partition_mensuelle`` (SECURITY
 DEFINER), donc peut tourner sous le rôle applicatif.
 
-Elle n'a pas besoin de la table ``execution_traitement`` (arbitrage Q9) : son
-résultat est entièrement vérifiable dans le catalogue PostgreSQL, et son
-dernier passage est tracé dans les journaux JSON. Cette table arrivera avec le
-premier traitement ordonnancé métier, en B3.
+C'est le premier traitement du cadre ``socle/traitements.py`` (6.5) : chaque
+passage est inscrit dans ``execution_traitement`` et un échec déclenche une
+alerte technique. ``lancer_traitement creer_partitions`` fait la même chose
+avec les réglages par défaut ; cette commande garde ses options pour les
+étapes de publication déjà déclarées.
 """
 
-import logging
 from argparse import ArgumentParser
 from typing import Any
 
-from django.conf import settings
-from django.core.management.base import BaseCommand
-from django.db import connections
-from django.utils import timezone
+from django.core.management.base import BaseCommand, CommandError
 
-from socle.base_de_donnees.partitions import (
-    TABLES_PARTITIONNEES,
-    creer_partitions,
-    mois_a_couvrir,
-)
+from socle import traitements
+from socle.base_de_donnees.partitions import preparer_partitions
 
-journal = logging.getLogger("chantiersync.traitements")
+NOM_TRAITEMENT = "creer_partitions"
 
 
 class Command(BaseCommand):
@@ -47,13 +41,11 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args: Any, **options: Any) -> None:
-        avance = options["mois_avance"]
-        if avance is None:
-            avance = settings.PARTITIONS_MOIS_AVANCE
-        mois = mois_a_couvrir(timezone.localdate(), avance)
-        noms = creer_partitions(connections[options["database"]], TABLES_PARTITIONNEES, mois)
-        journal.info(
-            "partitions mensuelles vérifiées",
-            extra={"commande": "creer_partitions", "detail": len(noms)},
-        )
-        self.stdout.write(f"{len(noms)} partition(s) vérifiée(s) : {', '.join(noms)}")
+        try:
+            execution = traitements.executer(
+                NOM_TRAITEMENT,
+                lambda: preparer_partitions(options["mois_avance"], options["database"]),
+            )
+        except traitements.TraitementDejaEnCours as erreur:
+            raise CommandError(str(erreur)) from erreur
+        self.stdout.write(execution.detail)

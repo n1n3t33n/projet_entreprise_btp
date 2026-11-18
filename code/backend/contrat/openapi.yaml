@@ -855,6 +855,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/MagasinStock'
           description: ''
+  /api/metriques:
+    get:
+      operationId: metriques_retrieve
+      description: |-
+        GET /api/metriques. Le droit exigé est fixé à l'inscription de la
+        route (``configuration/urls.py``) : le socle ne dépend d'aucun domaine.
+      tags:
+      - metriques
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metriques'
+          description: ''
   /api/motifs-blocage:
     get:
       operationId: motifs_blocage_list
@@ -1949,6 +1966,26 @@ components:
             $ref: '#/components/schemas/EtapeModeleEntreeRequest'
       required:
       - etapes
+    Execution:
+      type: object
+      properties:
+        nom_traitement:
+          type: string
+          maxLength: 120
+        debut:
+          type: string
+          format: date-time
+        fin:
+          type: string
+          format: date-time
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        detail:
+          type: string
+      required:
+      - nom_traitement
     Gamme:
       type: object
       description: |-
@@ -2194,6 +2231,31 @@ components:
             minLength: 1
       required:
       - droits
+    Metriques:
+      type: object
+      properties:
+        demarre_le:
+          type: string
+          format: date-time
+        requetes:
+          $ref: '#/components/schemas/Requetes'
+        erreurs_serveur_recentes:
+          type: integer
+        fenetre_minutes:
+          type: integer
+        base_de_donnees:
+          type: string
+        traitements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Execution'
+      required:
+      - base_de_donnees
+      - demarre_le
+      - erreurs_serveur_recentes
+      - fenetre_minutes
+      - requetes
+      - traitements
     MotifBlocage:
       type: object
       properties:
@@ -2438,6 +2500,26 @@ components:
       - champ_teste
       - operateur
       - type_evenement
+    Requetes:
+      type: object
+      properties:
+        total:
+          type: integer
+        par_classe:
+          type: object
+          additionalProperties:
+            type: integer
+        duree_moyenne_ms:
+          type: number
+          format: double
+        duree_max_ms:
+          type: number
+          format: double
+      required:
+      - duree_max_ms
+      - duree_moyenne_ms
+      - par_classe
+      - total
     ResultatImport:
       type: object
       properties:

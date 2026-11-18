@@ -23,11 +23,16 @@ MOT_DE_PASSE_TEST = "Chantier-Test-2026!"
 
 @pytest.fixture(autouse=True)
 def _vider_cache() -> Iterator[None]:
-    """Les compteurs de limitation du taux vivent dans le cache local : on
-    repart de zéro à chaque test."""
+    """Les compteurs de limitation du taux et l'anti-répétition des alertes
+    vivent dans le cache local, les métriques en mémoire : on repart de zéro
+    à chaque test."""
+    from socle.metriques import COMPTEURS
+
     cache.clear()
+    COMPTEURS.reinitialiser()
     yield
     cache.clear()
+    COMPTEURS.reinitialiser()
 
 
 @pytest.fixture

@@ -2,7 +2,8 @@
 
 - ``GET /api/sante/vivacite`` : le service répond (aucun accès à la base).
 - ``GET /api/sante/aptitude`` : la base est joignable ET toutes les
-  migrations sont appliquées.
+  migrations sont appliquées. Une base injoignable déclenche aussi une
+  alerte technique (6.7) : la plateforme interroge cette route en continu.
 
 Sans authentification, pour que la plateforme d'hébergement puisse les
 interroger ; mais la réponse ne divulgue rien de l'infrastructure : ni
@@ -15,6 +16,8 @@ from django.db import DatabaseError, connection
 from django.db.migrations.executor import MigrationExecutor
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.http import require_GET
+
+from socle import alertes
 
 journal = logging.getLogger("chantiersync.sante")
 
@@ -31,6 +34,12 @@ def verifier_base() -> str:
             curseur.fetchone()
     except DatabaseError:
         journal.exception("base de données injoignable")
+        alertes.alerter(
+            alertes.BASE_INJOIGNABLE,
+            "Base de données injoignable",
+            "Le serveur n'arrive plus à joindre PostgreSQL. Vérifiez le service de base "
+            "de données et les paramètres de connexion de la plateforme.",
+        )
         return KO
     return OK
 

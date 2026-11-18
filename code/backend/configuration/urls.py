@@ -19,16 +19,24 @@ from rest_framework.permissions import IsAuthenticated
 from domaines.identite.authentification import AuthentificationParJeton
 from domaines.identite.constantes import ACTION_LIRE, MODULE_TECHNIQUE
 from domaines.identite.permissions import ADroit
-from socle import sante
+from socle import metriques, sante
 
 PROTECTION_DOCUMENTATION = {
     "authentication_classes": [AuthentificationParJeton, SessionAuthentication],
     "permission_classes": [IsAuthenticated, ADroit(MODULE_TECHNIQUE, "documentation", ACTION_LIRE)],
 }
 
+# Métriques d'exploitation (6.6) : jeton porteur et droit « technique /
+# metriques / LIRE ». Le socle ne connaît pas la matrice des droits ; c'est
+# ici, à l'assemblage, qu'on la branche.
+PROTECTION_METRIQUES = {
+    "permission_classes": [IsAuthenticated, ADroit(MODULE_TECHNIQUE, "metriques", ACTION_LIRE)],
+}
+
 routes_api: list[URLPattern | URLResolver] = [
     path("sante/vivacite", sante.vivacite, name="sante-vivacite"),
     path("sante/aptitude", sante.aptitude, name="sante-aptitude"),
+    path("metriques", metriques.VueMetriques.as_view(**PROTECTION_METRIQUES), name="metriques"),
     path("", include("domaines.identite.api.routes")),
     path("", include("domaines.organisation.api.routes")),
     path("", include("domaines.referentiels.api.routes")),

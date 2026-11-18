@@ -5,7 +5,8 @@ l'entreprise). Tout vient de l'environnement ; DEBUG reste faux.
   1. python manage.py collectstatic --noinput
   2. python manage.py migrate --database migration
   3. python manage.py creer_partitions
-Tâche planifiée quotidienne : python manage.py creer_partitions
+Tâche planifiée quotidienne : python manage.py lancer_traitement creer_partitions
+(chaque passage est tracé dans execution_traitement, exigence 6.5)
 """
 
 from socle import environnement as env

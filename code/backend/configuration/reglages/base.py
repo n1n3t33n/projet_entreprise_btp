@@ -294,6 +294,27 @@ X_FRAME_OPTIONS = "DENY"
 # Les traces d'erreur ne doivent jamais exposer de secret (exigence 6.1).
 DEFAULT_EXCEPTION_REPORTER_FILTER = "socle.journalisation.masquage.FiltreRapportErreur"
 
+# ---------------------------------------------------------------------------
+# Alertes techniques par courriel (exigence 6.7). SMTP et destinataires
+# viennent de l'environnement ; en développement, le courriel s'affiche dans
+# la console (developpement.py). Sans destinataire, l'alerte est seulement
+# journalisée.
+# ---------------------------------------------------------------------------
+EMAIL_BACKEND = env.texte("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = env.texte("EMAIL_HOTE", "localhost")
+EMAIL_PORT = env.entier("EMAIL_PORT", 587)
+EMAIL_HOST_USER = env.texte("EMAIL_UTILISATEUR", "")
+EMAIL_HOST_PASSWORD = env.texte("EMAIL_MOT_DE_PASSE", "")
+EMAIL_USE_TLS = env.booleen("EMAIL_TLS", True)
+EMAIL_TIMEOUT = env.entier("EMAIL_DELAI_SECONDES", 10)
+ALERTES_EXPEDITEUR = env.texte("ALERTES_EXPEDITEUR", "alertes@chantiersync.invalid")
+ALERTES_DESTINATAIRES = env.liste("ALERTES_DESTINATAIRES")
+# Seuil « erreurs serveur répétées » : N erreurs 5xx dans la fenêtre.
+ALERTES_SEUIL_ERREURS = env.entier("ALERTES_SEUIL_ERREURS", 5)
+ALERTES_FENETRE_MINUTES = env.entier("ALERTES_FENETRE_MINUTES", 5)
+# Au plus une alerte par type pendant cet intervalle.
+ALERTES_INTERVALLE_MINUTES = env.entier("ALERTES_INTERVALLE_MINUTES", 15)
+
 # Partitions mensuelles créées d'avance par « creer_partitions ».
 PARTITIONS_MOIS_AVANCE = env.entier("PARTITIONS_MOIS_AVANCE", 3)
 
