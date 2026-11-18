@@ -1,0 +1,7 @@
+# Exécution en production : dépendances de base + serveur d'application.
+# gunicorn sert l'interface WSGI (ou ASGI via ses workers, décision 6.8
+# reportée en B6). Il ne fonctionne pas sous Windows : en développement on
+# utilise « manage.py runserver ».
+-r base.txt
+gunicorn==27.0.1
+packaging==26.3

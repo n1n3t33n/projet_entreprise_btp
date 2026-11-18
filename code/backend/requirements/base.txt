@@ -1,0 +1,33 @@
+# Dépendances d'exécution du backend ChantierSync, toutes épinglées (aucune
+# plage) pour qu'une installation donne toujours le même résultat.
+# Choix des versions : rapport B0, arbitrage Q1 (Django 5.2 LTS, DRF 3.18.3).
+
+# --- Cadre et API ---
+Django==5.2.19
+djangorestframework==3.18.3
+# Schéma OpenAPI généré depuis le code, Swagger et ReDoc (exigence 6.9).
+drf-spectacular==0.30.0
+# Politique CORS du poste de pilotage web (rapport B0 § 3.7).
+django-cors-headers==4.9.0
+# Fichiers statiques de l'admin et de la documentation servis par
+# l'application : aucun disque persistant requis sur le PaaS.
+whitenoise==6.12.0
+# Lecture du fichier .env en développement (règle ecc/python/security.md).
+python-dotenv==1.2.4
+
+# --- Pilote PostgreSQL 16 ---
+psycopg==3.3.9
+psycopg-binary==3.3.9
+
+# --- Dépendances transitives, épinglées ---
+asgiref==3.13.0
+sqlparse==0.6.1
+tzdata==2026.6
+uritemplate==4.2.0
+PyYAML==6.0.3
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+referencing==0.37.0
+rpds-py==2026.9.1
+attrs==26.1.0
+inflection==0.5.1

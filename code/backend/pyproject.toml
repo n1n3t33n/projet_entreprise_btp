@@ -1,0 +1,50 @@
+# Configuration des outils du backend (aucune dépendance déclarée ici : elles
+# sont épinglées dans requirements/*.txt).
+
+[tool.black]
+line-length = 100
+target-version = ["py313"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+# E/W/F : erreurs de base ; I : ordre des imports (remplace isort) ;
+# B : pièges courants ; UP : syntaxe moderne ; S : sécurité (équivalent bandit) ;
+# DJ : règles Django.
+select = ["E", "W", "F", "I", "B", "UP", "S", "DJ"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Dans les tests, `assert` est l'outil normal ; les ordres SQL des tests
+# d'immuabilité visent des noms de table tirés d'une liste fixe du test
+# (aucune entrée extérieure), d'où S608.
+"**/tests/**" = ["S101", "S105", "S106", "S608"]
+"conftest.py" = ["S101", "S105", "S106"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "configuration.reglages.test"
+python_files = ["test_*.py"]
+addopts = "--strict-markers -p no:cacheprovider"
+markers = [
+    "integration: exerce la vraie base PostgreSQL (rôles, déclencheurs, partitions)",
+]
+
+[tool.coverage.run]
+source = ["socle", "domaines", "configuration"]
+omit = ["*/migrations/*", "*/tests/*"]
+
+[tool.mypy]
+python_version = "3.13"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+ignore_missing_imports = true
+check_untyped_defs = true
+exclude = ["migrations/"]
+
+[tool.django-stubs]
+django_settings_module = "configuration.reglages.test"
+
+[tool.bandit]
+exclude_dirs = ["tests", "migrations"]
