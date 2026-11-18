@@ -13,6 +13,8 @@ class ConfigurationIdentite(AppConfig):
     verbose_name = "Identité, comptes et droits"
 
     def ready(self) -> None:
+        # Description OpenAPI du jeton porteur (enregistrée à l'import).
+        from domaines.identite import schema_openapi  # noqa: F401
         from socle.base_de_donnees.partitions import declarer_table_partitionnee
 
         # journal_audit est partitionnée par mois (MPD-1, MPD § 6.5) : la

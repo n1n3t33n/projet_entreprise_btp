@@ -1,0 +1,1007 @@
+openapi: 3.0.3
+info:
+  title: API ChantierSync
+  version: B1
+  description: Contrat de l'API REST de ChantierSync, généré depuis le code. Il fait
+    foi pour le CONTRAT d'API ; le schéma de données, lui, est défini par le modèle
+    physique (MPD) de la modélisation.
+paths:
+  /api/appareils:
+    get:
+      operationId: appareils_list
+      description: GET /api/appareils.
+      tags:
+      - appareils
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appareil'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/appareils/{id_appareil}/revocation:
+    post:
+      operationId: appareils_revocation_create
+      description: POST /api/appareils/{id}/revocation — blocage immédiat et audit.
+      parameters:
+      - in: path
+        name: id_appareil
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - appareils
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appareil'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/audit:
+    get:
+      operationId: audit_list
+      description: GET /api/audit?action=&auteur=&limite= — plus récentes d'abord.
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+        description: Action, en UPPER_SNAKE.
+      - in: query
+        name: auteur
+        schema:
+          type: string
+        description: Identifiant de l'auteur (uuid).
+      - in: query
+        name: limite
+        schema:
+          type: integer
+        description: Nombre maximal d'entrées (1 à 1000).
+      tags:
+      - audit
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntreeAudit'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/auth/comptes:
+    get:
+      operationId: auth_comptes_list
+      description: GET /api/auth/comptes (lister) et POST /api/auth/comptes (créer).
+      tags:
+      - auth
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Utilisateur'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+    post:
+      operationId: auth_comptes_create
+      description: GET /api/auth/comptes (lister) et POST /api/auth/comptes (créer).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompteEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Utilisateur'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/auth/comptes/{id_utilisateur}:
+    put:
+      operationId: auth_comptes_update
+      description: PUT /api/auth/comptes/{id} — modifier ou désactiver un compte.
+      parameters:
+      - in: path
+        name: id_utilisateur
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompteEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Utilisateur'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/auth/connexion:
+    post:
+      operationId: auth_connexion_create
+      description: |-
+        POST /api/auth/connexion — connexion en ligne (SQ-5 étapes 2 à 5).
+
+        Publique par nature. Limitée par IP et par identifiant (exigence 6.3) ;
+        l'excès répond « 429 VERROUILLE » avec le délai restant, forme que le web
+        affiche déjà (EF-AUT-04, arbitrage Q11).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnexionEntreeRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/auth/deconnexion:
+    post:
+      operationId: auth_deconnexion_create
+      description: |-
+        POST /api/auth/deconnexion — trace la déconnexion (RG-D9).
+
+        Limite documentée (arbitrage Q2) : le jeton web reste valable jusqu'à
+        ses 8 h ; c'est le client qui l'oublie.
+      tags:
+      - auth
+      security:
+      - jetonPorteur: []
+      responses:
+        '204':
+          description: No response body
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/auth/moi:
+    get:
+      operationId: auth_moi_retrieve
+      description: |-
+        GET /api/auth/moi — profil, affectations et droits effectifs.
+
+        Sert au mobile pour remplacer sa table de navigation codée en dur
+        (``ongletsPour``, I-06) par la donnée de la matrice, comme le web.
+      tags:
+      - auth
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profil'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/auth/perimetres:
+    get:
+      operationId: auth_perimetres_list
+      description: GET /api/auth/perimetres.
+      tags:
+      - auth
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Perimetre'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/droits/accordes:
+    get:
+      operationId: droits_accordes_list
+      description: GET /api/droits/accordes (lire) et PUT (remplacer) la matrice.
+      tags:
+      - droits
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DroitAccorde'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+    put:
+      operationId: droits_accordes_update
+      description: GET /api/droits/accordes (lire) et PUT (remplacer) la matrice.
+      tags:
+      - droits
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatriceEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DroitAccorde'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/droits/permissions:
+    get:
+      operationId: droits_permissions_list
+      description: GET /api/droits/permissions.
+      tags:
+      - droits
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Permission'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/droits/roles:
+    get:
+      operationId: droits_roles_list
+      description: GET /api/droits/roles.
+      tags:
+      - droits
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erreur'
+          description: ''
+components:
+  schemas:
+    Affectation:
+      type: object
+      properties:
+        role_code_role:
+          type: string
+        libelle_role:
+          type: string
+        perimetre_id_perimetre:
+          type: string
+          format: uuid
+        libelle_perimetre:
+          type: string
+        chantier_id_chantier:
+          type: string
+          format: uuid
+          nullable: true
+        magasin_id_magasin:
+          type: string
+          format: uuid
+          nullable: true
+        date_debut:
+          type: string
+          format: date
+        date_fin:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - chantier_id_chantier
+      - date_debut
+      - date_fin
+      - libelle_perimetre
+      - libelle_role
+      - magasin_id_magasin
+      - perimetre_id_perimetre
+      - role_code_role
+    Appareil:
+      type: object
+      description: '``AppareilDto`` (web, Administration › Appareils).'
+      properties:
+        id_appareil:
+          type: string
+          format: uuid
+        empreinte_materiel:
+          type: string
+        plateforme:
+          type: string
+        version_application:
+          type: string
+        derniere_synchronisation:
+          type: string
+          format: date-time
+          nullable: true
+        statut:
+          type: string
+        utilisateur_id_utilisateur:
+          type: string
+          format: uuid
+        identifiant_utilisateur:
+          type: string
+        nom_utilisateur:
+          type: string
+      required:
+      - derniere_synchronisation
+      - empreinte_materiel
+      - id_appareil
+      - identifiant_utilisateur
+      - nom_utilisateur
+      - plateforme
+      - statut
+      - utilisateur_id_utilisateur
+      - version_application
+    AppareilConnexionRequest:
+      type: object
+      description: Bloc facultatif envoyé par le mobile (SQ-5 étape 3).
+      properties:
+        empreinte_materiel:
+          type: string
+          minLength: 1
+          maxLength: 120
+        plateforme:
+          type: string
+          minLength: 1
+          maxLength: 120
+        version_application:
+          type: string
+          minLength: 1
+          maxLength: 120
+      required:
+      - empreinte_materiel
+      - plateforme
+      - version_application
+    CompteEntreeRequest:
+      type: object
+      description: |-
+        Corps de POST/PUT /auth/comptes. ``mot_de_passe`` est un ajout
+        (arbitrage Q12) : obligatoire à la création, facultatif ensuite.
+      properties:
+        identifiant:
+          type: string
+          minLength: 1
+          maxLength: 120
+        nom:
+          type: string
+          minLength: 1
+          maxLength: 120
+        prenom:
+          type: string
+          minLength: 1
+          maxLength: 120
+        fonction:
+          type: string
+          default: ''
+          maxLength: 120
+        statut:
+          $ref: '#/components/schemas/StatutEnum'
+        role_code_role:
+          type: string
+          minLength: 1
+          maxLength: 32
+        perimetre_id_perimetre:
+          type: string
+          format: uuid
+        mot_de_passe:
+          type: string
+          writeOnly: true
+          nullable: true
+          minLength: 1
+          maxLength: 256
+      required:
+      - identifiant
+      - nom
+      - perimetre_id_perimetre
+      - prenom
+      - role_code_role
+      - statut
+    ConnexionEntreeRequest:
+      type: object
+      properties:
+        identifiant:
+          type: string
+          minLength: 1
+          maxLength: 120
+        mot_de_passe:
+          type: string
+          minLength: 1
+          maxLength: 256
+        appareil:
+          $ref: '#/components/schemas/AppareilConnexionRequest'
+      required:
+      - identifiant
+      - mot_de_passe
+    DroitAccorde:
+      type: object
+      properties:
+        role_code_role:
+          type: string
+          maxLength: 32
+        permission_code_permission:
+          type: string
+          maxLength: 32
+        portee:
+          type: string
+          maxLength: 32
+      required:
+      - permission_code_permission
+      - portee
+      - role_code_role
+    DroitAccordeRequest:
+      type: object
+      properties:
+        role_code_role:
+          type: string
+          minLength: 1
+          maxLength: 32
+        permission_code_permission:
+          type: string
+          minLength: 1
+          maxLength: 32
+        portee:
+          type: string
+          minLength: 1
+          maxLength: 32
+      required:
+      - permission_code_permission
+      - portee
+      - role_code_role
+    DroitEffectif:
+      type: object
+      properties:
+        code_permission:
+          type: string
+        module:
+          type: string
+        ressource:
+          type: string
+        action:
+          type: string
+        portee:
+          type: string
+        id_perimetre:
+          type: string
+          format: uuid
+        libelle_perimetre:
+          type: string
+      required:
+      - action
+      - code_permission
+      - id_perimetre
+      - libelle_perimetre
+      - module
+      - portee
+      - ressource
+    EntreeAudit:
+      type: object
+      description: |-
+        ``EntreeAuditDto``. ``id_objet`` reste null : colonne absente du MPD
+        (incohérence I-27, non tranchée).
+      properties:
+        id_entree:
+          type: string
+          format: uuid
+        action:
+          type: string
+        type_objet:
+          type: string
+        id_objet:
+          type: string
+          nullable: true
+          readOnly: true
+        resume:
+          type: string
+          readOnly: true
+        horodatage:
+          type: string
+          format: date-time
+        adresse_ip:
+          type: string
+          nullable: true
+        utilisateur_id_utilisateur:
+          type: string
+          format: uuid
+        identifiant_utilisateur:
+          type: string
+        nom_utilisateur:
+          type: string
+      required:
+      - action
+      - adresse_ip
+      - horodatage
+      - id_entree
+      - id_objet
+      - identifiant_utilisateur
+      - nom_utilisateur
+      - resume
+      - type_objet
+      - utilisateur_id_utilisateur
+    Erreur:
+      type: object
+      properties:
+        motif:
+          type: string
+          description: Code stable, UPPER_SNAKE, destiné au programme.
+        message:
+          type: string
+          description: Phrase en français destinée à l'utilisateur.
+        details:
+          type: object
+          additionalProperties: {}
+        secondes_restantes:
+          type: integer
+        id_correlation:
+          type: string
+      required:
+      - message
+      - motif
+    MatriceEntreeRequest:
+      type: object
+      properties:
+        droits:
+          type: array
+          items:
+            $ref: '#/components/schemas/DroitAccordeRequest'
+        modules:
+          type: array
+          items:
+            type: string
+            minLength: 1
+      required:
+      - droits
+    Perimetre:
+      type: object
+      properties:
+        id_perimetre:
+          type: string
+          format: uuid
+        libelle:
+          type: string
+      required:
+      - id_perimetre
+      - libelle
+    Permission:
+      type: object
+      properties:
+        code_permission:
+          type: string
+        module:
+          type: string
+        ressource:
+          type: string
+        action:
+          type: string
+        libelle:
+          type: string
+      required:
+      - action
+      - code_permission
+      - libelle
+      - module
+      - ressource
+    Profil:
+      type: object
+      description: |-
+        Profil, affectations et droits effectifs : le mobile en tire ses
+        onglets (permissions du module « mobile ») au lieu de les coder en dur
+        (lève I-06 côté serveur). Bâtiment et libellé court d'appareil : absents
+        du MPD (I-20), donc non servis.
+      properties:
+        utilisateur:
+          $ref: '#/components/schemas/Utilisateur'
+        affectations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Affectation'
+        droits:
+          type: array
+          items:
+            $ref: '#/components/schemas/DroitEffectif'
+        appareil:
+          allOf:
+          - $ref: '#/components/schemas/Appareil'
+          nullable: true
+        horodatage_serveur:
+          type: string
+          format: date-time
+      required:
+      - affectations
+      - appareil
+      - droits
+      - horodatage_serveur
+      - utilisateur
+    Role:
+      type: object
+      properties:
+        code_role:
+          type: string
+        libelle:
+          type: string
+        systeme:
+          type: boolean
+        actif:
+          type: boolean
+      required:
+      - actif
+      - code_role
+      - libelle
+      - systeme
+    Session:
+      type: object
+      description: |-
+        ``SessionDto`` : ``jeton`` et ``utilisateur`` (contrat existant) ;
+        ``connecte_le``, ``id_appareil`` et ``droits`` sont des ajouts.
+      properties:
+        jeton:
+          type: string
+        utilisateur:
+          $ref: '#/components/schemas/Utilisateur'
+        connecte_le:
+          type: string
+          format: date-time
+          description: 'Heure du serveur : à ranger dans derniere_connexion_en_ligne
+            (verrou 14 j).'
+        id_appareil:
+          type: string
+          format: uuid
+          nullable: true
+        droits:
+          type: array
+          items:
+            $ref: '#/components/schemas/DroitEffectif'
+      required:
+      - connecte_le
+      - droits
+      - id_appareil
+      - jeton
+      - utilisateur
+    StatutEnum:
+      enum:
+      - ACTIF
+      - INACTIF
+      type: string
+      description: |-
+        * `ACTIF` - ACTIF
+        * `INACTIF` - INACTIF
+    Utilisateur:
+      type: object
+      description: |-
+        ``UtilisateurDto`` (web et mobile). ``role_code_role`` et
+        ``perimetre_id_perimetre`` décrivent l'affectation principale.
+      properties:
+        id_utilisateur:
+          type: string
+          format: uuid
+        identifiant:
+          type: string
+        nom:
+          type: string
+        prenom:
+          type: string
+        fonction:
+          type: string
+        statut:
+          type: string
+        date_creation:
+          type: string
+          format: date-time
+        role_code_role:
+          type: string
+          nullable: true
+          readOnly: true
+        perimetre_id_perimetre:
+          type: string
+          nullable: true
+          readOnly: true
+        libelle_perimetre:
+          type: string
+          nullable: true
+          readOnly: true
+        libelle_chantier:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - date_creation
+      - fonction
+      - id_utilisateur
+      - identifiant
+      - libelle_chantier
+      - libelle_perimetre
+      - nom
+      - perimetre_id_perimetre
+      - prenom
+      - role_code_role
+      - statut
+  securitySchemes:
+    jetonPorteur:
+      type: http
+      scheme: bearer
+      description: 'Jeton rendu par POST /api/auth/connexion. Mobile : lié à l''appareil,
+        14 jours, renouvelé par l''en-tête X-Jeton-Renouvele. Web : 8 heures.'

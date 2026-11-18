@@ -167,7 +167,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-        "OPTIONS": {"min_length": 10},
+        "OPTIONS": {"min_length": 12},
     },
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -189,8 +189,9 @@ SESSION_COOKIE_AGE = 8 * 3600
 # ---------------------------------------------------------------------------
 REST_FRAMEWORK = {
     # Jeton porteur uniquement : aucune session sur l'API, donc pas de CSRF.
-    # (Branché avec l'authentification du domaine identité.)
-    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "domaines.identite.authentification.AuthentificationParJeton",
+    ],
     # Refus par défaut : chaque vue déclare en plus son droit ADroit(...)
     # (EF-AUT-07) ou, pour les rares vues publiques, AllowAny explicitement.
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
@@ -315,9 +316,10 @@ LOGGING = {
     "root": {"handlers": ["console"], "level": NIVEAU_JOURNAL},
     "loggers": {
         "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
-        # Le journal de chaque requête est écrit par MiddlewareCorrelation :
-        # celui de Django ferait doublon.
-        "django.request": {"handlers": ["console"], "level": "ERROR", "propagate": False},
+        # Le journal de chaque requête est écrit par MiddlewareCorrelation, et
+        # la trace d'une erreur par socle.erreurs (avec le numéro de suivi) :
+        # celui de Django ferait doublon, sans ce numéro.
+        "django.request": {"handlers": ["console"], "level": "CRITICAL", "propagate": False},
         "django.server": {"handlers": ["console"], "level": "WARNING", "propagate": False},
         "chantiersync": {"handlers": ["console"], "level": NIVEAU_JOURNAL, "propagate": False},
     },
