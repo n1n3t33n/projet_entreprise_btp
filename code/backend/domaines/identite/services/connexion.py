@@ -64,10 +64,14 @@ def connecter(
         make_password(mot_de_passe)
         raise _refuser_identifiants()
     if not utilisateur.check_password(mot_de_passe):
-        audit.consigner(utilisateur, AUDIT_ECHEC_CONNEXION, OBJET_UTILISATEUR, adresse_ip)
+        audit.consigner(
+            utilisateur, AUDIT_ECHEC_CONNEXION, OBJET_UTILISATEUR, adresse_ip, utilisateur.pk
+        )
         raise _refuser_identifiants()
     if not utilisateur.is_active:
-        audit.consigner(utilisateur, AUDIT_ECHEC_CONNEXION, OBJET_UTILISATEUR, adresse_ip)
+        audit.consigner(
+            utilisateur, AUDIT_ECHEC_CONNEXION, OBJET_UTILISATEUR, adresse_ip, utilisateur.pk
+        )
         raise ErreurApi(
             statut=403,
             motif="COMPTE_INACTIF",
@@ -88,6 +92,7 @@ def connecter(
         AUDIT_CONNEXION,
         OBJET_APPAREIL if appareil is not None else OBJET_UTILISATEUR,
         adresse_ip,
+        appareil.pk if appareil is not None else utilisateur.pk,
     )
     return ResultatConnexion(
         jeton=emettre_jeton(utilisateur, appareil),

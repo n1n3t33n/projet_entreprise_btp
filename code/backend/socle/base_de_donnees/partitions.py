@@ -19,7 +19,10 @@ Choix assumés :
 
 from datetime import date
 
+from django.conf import settings
+from django.db import connections
 from django.db.backends.base.base import BaseDatabaseWrapper
+from django.utils import timezone
 
 TABLES_PARTITIONNEES: set[str] = set()
 
@@ -62,3 +65,13 @@ def creer_partitions(
                 curseur.execute("SELECT socle_creer_partition_mensuelle(%s, %s)", [table, premier])
                 noms.append(curseur.fetchone()[0])
     return noms
+
+
+def preparer_partitions(mois_avance: int | None = None, alias: str = "default") -> str:
+    """Traitement planifié « creer_partitions » (6.5) : prépare les partitions
+    de toutes les tables déclarées et rend le bilan inscrit dans
+    ``execution_traitement``."""
+    avance = settings.PARTITIONS_MOIS_AVANCE if mois_avance is None else mois_avance
+    mois = mois_a_couvrir(timezone.localdate(), avance)
+    noms = creer_partitions(connections[alias], TABLES_PARTITIONNEES, mois)
+    return f"{len(noms)} partition(s) vérifiée(s) : {', '.join(noms)}"

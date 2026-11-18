@@ -392,6 +392,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/Erreur'
           description: ''
+  /api/chantiers/{id_chantier}/logements:
+    get:
+      operationId: chantiers_logements_list
+      description: GET /api/chantiers/{id}/logements — destinations d'une sortie de
+        stock.
+      parameters:
+      - in: path
+        name: id_chantier
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - chantiers
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LogementDestination'
+          description: ''
   /api/droits/accordes:
     get:
       operationId: droits_accordes_list
@@ -543,6 +568,832 @@ paths:
               schema:
                 $ref: '#/components/schemas/Erreur'
           description: ''
+  /api/gammes:
+    get:
+      operationId: gammes_list
+      description: GET /api/gammes.
+      tags:
+      - gammes
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Gamme'
+          description: ''
+  /api/gammes/{id_gamme}:
+    get:
+      operationId: gammes_retrieve
+      description: GET /api/gammes/{id}.
+      parameters:
+      - in: path
+        name: id_gamme
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - gammes
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gamme'
+          description: ''
+  /api/gammes/{id_gamme}/archivage:
+    post:
+      operationId: gammes_archivage_create
+      description: POST /api/gammes/{id}/archivage.
+      parameters:
+      - in: path
+        name: id_gamme
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - gammes
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gamme'
+          description: ''
+  /api/gammes/{id_gamme}/etapes:
+    get:
+      operationId: gammes_etapes_list
+      description: |-
+        GET et PUT /api/gammes/{id}/etapes — PUT remplace les étapes d'un
+        brouillon (une gamme publiée ne se modifie plus).
+      parameters:
+      - in: path
+        name: id_gamme
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - gammes
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EtapeModele'
+          description: ''
+    put:
+      operationId: gammes_etapes_update
+      description: |-
+        GET et PUT /api/gammes/{id}/etapes — PUT remplace les étapes d'un
+        brouillon (une gamme publiée ne se modifie plus).
+      parameters:
+      - in: path
+        name: id_gamme
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - gammes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EtapesEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EtapeModele'
+          description: ''
+  /api/gammes/{id_gamme}/publication:
+    post:
+      operationId: gammes_publication_create
+      description: POST /api/gammes/{id}/publication — EF-REF-09 (droit VALIDER).
+      parameters:
+      - in: path
+        name: id_gamme
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - gammes
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gamme'
+          description: ''
+  /api/gammes/{id_gamme}/versions:
+    post:
+      operationId: gammes_versions_create
+      description: POST /api/gammes/{id}/versions — brouillon de la version suivante.
+      parameters:
+      - in: path
+        name: id_gamme
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - gammes
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gamme'
+          description: ''
+  /api/gammes/corps-etat:
+    get:
+      operationId: gammes_corps_etat_list
+      description: GET et POST /api/gammes/corps-etat.
+      tags:
+      - gammes
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CorpsEtat'
+          description: ''
+    post:
+      operationId: gammes_corps_etat_create
+      description: GET et POST /api/gammes/corps-etat.
+      tags:
+      - gammes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorpsEtatRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorpsEtat'
+          description: ''
+  /api/gammes/corps-etat/{code}:
+    put:
+      operationId: gammes_corps_etat_update
+      description: PUT /api/gammes/corps-etat/{code}.
+      parameters:
+      - in: path
+        name: code
+        schema:
+          type: string
+        required: true
+      tags:
+      - gammes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorpsEtatRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorpsEtat'
+          description: ''
+  /api/import/analyse:
+    post:
+      operationId: import_analyse_create
+      description: POST /api/import/analyse — rapport ligne par ligne, aucune écriture.
+      tags:
+      - import
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RapportImport'
+          description: ''
+  /api/import/confirmation:
+    post:
+      operationId: import_confirmation_create
+      description: |-
+        POST /api/import/confirmation — réanalyse, écrit les lignes valides,
+        journalise (EF-AUT-08).
+      tags:
+      - import
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultatImport'
+          description: ''
+  /api/magasins:
+    get:
+      operationId: magasins_list
+      description: GET /api/magasins — forme de l'écran Stock (``libelle``, I-30).
+      tags:
+      - magasins
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MagasinStock'
+          description: ''
+  /api/metriques:
+    get:
+      operationId: metriques_retrieve
+      description: |-
+        GET /api/metriques. Le droit exigé est fixé à l'inscription de la
+        route (``configuration/urls.py``) : le socle ne dépend d'aucun domaine.
+      tags:
+      - metriques
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metriques'
+          description: ''
+  /api/motifs-blocage:
+    get:
+      operationId: motifs_blocage_list
+      description: GET /api/motifs-blocage.
+      tags:
+      - motifs-blocage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MotifBlocage'
+          description: ''
+  /api/parametrage/parametres:
+    get:
+      operationId: parametrage_parametres_list
+      description: |-
+        GET et POST /api/parametrage/parametres. ``?chantier=`` filtre ; sans
+        lui, le chantier unique du pilote (I-35).
+      parameters:
+      - in: query
+        name: chantier
+        schema:
+          type: string
+        description: Identifiant du chantier.
+      tags:
+      - parametrage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Parametre'
+          description: ''
+    post:
+      operationId: parametrage_parametres_create
+      description: |-
+        GET et POST /api/parametrage/parametres. ``?chantier=`` filtre ; sans
+        lui, le chantier unique du pilote (I-35).
+      tags:
+      - parametrage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParametreRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parametre'
+          description: ''
+  /api/parametrage/parametres/{id_parametre}:
+    put:
+      operationId: parametrage_parametres_update
+      description: PUT /api/parametrage/parametres/{id}.
+      parameters:
+      - in: path
+        name: id_parametre
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - parametrage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParametreRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Parametre'
+          description: ''
+  /api/parametrage/regles:
+    get:
+      operationId: parametrage_regles_list
+      description: GET et POST /api/parametrage/regles.
+      tags:
+      - parametrage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Regle'
+          description: ''
+    post:
+      operationId: parametrage_regles_create
+      description: GET et POST /api/parametrage/regles.
+      tags:
+      - parametrage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegleRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Regle'
+          description: ''
+  /api/parametrage/regles/{id_regle}:
+    put:
+      operationId: parametrage_regles_update
+      description: PUT /api/parametrage/regles/{id}.
+      parameters:
+      - in: path
+        name: id_regle
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - parametrage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegleRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Regle'
+          description: ''
+  /api/referentiels/articles:
+    get:
+      operationId: referentiels_articles_list
+      description: GET et POST /api/referentiels/articles (EF-REF-03).
+      tags:
+      - referentiels
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+          description: ''
+    post:
+      operationId: referentiels_articles_create
+      description: GET et POST /api/referentiels/articles (EF-REF-03).
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+          description: ''
+  /api/referentiels/articles/{id_article}:
+    put:
+      operationId: referentiels_articles_update
+      description: PUT /api/referentiels/articles/{id}.
+      parameters:
+      - in: path
+        name: id_article
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+          description: ''
+  /api/referentiels/categories:
+    get:
+      operationId: referentiels_categories_list
+      description: GET /api/referentiels/categories.
+      tags:
+      - referentiels
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Categorie'
+          description: ''
+  /api/referentiels/chantiers:
+    get:
+      operationId: referentiels_chantiers_list
+      description: GET /api/referentiels/chantiers.
+      tags:
+      - referentiels
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Chantier'
+          description: ''
+  /api/referentiels/chantiers/{id_chantier}:
+    put:
+      operationId: referentiels_chantiers_update
+      description: |-
+        PUT /api/referentiels/chantiers/{id} — la création passe par l'import
+        CSV (le contrat simulé n'a pas de POST).
+      parameters:
+      - in: path
+        name: id_chantier
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChantierRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Chantier'
+          description: ''
+  /api/referentiels/chantiers/{id_chantier}/arborescence:
+    get:
+      operationId: referentiels_chantiers_arborescence_retrieve
+      description: GET /api/referentiels/chantiers/{id}/arborescence — zones et logements.
+      parameters:
+      - in: path
+        name: id_chantier
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - referentiels
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Arborescence'
+          description: ''
+  /api/referentiels/logements:
+    post:
+      operationId: referentiels_logements_create
+      description: POST /api/referentiels/logements.
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogementRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logement'
+          description: ''
+  /api/referentiels/logements/{id_logement}:
+    put:
+      operationId: referentiels_logements_update
+      description: PUT /api/referentiels/logements/{id}.
+      parameters:
+      - in: path
+        name: id_logement
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogementRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logement'
+          description: ''
+  /api/referentiels/magasins:
+    get:
+      operationId: referentiels_magasins_list
+      description: GET et POST /api/referentiels/magasins (forme de l'écran Référentiels).
+      tags:
+      - referentiels
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MagasinReferentiel'
+          description: ''
+    post:
+      operationId: referentiels_magasins_create
+      description: GET et POST /api/referentiels/magasins (forme de l'écran Référentiels).
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MagasinReferentielRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MagasinReferentiel'
+          description: ''
+  /api/referentiels/magasins/{id_magasin}:
+    put:
+      operationId: referentiels_magasins_update
+      description: PUT /api/referentiels/magasins/{id}.
+      parameters:
+      - in: path
+        name: id_magasin
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MagasinReferentielRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MagasinReferentiel'
+          description: ''
+  /api/referentiels/types-logement:
+    get:
+      operationId: referentiels_types_logement_list
+      description: GET /api/referentiels/types-logement.
+      tags:
+      - referentiels
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypeLogement'
+          description: ''
+  /api/referentiels/unites:
+    get:
+      operationId: referentiels_unites_list
+      description: GET /api/referentiels/unites.
+      tags:
+      - referentiels
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Unite'
+          description: ''
+  /api/referentiels/zones:
+    post:
+      operationId: referentiels_zones_create
+      description: POST /api/referentiels/zones.
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoneRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+          description: ''
+  /api/referentiels/zones/{id_zone}:
+    put:
+      operationId: referentiels_zones_update
+      description: PUT /api/referentiels/zones/{id}.
+      parameters:
+      - in: path
+        name: id_zone
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - referentiels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoneRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+          description: ''
+  /api/types-mouvement:
+    get:
+      operationId: types_mouvement_list
+      description: GET /api/types-mouvement.
+      tags:
+      - types-mouvement
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypeMouvement'
+          description: ''
 components:
   schemas:
     Affectation:
@@ -637,6 +1488,167 @@ components:
       - empreinte_materiel
       - plateforme
       - version_application
+    Arborescence:
+      type: object
+      description: '``ChantierArbreDto`` : le chantier, ses zones et leurs logements.'
+      properties:
+        chantier:
+          $ref: '#/components/schemas/Chantier'
+        zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZoneArborescence'
+      required:
+      - chantier
+      - zones
+    Article:
+      type: object
+      description: '``ArticleDto`` de l''écran Référentiels (EF-REF-03).'
+      properties:
+        id_article:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 32
+        designation:
+          type: string
+          maxLength: 120
+        origine:
+          $ref: '#/components/schemas/OrigineEnum'
+        code_barre:
+          type: string
+          nullable: true
+          maxLength: 32
+        actif:
+          type: boolean
+        categorie_article_code_categorie:
+          type: string
+          nullable: true
+        unite_mesure_code_unite:
+          type: string
+      required:
+      - code
+      - designation
+      - id_article
+      - origine
+      - unite_mesure_code_unite
+    ArticleRequest:
+      type: object
+      description: '``ArticleDto`` de l''écran Référentiels (EF-REF-03).'
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 32
+        designation:
+          type: string
+          minLength: 1
+          maxLength: 120
+        origine:
+          $ref: '#/components/schemas/OrigineEnum'
+        code_barre:
+          type: string
+          nullable: true
+          maxLength: 32
+        actif:
+          type: boolean
+        categorie_article_code_categorie:
+          type: string
+          minLength: 1
+          nullable: true
+        unite_mesure_code_unite:
+          type: string
+          minLength: 1
+      required:
+      - code
+      - designation
+      - origine
+      - unite_mesure_code_unite
+    Categorie:
+      type: object
+      description: |-
+        ``CategorieDto``. ``code_parent`` toujours null : familles plates comme
+        au MPD (arbitrage Q-E) ; ajout compatible pour l'écran Stock (F-11).
+      properties:
+        code_categorie:
+          type: string
+          maxLength: 32
+        libelle:
+          type: string
+          maxLength: 120
+        code_parent:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - code_categorie
+      - code_parent
+      - libelle
+    Chantier:
+      type: object
+      description: '``ChantierDto`` (web, Référentiels).'
+      properties:
+        id_chantier:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 32
+        nom:
+          type: string
+          maxLength: 120
+        programme:
+          type: string
+          maxLength: 120
+        date_debut:
+          type: string
+          format: date
+          nullable: true
+        statut:
+          $ref: '#/components/schemas/StatutActiviteEnum'
+      required:
+      - code
+      - id_chantier
+      - nom
+      - statut
+    ChantierRequest:
+      type: object
+      description: '``ChantierDto`` (web, Référentiels).'
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 32
+        nom:
+          type: string
+          minLength: 1
+          maxLength: 120
+        programme:
+          type: string
+          maxLength: 120
+        date_debut:
+          type: string
+          format: date
+          nullable: true
+        statut:
+          $ref: '#/components/schemas/StatutActiviteEnum'
+      required:
+      - code
+      - nom
+      - statut
+    CibleEnum:
+      enum:
+      - articles
+      - chantiers
+      - magasins
+      type: string
+      description: |-
+        * `articles` - articles
+        * `chantiers` - chantiers
+        * `magasins` - magasins
     CompteEntreeRequest:
       type: object
       description: |-
@@ -660,7 +1672,7 @@ components:
           default: ''
           maxLength: 120
         statut:
-          $ref: '#/components/schemas/StatutEnum'
+          $ref: '#/components/schemas/StatutActiviteEnum'
         role_code_role:
           type: string
           minLength: 1
@@ -697,6 +1709,53 @@ components:
       required:
       - identifiant
       - mot_de_passe
+    CorpsEtat:
+      type: object
+      description: '``CorpsEtatDto`` (EF-REF-05).'
+      properties:
+        code_corps_etat:
+          type: string
+          maxLength: 32
+        libelle:
+          type: string
+          maxLength: 120
+        ordre:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        couleur:
+          type: string
+          maxLength: 120
+      required:
+      - code_corps_etat
+      - couleur
+      - libelle
+      - ordre
+    CorpsEtatRequest:
+      type: object
+      description: '``CorpsEtatDto`` (EF-REF-05).'
+      properties:
+        code_corps_etat:
+          type: string
+          minLength: 1
+          maxLength: 32
+        libelle:
+          type: string
+          minLength: 1
+          maxLength: 120
+        ordre:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        couleur:
+          type: string
+          minLength: 1
+          maxLength: 120
+      required:
+      - code_corps_etat
+      - couleur
+      - libelle
+      - ordre
     DroitAccorde:
       type: object
       properties:
@@ -761,8 +1820,8 @@ components:
     EntreeAudit:
       type: object
       description: |-
-        ``EntreeAuditDto``. ``id_objet`` reste null : colonne absente du MPD
-        (incohérence I-27, non tranchée).
+        ``EntreeAuditDto``. ``id_objet`` désigne l'objet visé (écart Q-C) ;
+        null quand l'action ne vise pas un objet précis.
       properties:
         id_entree:
           type: string
@@ -774,7 +1833,6 @@ components:
         id_objet:
           type: string
           nullable: true
-          readOnly: true
         resume:
           type: string
           readOnly: true
@@ -821,6 +1879,344 @@ components:
       required:
       - message
       - motif
+    EtapeModele:
+      type: object
+      description: '``EtapeModeleDto`` (lecture).'
+      properties:
+        id_etape_modele:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 32
+        libelle:
+          type: string
+          maxLength: 120
+        ordre:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        poids:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        controle_requis:
+          type: boolean
+        corps_etat_code_corps_etat:
+          type: string
+        libelle_corps_etat:
+          type: string
+        couleur_corps_etat:
+          type: string
+        gamme_id_gamme:
+          type: string
+          format: uuid
+      required:
+      - code
+      - corps_etat_code_corps_etat
+      - couleur_corps_etat
+      - gamme_id_gamme
+      - id_etape_modele
+      - libelle
+      - libelle_corps_etat
+      - ordre
+      - poids
+    EtapeModeleEntreeRequest:
+      type: object
+      description: |-
+        ``EtapeModeleCorps`` : une étape envoyée par l'écran Gammes. Le poids
+        arrive en nombre ; il est rangé en numeric(14,3).
+      properties:
+        id_etape_modele:
+          type: string
+        code:
+          type: string
+          minLength: 1
+          maxLength: 32
+        libelle:
+          type: string
+          minLength: 1
+          maxLength: 120
+        ordre:
+          type: integer
+          minimum: 1
+        poids:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        controle_requis:
+          type: boolean
+        corps_etat_code_corps_etat:
+          type: string
+          minLength: 1
+      required:
+      - code
+      - controle_requis
+      - corps_etat_code_corps_etat
+      - libelle
+      - ordre
+      - poids
+    EtapesEntreeRequest:
+      type: object
+      properties:
+        etapes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EtapeModeleEntreeRequest'
+      required:
+      - etapes
+    Execution:
+      type: object
+      properties:
+        nom_traitement:
+          type: string
+          maxLength: 120
+        debut:
+          type: string
+          format: date-time
+        fin:
+          type: string
+          format: date-time
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        detail:
+          type: string
+      required:
+      - nom_traitement
+    Gamme:
+      type: object
+      description: |-
+        ``GammeDto`` : la gamme, le libellé de son type de logement, son nombre
+        d'étapes et son poids total (calculés par ``selecteurs.gammes``).
+      properties:
+        id_gamme:
+          type: string
+          format: uuid
+          readOnly: true
+        version:
+          type: integer
+          readOnly: true
+        libelle:
+          type: string
+          readOnly: true
+        statut:
+          type: string
+          readOnly: true
+        date_activation:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        type_logement_code_type:
+          type: string
+          readOnly: true
+        libelle_type_logement:
+          type: string
+          readOnly: true
+        nombre_etapes:
+          type: integer
+          readOnly: true
+          default: 0
+        poids_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+          readOnly: true
+          default: '0.000'
+      required:
+      - date_activation
+      - id_gamme
+      - libelle
+      - libelle_type_logement
+      - nombre_etapes
+      - poids_total
+      - statut
+      - type_logement_code_type
+      - version
+    ImportEntreeRequest:
+      type: object
+      description: |-
+        Corps des deux appels : la cible et le texte brut du fichier. Les
+        cibles possibles sont celles que les domaines ont déclarées.
+      properties:
+        cible:
+          $ref: '#/components/schemas/CibleEnum'
+        contenu:
+          type: string
+          minLength: 1
+      required:
+      - cible
+      - contenu
+    LigneImport:
+      type: object
+      properties:
+        numero:
+          type: integer
+        valeurs:
+          type: array
+          items:
+            type: string
+        erreur:
+          type: string
+          nullable: true
+      required:
+      - erreur
+      - numero
+      - valeurs
+    Logement:
+      type: object
+      description: |-
+        ``LogementDto``. Statut = cycle de vie {A_VENIR, EN_COURS, LIVRE}
+        (arbitrage Q-A ; le module Référentiels du web s'alignera, F-11).
+      properties:
+        id_logement:
+          type: string
+          format: uuid
+          readOnly: true
+        numero:
+          type: string
+          maxLength: 120
+        statut:
+          $ref: '#/components/schemas/StatutLogementEnum'
+        date_livraison_prevue:
+          type: string
+          format: date
+          nullable: true
+        zone_id_zone:
+          type: string
+          format: uuid
+        type_logement_code_type:
+          type: string
+      required:
+      - id_logement
+      - numero
+      - statut
+      - type_logement_code_type
+      - zone_id_zone
+    LogementDestination:
+      type: object
+      description: '``LogementDestinationDto`` (écran Stock, sortie vers un logement).'
+      properties:
+        id_logement:
+          type: string
+          format: uuid
+          readOnly: true
+        numero:
+          type: string
+          maxLength: 120
+        libelle_zone:
+          type: string
+        libelle_type:
+          type: string
+      required:
+      - id_logement
+      - libelle_type
+      - libelle_zone
+      - numero
+    LogementRequest:
+      type: object
+      description: |-
+        ``LogementDto``. Statut = cycle de vie {A_VENIR, EN_COURS, LIVRE}
+        (arbitrage Q-A ; le module Référentiels du web s'alignera, F-11).
+      properties:
+        numero:
+          type: string
+          minLength: 1
+          maxLength: 120
+        statut:
+          $ref: '#/components/schemas/StatutLogementEnum'
+        date_livraison_prevue:
+          type: string
+          format: date
+          nullable: true
+        zone_id_zone:
+          type: string
+          format: uuid
+        type_logement_code_type:
+          type: string
+          minLength: 1
+      required:
+      - numero
+      - statut
+      - type_logement_code_type
+      - zone_id_zone
+    MagasinReferentiel:
+      type: object
+      description: '``MagasinDto`` de l''écran Référentiels : ``nom``, ``chantier_id_chantier``.'
+      properties:
+        id_magasin:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 32
+        nom:
+          type: string
+          maxLength: 120
+        actif:
+          type: boolean
+        chantier_id_chantier:
+          type: string
+          format: uuid
+        libelle_chantier:
+          type: string
+          readOnly: true
+      required:
+      - chantier_id_chantier
+      - code
+      - id_magasin
+      - libelle_chantier
+      - nom
+    MagasinReferentielRequest:
+      type: object
+      description: '``MagasinDto`` de l''écran Référentiels : ``nom``, ``chantier_id_chantier``.'
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 32
+        nom:
+          type: string
+          minLength: 1
+          maxLength: 120
+        actif:
+          type: boolean
+        chantier_id_chantier:
+          type: string
+          format: uuid
+      required:
+      - chantier_id_chantier
+      - code
+      - nom
+    MagasinStock:
+      type: object
+      description: '``MagasinDto`` de l''écran Stock : ``libelle`` et ``id_chantier``
+        (I-30).'
+      properties:
+        id_magasin:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 32
+        libelle:
+          type: string
+        id_chantier:
+          type: string
+          format: uuid
+        libelle_chantier:
+          type: string
+      required:
+      - code
+      - id_chantier
+      - id_magasin
+      - libelle
+      - libelle_chantier
     MatriceEntreeRequest:
       type: object
       properties:
@@ -835,6 +2231,130 @@ components:
             minLength: 1
       required:
       - droits
+    Metriques:
+      type: object
+      properties:
+        demarre_le:
+          type: string
+          format: date-time
+        requetes:
+          $ref: '#/components/schemas/Requetes'
+        erreurs_serveur_recentes:
+          type: integer
+        fenetre_minutes:
+          type: integer
+        base_de_donnees:
+          type: string
+        traitements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Execution'
+      required:
+      - base_de_donnees
+      - demarre_le
+      - erreurs_serveur_recentes
+      - fenetre_minutes
+      - requetes
+      - traitements
+    MotifBlocage:
+      type: object
+      properties:
+        code_motif:
+          type: string
+          maxLength: 32
+        libelle:
+          type: string
+          maxLength: 120
+        requiert_article:
+          type: boolean
+        actif:
+          type: boolean
+      required:
+      - code_motif
+      - libelle
+    OperateurEnum:
+      enum:
+      - INFERIEUR_EGAL
+      - SUPERIEUR_EGAL
+      - EGAL
+      - INFERIEUR
+      - SUPERIEUR
+      type: string
+      description: |-
+        * `INFERIEUR_EGAL` - INFERIEUR_EGAL
+        * `SUPERIEUR_EGAL` - SUPERIEUR_EGAL
+        * `EGAL` - EGAL
+        * `INFERIEUR` - INFERIEUR
+        * `SUPERIEUR` - SUPERIEUR
+    OrigineEnum:
+      enum:
+      - ACHAT
+      - PRODUCTION_INTERNE
+      - RECUPERATION
+      type: string
+      description: |-
+        * `ACHAT` - ACHAT
+        * `PRODUCTION_INTERNE` - PRODUCTION_INTERNE
+        * `RECUPERATION` - RECUPERATION
+    Parametre:
+      type: object
+      description: |-
+        ``ParametreChantierDto`` (EF-REF-07). ``chantier_id_chantier`` est un
+        ajout compatible : facultatif en entrée tant qu'il n'y a qu'un chantier
+        (I-35).
+      properties:
+        id_parametre:
+          type: string
+          format: uuid
+          readOnly: true
+        cle:
+          type: string
+          maxLength: 32
+        valeur:
+          type: string
+          maxLength: 120
+        type_valeur:
+          $ref: '#/components/schemas/TypeValeurEnum'
+        libelle:
+          type: string
+          nullable: true
+          maxLength: 120
+        chantier_id_chantier:
+          type: string
+          format: uuid
+      required:
+      - cle
+      - id_parametre
+      - type_valeur
+      - valeur
+    ParametreRequest:
+      type: object
+      description: |-
+        ``ParametreChantierDto`` (EF-REF-07). ``chantier_id_chantier`` est un
+        ajout compatible : facultatif en entrée tant qu'il n'y a qu'un chantier
+        (I-35).
+      properties:
+        cle:
+          type: string
+          minLength: 1
+          maxLength: 32
+        valeur:
+          type: string
+          minLength: 1
+          maxLength: 120
+        type_valeur:
+          $ref: '#/components/schemas/TypeValeurEnum'
+        libelle:
+          type: string
+          nullable: true
+          maxLength: 120
+        chantier_id_chantier:
+          type: string
+          format: uuid
+      required:
+      - cle
+      - type_valeur
+      - valeur
     Perimetre:
       type: object
       properties:
@@ -896,6 +2416,120 @@ components:
       - droits
       - horodatage_serveur
       - utilisateur
+    RapportImport:
+      type: object
+      description: |-
+        ``RapportImportDto`` : ``colonnes`` dit au web quelles colonnes le
+        serveur attend (I-37).
+      properties:
+        cible:
+          type: string
+        colonnes:
+          type: array
+          items:
+            type: string
+        lignes:
+          type: array
+          items:
+            $ref: '#/components/schemas/LigneImport'
+        nombre_valides:
+          type: integer
+        nombre_erreurs:
+          type: integer
+      required:
+      - cible
+      - colonnes
+      - lignes
+      - nombre_erreurs
+      - nombre_valides
+    Regle:
+      type: object
+      description: |-
+        ``RegleValidationDto`` (EF-REF-08). ``type_evenement`` et ``operateur``
+        sont contrôlés ici, le MPD ne les contraignant pas en base.
+      properties:
+        id_regle:
+          type: string
+          format: uuid
+          readOnly: true
+        type_evenement:
+          $ref: '#/components/schemas/TypeEvenementEnum'
+        champ_teste:
+          type: string
+          maxLength: 120
+        operateur:
+          $ref: '#/components/schemas/OperateurEnum'
+        valeur_seuil:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+          nullable: true
+        delai_heures:
+          type: integer
+          minimum: 1
+          nullable: true
+      required:
+      - champ_teste
+      - id_regle
+      - operateur
+      - type_evenement
+    RegleRequest:
+      type: object
+      description: |-
+        ``RegleValidationDto`` (EF-REF-08). ``type_evenement`` et ``operateur``
+        sont contrôlés ici, le MPD ne les contraignant pas en base.
+      properties:
+        type_evenement:
+          $ref: '#/components/schemas/TypeEvenementEnum'
+        champ_teste:
+          type: string
+          minLength: 1
+          maxLength: 120
+        operateur:
+          $ref: '#/components/schemas/OperateurEnum'
+        valeur_seuil:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+          nullable: true
+        delai_heures:
+          type: integer
+          minimum: 1
+          nullable: true
+      required:
+      - champ_teste
+      - operateur
+      - type_evenement
+    Requetes:
+      type: object
+      properties:
+        total:
+          type: integer
+        par_classe:
+          type: object
+          additionalProperties:
+            type: integer
+        duree_moyenne_ms:
+          type: number
+          format: double
+        duree_max_ms:
+          type: number
+          format: double
+      required:
+      - duree_max_ms
+      - duree_moyenne_ms
+      - par_classe
+      - total
+    ResultatImport:
+      type: object
+      properties:
+        cible:
+          type: string
+        nombre_importees:
+          type: integer
+      required:
+      - cible
+      - nombre_importees
     Role:
       type: object
       properties:
@@ -941,7 +2575,7 @@ components:
       - id_appareil
       - jeton
       - utilisateur
-    StatutEnum:
+    StatutActiviteEnum:
       enum:
       - ACTIF
       - INACTIF
@@ -949,6 +2583,106 @@ components:
       description: |-
         * `ACTIF` - ACTIF
         * `INACTIF` - INACTIF
+    StatutLogementEnum:
+      enum:
+      - A_VENIR
+      - EN_COURS
+      - LIVRE
+      type: string
+      description: |-
+        * `A_VENIR` - A_VENIR
+        * `EN_COURS` - EN_COURS
+        * `LIVRE` - LIVRE
+    TypeEvenementEnum:
+      enum:
+      - DECLARATION_ETAPE
+      - VALIDATION_ETAPE
+      - ECART_INVENTAIRE
+      - MOUVEMENT_STOCK
+      type: string
+      description: |-
+        * `DECLARATION_ETAPE` - DECLARATION_ETAPE
+        * `VALIDATION_ETAPE` - VALIDATION_ETAPE
+        * `ECART_INVENTAIRE` - ECART_INVENTAIRE
+        * `MOUVEMENT_STOCK` - MOUVEMENT_STOCK
+    TypeLogement:
+      type: object
+      properties:
+        code_type:
+          type: string
+          maxLength: 32
+        libelle:
+          type: string
+          maxLength: 120
+        surface_reference:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+          nullable: true
+        actif:
+          type: boolean
+      required:
+      - code_type
+      - libelle
+    TypeMouvement:
+      type: object
+      properties:
+        code_type_mouvement:
+          type: string
+          maxLength: 32
+        libelle:
+          type: string
+          maxLength: 120
+        sens:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        motif_obligatoire:
+          type: boolean
+        destination_obligatoire:
+          type: boolean
+      required:
+      - code_type_mouvement
+      - libelle
+      - sens
+    TypeValeurEnum:
+      enum:
+      - ENTIER
+      - DECIMAL
+      - BOOLEEN
+      - TEXTE
+      type: string
+      description: |-
+        * `ENTIER` - ENTIER
+        * `DECIMAL` - DECIMAL
+        * `BOOLEEN` - BOOLEEN
+        * `TEXTE` - TEXTE
+    TypeZoneEnum:
+      enum:
+      - BATIMENT
+      - NIVEAU
+      - TRANCHE
+      type: string
+      description: |-
+        * `BATIMENT` - BATIMENT
+        * `NIVEAU` - NIVEAU
+        * `TRANCHE` - TRANCHE
+    Unite:
+      type: object
+      properties:
+        code_unite:
+          type: string
+          maxLength: 32
+        libelle:
+          type: string
+          maxLength: 120
+        type_unite:
+          type: string
+          maxLength: 32
+      required:
+      - code_unite
+      - libelle
+      - type_unite
     Utilisateur:
       type: object
       description: |-
@@ -999,6 +2733,63 @@ components:
       - prenom
       - role_code_role
       - statut
+    Zone:
+      type: object
+      properties:
+        id_zone:
+          type: string
+          format: uuid
+          readOnly: true
+        code:
+          type: string
+          maxLength: 32
+        nom:
+          type: string
+          maxLength: 120
+        type_zone:
+          $ref: '#/components/schemas/TypeZoneEnum'
+        chantier_id_chantier:
+          type: string
+          format: uuid
+      required:
+      - chantier_id_chantier
+      - code
+      - id_zone
+      - nom
+      - type_zone
+    ZoneArborescence:
+      type: object
+      properties:
+        zone:
+          $ref: '#/components/schemas/Zone'
+        logements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Logement'
+      required:
+      - logements
+      - zone
+    ZoneRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 32
+        nom:
+          type: string
+          minLength: 1
+          maxLength: 120
+        type_zone:
+          $ref: '#/components/schemas/TypeZoneEnum'
+        chantier_id_chantier:
+          type: string
+          format: uuid
+      required:
+      - chantier_id_chantier
+      - code
+      - nom
+      - type_zone
   securitySchemes:
     jetonPorteur:
       type: http

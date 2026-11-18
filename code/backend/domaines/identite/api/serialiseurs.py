@@ -14,8 +14,8 @@ from typing import Any
 from rest_framework import serializers
 
 from domaines.identite.constantes import STATUTS_UTILISATEUR
+from domaines.identite.selecteurs.comptes import affectation_principale
 from domaines.identite.services import audit as service_audit
-from domaines.identite.services.comptes import affectation_principale
 
 
 # --- Erreur (format unique, socle/erreurs.py) -------------------------------
@@ -204,22 +204,19 @@ class MatriceEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
 
 # --- Audit ------------------------------------------------------------------
 class EntreeAuditSerializer(serializers.Serializer):  # type: ignore[type-arg]
-    """``EntreeAuditDto``. ``id_objet`` reste null : colonne absente du MPD
-    (incohérence I-27, non tranchée)."""
+    """``EntreeAuditDto``. ``id_objet`` désigne l'objet visé (écart Q-C) ;
+    null quand l'action ne vise pas un objet précis."""
 
     id_entree = serializers.UUIDField()
     action = serializers.CharField()
     type_objet = serializers.CharField()
-    id_objet = serializers.SerializerMethodField()
+    id_objet = serializers.CharField(allow_null=True)
     resume = serializers.SerializerMethodField()
     horodatage = serializers.DateTimeField()
     adresse_ip = serializers.CharField(allow_null=True)
     utilisateur_id_utilisateur = serializers.UUIDField(source="utilisateur_id")
     identifiant_utilisateur = serializers.CharField(source="utilisateur.identifiant")
     nom_utilisateur = serializers.CharField(source="utilisateur.nom_complet")
-
-    def get_id_objet(self, obj: Any) -> str | None:
-        return None
 
     def get_resume(self, obj: Any) -> str:
         return service_audit.resume(obj)

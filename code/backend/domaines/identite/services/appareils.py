@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from typing import Any
 
 from django.db import transaction
-from django.db.models import QuerySet
 
 from domaines.identite.constantes import (
     AUDIT_ENROLEMENT_APPAREIL,
@@ -53,17 +52,15 @@ def enroler(utilisateur: Any, donnees: DonneesAppareil, adresse_ip: str | None) 
             version_application=donnees.version_application,
             statut=STATUT_APPAREIL_ACTIF,
         )
-        audit.consigner(utilisateur, AUDIT_ENROLEMENT_APPAREIL, OBJET_APPAREIL, adresse_ip)
+        audit.consigner(
+            utilisateur, AUDIT_ENROLEMENT_APPAREIL, OBJET_APPAREIL, adresse_ip, appareil.pk
+        )
         return appareil
     appareil.plateforme = donnees.plateforme
     appareil.version_application = donnees.version_application
     appareil.statut = STATUT_APPAREIL_ACTIF
     appareil.save(update_fields=["plateforme", "version_application", "statut"])
     return appareil
-
-
-def lister() -> QuerySet[Appareil]:
-    return Appareil.objects.select_related("utilisateur").order_by("utilisateur__nom", "plateforme")
 
 
 def revoquer(auteur: Any, id_appareil: str, adresse_ip: str | None) -> Appareil:
@@ -85,7 +82,7 @@ def revoquer(auteur: Any, id_appareil: str, adresse_ip: str | None) -> Appareil:
             return appareil
         appareil.statut = STATUT_APPAREIL_REVOQUE
         appareil.save(update_fields=["statut"])
-        audit.consigner(auteur, AUDIT_REVOCATION_APPAREIL, OBJET_APPAREIL, adresse_ip)
+        audit.consigner(auteur, AUDIT_REVOCATION_APPAREIL, OBJET_APPAREIL, adresse_ip, appareil.pk)
     return appareil
 
 

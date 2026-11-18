@@ -38,8 +38,8 @@
 | Énumérés | `UPPER_SNAKE` (`ACTIF`, `REVOQUE`, `LIRE`…) |
 | Identifiants | `uuid` en chaîne, sauf codes des référentiels (`code_role`…) |
 | Dates | `AAAA-MM-JJ` ; horodatages ISO 8601 avec fuseau (heure d'Abidjan = UTC) |
-| Décimaux | `numeric(14,3)` transportés en chaîne (aucune quantité en B1) |
-| Collections | tableaux nus, sans enveloppe ni pagination en B1 ; `GET /api/audit` borné par `limite` (1 à 1000, 200 par défaut) |
+| Décimaux | `numeric(14,3)` transportés en chaîne (`"5.000"`) ; en entrée, nombre ou chaîne acceptés |
+| Collections | tableaux nus, sans enveloppe ni pagination (référentiels de taille bornée) ; `GET /api/audit` borné par `limite` (1 à 1000, 200 par défaut) |
 | Authentification | `Authorization: Bearer <jeton>` ; jeton rendu par `POST /api/auth/connexion` |
 | Corrélation | en-tête `X-Request-ID` (uuid) accepté et toujours renvoyé |
 
@@ -62,7 +62,7 @@ jamais de code interne (charte § 8). `details`, `secondes_restantes` et
 | 403 | `ACCES_REFUSE` ; à la connexion : `COMPTE_INACTIF`, `AUCUNE_AFFECTATION`, `APPAREIL_REVOQUE` |
 | 404 | `INTROUVABLE` |
 | 405 | `METHODE_NON_AUTORISEE` |
-| 409 | `VERROUILLAGE_ADMINISTRATION` |
+| 409 | `VERROUILLAGE_ADMINISTRATION` ; gammes : `BROUILLON_EXISTANT`, `GAMME_PUBLIEE`, `GAMME_NON_BROUILLON`, `GAMME_VIDE`, `GAMME_NON_ACTIVE` ; import : `RIEN_A_IMPORTER` |
 | 429 | `VERROUILLE` (connexion, EF-AUT-04) ; `TROP_DE_REQUETES` ; en-tête `Retry-After` |
 | 500 | `ERREUR_INTERNE` + `id_correlation` |
 
@@ -82,6 +82,29 @@ jamais de code interne (charte § 8). `details`, `secondes_restantes` et
 - `GET /api/schema/`, `/api/docs/swagger/`, `/api/docs/redoc/` : documentation
   protégée par le droit « technique / documentation / LIRE ».
 
+`GET /api/metriques` (exigence 6.6) figure dans le schéma ; il est protégé par
+le droit « technique / metriques / LIRE » et sert à l'exploitation, pas aux
+écrans.
+
+## Import CSV des référentiels (EF-ADM-02)
+
+`POST /api/import/analyse` puis `POST /api/import/confirmation`, avec le même
+corps `{"cible": "articles" | "magasins" | "chantiers", "contenu": "<texte du
+fichier>"}`. La première ligne du fichier est l'en-tête ; les colonnes sont
+reconnues par leur nom, dans n'importe quel ordre ; séparateur `;` ou `,`.
+
+| Cible | Colonnes obligatoires | Colonnes facultatives |
+| --- | --- | --- |
+| `articles` | `code`, `designation`, `unite` | `origine`, `famille`, `code_barre` |
+| `magasins` | `code`, `nom`, `chantier` (code) | — |
+| `chantiers` | `code`, `nom` | `programme`, `date_debut` (AAAA-MM-JJ ou JJ/MM/AAAA) |
+
+L'analyse n'écrit rien et rend `colonnes`, une ligne de rapport par ligne de
+données et les totaux. La confirmation refait l'analyse, écrit les lignes
+valides (création ou mise à jour par code) et journalise `IMPORT_CSV`. Un
+en-tête inconnu ou incomplet rend `400 DONNEES_INVALIDES` avec la liste des
+colonnes possibles dans `details.contenu`.
+
 ## Écarts avec le contrat simulé des fronts (à reprendre en phase F-06)
 
 - Codes de rôle en `UPPER_SNAKE` (le web les simule en minuscules).
@@ -89,6 +112,23 @@ jamais de code interne (charte § 8). `details`, `secondes_restantes` et
 - Ajouts compatibles : `connecte_le`, `id_appareil`, `droits` dans la
   session ; `libelle_chantier` dans l'utilisateur ; bloc `appareil` et
   `mot_de_passe` (création de compte) en entrée ; `GET /api/auth/moi`.
-- `id_objet` du journal d'audit toujours `null` (colonne absente du MPD).
+- `id_objet` du journal d'audit : renseigné depuis B2 (appareil, compte ou
+  cible d'import visés) ; colonne hors MPD, écart validé (Q-C, dette v0.2).
 - Aucun front n'envoie encore l'en-tête `Authorization` ; le mobile n'envoie
   pas encore le bloc `appareil`.
+
+Écarts introduits en B2 (référentiels) :
+
+- Deux formes pour le magasin, chacune à la forme de son écran (I-30) :
+  `GET /api/referentiels/magasins` rend `nom` et `chantier_id_chantier`,
+  `GET /api/magasins` (écran Stock) rend `libelle` et `id_chantier`.
+- Statut du logement : cycle de vie `A_VENIR`, `EN_COURS`, `LIVRE`
+  (arbitrage Q-A) ; l'écran Référentiels du web en simule un autre (I-34).
+- Familles d'articles plates (Q-E) : `code_parent` toujours `null`.
+- Paramètres de chantier : `chantier_id_chantier` ajouté, facultatif en
+  entrée tant qu'il n'existe qu'un chantier (I-35).
+- Codes d'étape de gamme suffixés par version (`EM-01~V2`) : le code est
+  unique sur tout le catalogue au MPD (I-36).
+- Colonnes de l'import tirées du MPD et non de la simulation (I-37).
+- Énumération `{ACTIF, INACTIF}` nommée `StatutActiviteEnum` dans le schéma
+  (anciennement `StatutEnum`, mêmes valeurs).

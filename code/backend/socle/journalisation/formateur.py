@@ -23,6 +23,9 @@ CHAMPS_AUTORISES = (
     "motif",
     "commande",
     "detail",
+    # Alertes techniques (6.7) et traitements planifiés (6.5).
+    "type_alerte",
+    "nom_traitement",
 )
 
 

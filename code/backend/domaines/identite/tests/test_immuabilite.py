@@ -132,6 +132,22 @@ def test_creer_partitions_est_idempotente_et_pose_le_declencheur_tronquer() -> N
     assert declencheurs == nombre
 
 
+def test_id_objet_existe_sur_chaque_partition() -> None:
+    """Écart Q-C : la colonne ajoutée sur la table parente (identite 0005)
+    est présente sur chaque partition, existante comme créée ensuite."""
+    call_command("creer_partitions", "--mois-avance", "6")
+    with connection.cursor() as curseur:
+        curseur.execute(
+            "SELECT c.relname, EXISTS (SELECT 1 FROM pg_attribute a WHERE a.attrelid = c.oid "
+            "AND a.attname = 'id_objet' AND NOT a.attisdropped) "
+            "FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid "
+            "WHERE i.inhparent = 'journal_audit'::regclass"
+        )
+        partitions = dict(curseur.fetchall())
+    assert len(partitions) >= 8
+    assert all(partitions.values()), partitions
+
+
 def test_le_role_applicatif_peut_creer_les_partitions(role_applicatif: None) -> None:
     """La fonction SECURITY DEFINER permet au rôle applicatif de préparer
     les mois futurs sans posséder aucune table (tâche planifiée du PaaS)."""

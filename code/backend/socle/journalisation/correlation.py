@@ -14,6 +14,7 @@ from collections.abc import Callable
 
 from django.http import HttpRequest, HttpResponse
 
+from socle import metriques
 from socle.journalisation import contexte
 
 journal = logging.getLogger("chantiersync.requetes")
@@ -63,6 +64,9 @@ class MiddlewareCorrelation:
             reponse = self.get_response(request)
             reponse[EN_TETE_CORRELATION] = identifiant
             statut = reponse.status_code
+            duree_ms = round((time.perf_counter() - debut) * 1000, 1)
+            # Compteurs d'exploitation (6.6) et alerte sur rafale de 5xx (6.7).
+            metriques.enregistrer_requete(statut, duree_ms)
             niveau = (
                 logging.ERROR
                 if statut >= 500
@@ -77,7 +81,7 @@ class MiddlewareCorrelation:
                     "route": _route(request),
                     "methode": request.method,
                     "statut": statut,
-                    "duree_ms": round((time.perf_counter() - debut) * 1000, 1),
+                    "duree_ms": duree_ms,
                 },
             )
             return reponse

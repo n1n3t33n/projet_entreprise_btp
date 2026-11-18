@@ -10,3 +10,14 @@ class ConfigurationOrganisation(AppConfig):
     name = "domaines.organisation"
     label = "organisation"
     verbose_name = "Organisation du chantier"
+
+    def ready(self) -> None:
+        from domaines.organisation import demo, importation
+        from socle.demo import declarer_chargeur
+        from socle.importation import declarer_cible
+
+        # Rang 10 : racine du graphe, chargée avant tous les autres domaines.
+        declarer_chargeur(10, "organisation", demo.charger)
+        # Import CSV (EF-ADM-02).
+        declarer_cible(importation.CHANTIERS)
+        declarer_cible(importation.MAGASINS)

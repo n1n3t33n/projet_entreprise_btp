@@ -16,7 +16,6 @@ from typing import Any
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import QuerySet
 from django.utils import timezone
 
 from domaines.identite.constantes import (
@@ -28,9 +27,9 @@ from domaines.identite.constantes import (
 )
 from domaines.identite.models import AffectationRole, Perimetre, Role, Utilisateur
 from domaines.identite.models.utilisateur import normaliser_identifiant
+from domaines.identite.selecteurs.comptes import affectation_principale
 from domaines.identite.services import audit
 from domaines.identite.services.appareils import revoquer_tous
-from domaines.identite.services.droits import affectations_actives
 from socle.erreurs import ErreurApi
 
 
@@ -44,16 +43,6 @@ class SaisieCompte:
     code_role: str
     id_perimetre: str
     mot_de_passe: str | None
-
-
-def affectation_principale(utilisateur: Any) -> AffectationRole | None:
-    """Affectation active la plus récente : c'est elle que montre le contrat
-    ``UtilisateurDto`` (role_code_role, perimetre_id_perimetre)."""
-    return affectations_actives(utilisateur).first()
-
-
-def lister() -> QuerySet[Utilisateur]:
-    return Utilisateur.objects.order_by("nom", "prenom")
 
 
 def _invalide(champ: str, message: str) -> ErreurApi:
@@ -107,7 +96,9 @@ def creer(auteur: Any, saisie: SaisieCompte, adresse_ip: str | None) -> Utilisat
         _appliquer_mot_de_passe(utilisateur, saisie.mot_de_passe)
         utilisateur.save()
         AffectationRole.objects.create(role=role, perimetre=perimetre, utilisateur=utilisateur)
-        audit.consigner(auteur, AUDIT_CREATION_COMPTE, OBJET_UTILISATEUR, adresse_ip)
+        audit.consigner(
+            auteur, AUDIT_CREATION_COMPTE, OBJET_UTILISATEUR, adresse_ip, utilisateur.pk
+        )
     return utilisateur
 
 
@@ -167,6 +158,7 @@ def modifier(
             AUDIT_DESACTIVATION_COMPTE if desactivation else AUDIT_MODIFICATION_COMPTE,
             OBJET_UTILISATEUR,
             adresse_ip,
+            utilisateur.pk,
         )
         if desactivation:
             revoquer_tous(auteur, utilisateur, adresse_ip)

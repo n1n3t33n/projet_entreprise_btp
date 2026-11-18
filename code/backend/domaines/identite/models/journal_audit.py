@@ -18,9 +18,7 @@ Conséquences assumées : aucune clé étrangère ne peut viser cette table (auc
 ne le fait au MPD, vérifié en B0), et l'admin Django ne peut pas l'afficher
 (clé composite) ; elle se consulte par ``GET /api/audit``.
 
-Écart signalé (I-27, non tranché) : le MPD n'a pas de colonne « id_objet » ;
-l'objet visé par une action (quel appareil, quel compte) n'est donc pas
-enregistré. Le contrat web prévoit ``id_objet`` : il est servi à ``null``.
+Écart validé (Q-C) : colonne ``id_objet`` ajoutée en identite 0005.
 """
 
 import uuid
@@ -42,6 +40,12 @@ class JournalAudit(models.Model):
     # NULL voulu (colonne nullable dans la table créée en SQL) : « adresse
     # inconnue » n'est pas une chaîne vide.
     adresse_ip = models.CharField(max_length=120, null=True, blank=True)  # noqa: DJ001
+    # Écart au MPD validé (Q-C, 2026-11-18, dette v0.2) : identifiant de
+    # l'objet visé (quel appareil, quel compte). Sans lui, la trace d'une
+    # révocation ne dit pas quel appareil est concerné (RG-D9). varchar et non
+    # uuid : certains objets ont une clé texte (un rôle). NULL quand l'action ne
+    # vise pas un objet précis (modification de la matrice).
+    id_objet = models.CharField(max_length=120, null=True, blank=True)  # noqa: DJ001
     # CL-1 « Utilisateur tracé par 0..* JournalAudit » : multiplicité 1, donc
     # NOT NULL. Une tentative de connexion avec un identifiant INCONNU n'a pas
     # d'auteur : elle ne va qu'aux journaux techniques, pas ici.
