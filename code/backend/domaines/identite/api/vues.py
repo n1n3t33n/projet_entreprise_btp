@@ -110,7 +110,11 @@ class VueDeconnexion(APIView):
     @extend_schema(request=None, responses={204: None, 401: s.ErreurSerializer})
     def post(self, request: Request) -> Response:
         service_audit.consigner(
-            request.user, AUDIT_DECONNEXION, OBJET_UTILISATEUR, adresse_client(request)
+            request.user,
+            AUDIT_DECONNEXION,
+            OBJET_UTILISATEUR,
+            adresse_client(request),
+            id_objet=request.user.pk,
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 

@@ -761,8 +761,8 @@ components:
     EntreeAudit:
       type: object
       description: |-
-        ``EntreeAuditDto``. ``id_objet`` reste null : colonne absente du MPD
-        (incohérence I-27, non tranchée).
+        ``EntreeAuditDto``. ``id_objet`` désigne l'objet visé (écart Q-C) ;
+        null quand l'action ne vise pas un objet précis.
       properties:
         id_entree:
           type: string
@@ -774,7 +774,6 @@ components:
         id_objet:
           type: string
           nullable: true
-          readOnly: true
         resume:
           type: string
           readOnly: true

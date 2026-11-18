@@ -13,15 +13,21 @@ from domaines.identite.models import JournalAudit
 
 
 def consigner(
-    utilisateur: Any, action: str, type_objet: str, adresse_ip: str | None = None
+    utilisateur: Any,
+    action: str,
+    type_objet: str,
+    adresse_ip: str | None = None,
+    id_objet: object = None,
 ) -> JournalAudit:
     """Ajoute une entrée au journal d'audit (insertion forcée : jamais de
-    mise à jour, que les déclencheurs refuseraient de toute façon)."""
+    mise à jour, que les déclencheurs refuseraient de toute façon).
+    ``id_objet`` désigne l'objet visé, par exemple l'appareil révoqué."""
     return JournalAudit.objects.create(
         utilisateur=utilisateur,
         action=action,
         type_objet=type_objet,
         adresse_ip=adresse_ip,
+        id_objet=str(id_objet) if id_objet is not None else None,
     )
 
 

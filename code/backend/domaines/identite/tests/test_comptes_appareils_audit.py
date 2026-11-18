@@ -103,6 +103,9 @@ def test_revocation_d_un_appareil_idempotente_et_auditee(
     assert premiere.status_code == seconde.status_code == 200
     assert premiere.json()["statut"] == "REVOQUE"
     assert JournalAudit.objects.filter(action="REVOCATION_APPAREIL").count() == 1
+    # RG-D9 + écart Q-C : la trace dit QUEL appareil a été révoqué.
+    trace = JournalAudit.objects.get(action="REVOCATION_APPAREIL")
+    assert trace.id_objet == str(appareil.pk)
     liste = client.get("/api/appareils").json()
     assert liste[0]["nom_utilisateur"] == proprietaire.nom_complet
 
@@ -121,5 +124,6 @@ def test_journal_d_audit_filtre_et_sans_code_interne(client_authentifie: Any) ->
     assert len(entrees) == 1
     entree = entrees[0]
     assert entree["resume"] == "Déconnexion"
-    assert entree["id_objet"] is None
+    # Écart Q-C : la trace désigne l'objet visé (ici le compte qui se déconnecte).
+    assert entree["id_objet"] == str(client.utilisateur.pk)
     assert entree["identifiant_utilisateur"] == client.utilisateur.identifiant

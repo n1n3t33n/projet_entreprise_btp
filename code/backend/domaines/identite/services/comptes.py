@@ -96,7 +96,9 @@ def creer(auteur: Any, saisie: SaisieCompte, adresse_ip: str | None) -> Utilisat
         _appliquer_mot_de_passe(utilisateur, saisie.mot_de_passe)
         utilisateur.save()
         AffectationRole.objects.create(role=role, perimetre=perimetre, utilisateur=utilisateur)
-        audit.consigner(auteur, AUDIT_CREATION_COMPTE, OBJET_UTILISATEUR, adresse_ip)
+        audit.consigner(
+            auteur, AUDIT_CREATION_COMPTE, OBJET_UTILISATEUR, adresse_ip, utilisateur.pk
+        )
     return utilisateur
 
 
@@ -156,6 +158,7 @@ def modifier(
             AUDIT_DESACTIVATION_COMPTE if desactivation else AUDIT_MODIFICATION_COMPTE,
             OBJET_UTILISATEUR,
             adresse_ip,
+            utilisateur.pk,
         )
         if desactivation:
             revoquer_tous(auteur, utilisateur, adresse_ip)

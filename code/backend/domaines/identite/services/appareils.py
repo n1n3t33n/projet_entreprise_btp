@@ -52,7 +52,9 @@ def enroler(utilisateur: Any, donnees: DonneesAppareil, adresse_ip: str | None) 
             version_application=donnees.version_application,
             statut=STATUT_APPAREIL_ACTIF,
         )
-        audit.consigner(utilisateur, AUDIT_ENROLEMENT_APPAREIL, OBJET_APPAREIL, adresse_ip)
+        audit.consigner(
+            utilisateur, AUDIT_ENROLEMENT_APPAREIL, OBJET_APPAREIL, adresse_ip, appareil.pk
+        )
         return appareil
     appareil.plateforme = donnees.plateforme
     appareil.version_application = donnees.version_application
@@ -80,7 +82,7 @@ def revoquer(auteur: Any, id_appareil: str, adresse_ip: str | None) -> Appareil:
             return appareil
         appareil.statut = STATUT_APPAREIL_REVOQUE
         appareil.save(update_fields=["statut"])
-        audit.consigner(auteur, AUDIT_REVOCATION_APPAREIL, OBJET_APPAREIL, adresse_ip)
+        audit.consigner(auteur, AUDIT_REVOCATION_APPAREIL, OBJET_APPAREIL, adresse_ip, appareil.pk)
     return appareil
 
 
