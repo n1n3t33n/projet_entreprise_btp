@@ -1,0 +1,62 @@
+# Développement et contrôles avant commit (ecc:django-verification) :
+# tests pytest-django, lint ruff/black, typage mypy, sécurité bandit et
+# pip-audit. Toutes les versions sont épinglées.
+-r base.txt
+
+# --- Tests ---
+pytest==9.2.0
+pytest-django==4.14.0
+pytest-cov==7.1.0
+coverage==7.17.3
+iniconfig==2.3.1
+pluggy==1.7.0
+Pygments==2.21.0
+
+# --- Style et typage ---
+ruff==0.17.5
+black==26.10.1
+mypy==2.4.1
+# django-stubs 5.2.x suit Django 5.2 ; les stubs DRF 3.18.2 exigent
+# django-stubs 6.x, d'où 3.16.9 (dernière version compatible).
+django-stubs==5.2.9
+django-stubs-ext==6.1.2
+djangorestframework-stubs==3.16.9
+types-PyYAML==6.0.12.20261113
+typing_extensions==4.16.0
+mypy_extensions==1.2.0
+librt==0.16.0
+ast_serialize==0.13.1
+pathspec==1.1.1
+platformdirs==4.14.7
+pytokens==0.4.1
+click==8.5.1
+colorama==0.4.6
+packaging==26.3
+
+# --- Sécurité ---
+bandit==1.9.4
+stevedore==5.10.0
+rich==15.0.0
+markdown-it-py==4.3.0
+mdurl==0.1.2
+pip-audit==2.10.1
+pip_api==0.0.35
+pip-requirements-parser==32.0.1
+pyparsing==3.3.3
+CacheControl==0.15.0
+msgpack==1.2.4
+filelock==4.2.11
+requests==2.34.2
+certifi==2026.10.23
+charset-normalizer==3.5.2
+idna==3.20
+urllib3==2.8.0
+cyclonedx-python-lib==11.12.0
+packageurl-python==0.17.6
+py-serializable==2.2.0
+defusedxml==0.7.1
+license-expression==30.4.4
+boolean.py==5.0
+sortedcontainers==2.4.0
+tomli==2.5.0
+tomli_w==1.2.0
