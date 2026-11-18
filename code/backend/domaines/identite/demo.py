@@ -169,8 +169,61 @@ ONGLETS_PAR_ROLE = {
     "RESPONSABLE_TECHNIQUE": ["a-valider", "fiches", "profil"],
 }
 
-# EF-AUT-08 : le journal d'audit se consulte par l'administrateur ET la direction.
-DROITS_API_SUPPLEMENTAIRES = {"DIRECTION": ["api.audit.lire"]}
+# Lecture des référentiels (B2) : tous les rôles internes et de terrain ;
+# l'acquéreur n'en a pas besoin (il ne voit que son espace).
+LECTURE_REFERENTIELS = [
+    f"api.{ressource}.lire"
+    for ressource in (
+        "chantiers",
+        "magasins",
+        "logements",
+        "types-logement",
+        "parametres",
+        "articles",
+        "categories",
+        "unites",
+        "corps-etat",
+        "gammes",
+        "types-mouvement",
+        "motifs-blocage",
+        "regles",
+    )
+]
+ROLES_LECTEURS_REFERENTIELS = [
+    "DIRECTION",
+    "COMMERCIAL",
+    "RESPONSABLE_TECHNIQUE",
+    "MAGASINIER",
+    "TECHNICIEN",
+    "CHEF_CHANTIER",
+    "GESTIONNAIRE_STOCK",
+]
+
+# Droits d'écriture métier (l'administrateur a déjà tout par amorçage) :
+# EF-AUT-08 — journal d'audit consultable aussi par la direction ;
+# gammes, corps d'état, paramètres et règles — responsable technique (EF-REF-05,
+# 07 à 09) ; catalogue et magasins — gestionnaire de stock (EF-REF-03, 04).
+DROITS_API_SUPPLEMENTAIRES = {
+    "DIRECTION": ["api.audit.lire"],
+    "RESPONSABLE_TECHNIQUE": [
+        "api.corps-etat.creer",
+        "api.corps-etat.modifier",
+        "api.gammes.creer",
+        "api.gammes.modifier",
+        "api.gammes.valider",
+        "api.parametres.creer",
+        "api.parametres.modifier",
+        "api.regles.creer",
+        "api.regles.modifier",
+    ],
+    "GESTIONNAIRE_STOCK": [
+        "api.articles.creer",
+        "api.articles.modifier",
+        "api.magasins.creer",
+        "api.magasins.modifier",
+        "api.import.creer",
+    ],
+}
 
 
 def _horodatage(jour: date) -> datetime:
@@ -231,6 +284,8 @@ def _matrice() -> None:
         lignes += [(role, f"ecran.{ecran}.lire") for ecran in ecrans]
     for role, onglets in ONGLETS_PAR_ROLE.items():
         lignes += [(role, f"mobile.{onglet}.lire") for onglet in onglets]
+    for role in ROLES_LECTEURS_REFERENTIELS:
+        lignes += [(role, permission) for permission in LECTURE_REFERENTIELS]
     for role, permissions in DROITS_API_SUPPLEMENTAIRES.items():
         lignes += [(role, permission) for permission in permissions]
     for role, permission in lignes:

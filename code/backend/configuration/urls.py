@@ -30,6 +30,8 @@ routes_api: list[URLPattern | URLResolver] = [
     path("sante/vivacite", sante.vivacite, name="sante-vivacite"),
     path("sante/aptitude", sante.aptitude, name="sante-aptitude"),
     path("", include("domaines.identite.api.routes")),
+    path("", include("domaines.organisation.api.routes")),
+    path("", include("domaines.referentiels.api.routes")),
     path("schema/", SpectacularAPIView.as_view(**PROTECTION_DOCUMENTATION), name="schema"),
     path(
         "docs/swagger/",

@@ -228,7 +228,12 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "SCHEMA_PATH_PREFIX": "/api",
     "COMPONENT_SPLIT_REQUEST": True,
-    "ENUM_NAME_OVERRIDES": {},
+    # Noms stables pour les listes partagées : {ACTIF, INACTIF} sert au compte
+    # comme au chantier ; sans ces noms, l'outil inventerait « Statut4c5Enum ».
+    "ENUM_NAME_OVERRIDES": {
+        "StatutActiviteEnum": "domaines.identite.constantes.STATUTS_UTILISATEUR",
+        "StatutLogementEnum": "domaines.organisation.constantes.STATUTS_LOGEMENT",
+    },
 }
 
 # ---------------------------------------------------------------------------
