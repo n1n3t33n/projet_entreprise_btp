@@ -1,4 +1,4 @@
-"""Déclaration du domaine « référentiels et catalogue » (vide en B1)."""
+"""Déclaration du domaine « référentiels et catalogue »."""
 
 from django.apps import AppConfig
 
@@ -13,8 +13,11 @@ class ConfigurationReferentiels(AppConfig):
     verbose_name = "Référentiels et catalogue"
 
     def ready(self) -> None:
-        from domaines.referentiels import demo
+        from domaines.referentiels import demo, importation
         from socle.demo import declarer_chargeur
+        from socle.importation import declarer_cible
 
         # Rang 15 : après l'organisation (types de logement des gammes).
         declarer_chargeur(15, "référentiels", demo.charger)
+        # Import CSV (EF-ADM-02).
+        declarer_cible(importation.ARTICLES)

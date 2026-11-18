@@ -18,7 +18,9 @@ from domaines.identite.permissions import ADroit
 from domaines.referentiels import selecteurs, services
 from domaines.referentiels.api import serialiseurs as s
 from domaines.referentiels.models import Article, CorpsEtat, RegleValidation
+from socle import importation
 from socle.api_outils import obtenir_ou_404
+from socle.reseau import adresse_client
 
 
 def droit(ressource: str, action: str) -> list[Any]:
@@ -256,3 +258,34 @@ class VueRegle(APIView):
         )
         donnees = _valider(s.RegleSerializer, request.data, regle)
         return Response(s.RegleSerializer(services.enregistrer(regle, donnees)).data)
+
+
+# --- Import CSV (EF-ADM-02, UC-4) -------------------------------------------
+class VueImportAnalyse(APIView):
+    """POST /api/import/analyse — rapport ligne par ligne, aucune écriture."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("import", "CREER")
+
+    @extend_schema(request=s.ImportEntreeSerializer, responses=s.RapportImportSerializer)
+    def post(self, request: Request) -> Response:
+        donnees = _valider(s.ImportEntreeSerializer, request.data)
+        rapport = importation.analyser(donnees["cible"], donnees["contenu"])
+        return Response(s.RapportImportSerializer(rapport).data)
+
+
+class VueImportConfirmation(APIView):
+    """POST /api/import/confirmation — réanalyse, écrit les lignes valides,
+    journalise (EF-AUT-08)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("import", "CREER")
+
+    @extend_schema(request=s.ImportEntreeSerializer, responses=s.ResultatImportSerializer)
+    def post(self, request: Request) -> Response:
+        donnees = _valider(s.ImportEntreeSerializer, request.data)
+        nombre = services.importer_csv(
+            request.user, donnees["cible"], donnees["contenu"], adresse_client(request)
+        )
+        resultat = {"cible": donnees["cible"], "nombre_importees": nombre}
+        return Response(s.ResultatImportSerializer(resultat).data)

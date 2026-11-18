@@ -794,6 +794,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/CorpsEtat'
           description: ''
+  /api/import/analyse:
+    post:
+      operationId: import_analyse_create
+      description: POST /api/import/analyse — rapport ligne par ligne, aucune écriture.
+      tags:
+      - import
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RapportImport'
+          description: ''
+  /api/import/confirmation:
+    post:
+      operationId: import_confirmation_create
+      description: |-
+        POST /api/import/confirmation — réanalyse, écrit les lignes valides,
+        journalise (EF-AUT-08).
+      tags:
+      - import
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultatImport'
+          description: ''
   /api/magasins:
     get:
       operationId: magasins_list
@@ -1578,6 +1622,16 @@ components:
       - code
       - nom
       - statut
+    CibleEnum:
+      enum:
+      - articles
+      - chantiers
+      - magasins
+      type: string
+      description: |-
+        * `articles` - articles
+        * `chantiers` - chantiers
+        * `magasins` - magasins
     CompteEntreeRequest:
       type: object
       description: |-
@@ -1945,6 +1999,36 @@ components:
       - statut
       - type_logement_code_type
       - version
+    ImportEntreeRequest:
+      type: object
+      description: |-
+        Corps des deux appels : la cible et le texte brut du fichier. Les
+        cibles possibles sont celles que les domaines ont déclarées.
+      properties:
+        cible:
+          $ref: '#/components/schemas/CibleEnum'
+        contenu:
+          type: string
+          minLength: 1
+      required:
+      - cible
+      - contenu
+    LigneImport:
+      type: object
+      properties:
+        numero:
+          type: integer
+        valeurs:
+          type: array
+          items:
+            type: string
+        erreur:
+          type: string
+          nullable: true
+      required:
+      - erreur
+      - numero
+      - valeurs
     Logement:
       type: object
       description: |-
@@ -2270,6 +2354,32 @@ components:
       - droits
       - horodatage_serveur
       - utilisateur
+    RapportImport:
+      type: object
+      description: |-
+        ``RapportImportDto`` : ``colonnes`` dit au web quelles colonnes le
+        serveur attend (I-37).
+      properties:
+        cible:
+          type: string
+        colonnes:
+          type: array
+          items:
+            type: string
+        lignes:
+          type: array
+          items:
+            $ref: '#/components/schemas/LigneImport'
+        nombre_valides:
+          type: integer
+        nombre_erreurs:
+          type: integer
+      required:
+      - cible
+      - colonnes
+      - lignes
+      - nombre_erreurs
+      - nombre_valides
     Regle:
       type: object
       description: |-
@@ -2328,6 +2438,16 @@ components:
       - champ_teste
       - operateur
       - type_evenement
+    ResultatImport:
+      type: object
+      properties:
+        cible:
+          type: string
+        nombre_importees:
+          type: integer
+      required:
+      - cible
+      - nombre_importees
     Role:
       type: object
       properties:

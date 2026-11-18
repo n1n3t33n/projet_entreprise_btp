@@ -29,4 +29,6 @@ urlpatterns = [
     path("motifs-blocage", vues.VueMotifsBlocage.as_view(), name="motifs-blocage"),
     path("parametrage/regles", vues.VueRegles.as_view(), name="regles"),
     path("parametrage/regles/<uuid:id_regle>", vues.VueRegle.as_view(), name="regle"),
+    path("import/analyse", vues.VueImportAnalyse.as_view(), name="import-analyse"),
+    path("import/confirmation", vues.VueImportConfirmation.as_view(), name="import-confirmation"),
 ]

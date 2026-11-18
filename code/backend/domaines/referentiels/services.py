@@ -19,6 +19,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Max
 from django.utils import timezone
 
+from domaines.identite.services import audit
 from domaines.referentiels import selecteurs
 from domaines.referentiels.constantes import (
     STATUT_GAMME_ACTIVE,
@@ -26,11 +27,17 @@ from domaines.referentiels.constantes import (
     STATUT_GAMME_BROUILLON,
 )
 from domaines.referentiels.models import EtapeModele, Gamme
+from socle import importation
 from socle.api_outils import conflit, donnee_invalide
 from socle.api_outils import enregistrer as enregistrer  # utilisé par les vues
 from socle.erreurs import ErreurApi
 
 SEPARATEUR_CODE = "~"
+
+# Journal d'audit de l'import CSV (EF-AUT-08) : mêmes valeurs que la
+# simulation du web.
+AUDIT_IMPORT_CSV = "IMPORT_CSV"
+OBJET_REFERENTIEL = "referentiel"
 
 
 def code_de_version(code: str, version: int) -> str:
@@ -145,3 +152,13 @@ def archiver(id_gamme: str) -> Gamme:
     gamme.statut = STATUT_GAMME_ARCHIVEE
     gamme.save(update_fields=["statut"])
     return gamme
+
+
+@transaction.atomic
+def importer_csv(utilisateur: Any, cible: str, contenu: str, adresse_ip: str | None) -> int:
+    """Second temps de l'import CSV (EF-ADM-02) : écrit les lignes valides et
+    journalise l'opération dans la même transaction (EF-AUT-08). L'audit est
+    écrit par le service du domaine identité (règle de modularité)."""
+    nombre = importation.importer(cible, contenu)
+    audit.consigner(utilisateur, AUDIT_IMPORT_CSV, OBJET_REFERENTIEL, adresse_ip, cible)
+    return nombre

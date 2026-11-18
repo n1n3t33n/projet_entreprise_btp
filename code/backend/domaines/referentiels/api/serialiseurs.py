@@ -27,6 +27,7 @@ from domaines.referentiels.models import (
     TypeMouvement,
     UniteMesure,
 )
+from socle import importation
 
 
 class CategorieSerializer(serializers.ModelSerializer):  # type: ignore[type-arg]
@@ -206,3 +207,34 @@ class RegleSerializer(serializers.ModelSerializer):  # type: ignore[type-arg]
             "delai_heures",
         ]
         read_only_fields = ["id_regle"]
+
+
+# --- Import CSV (EF-ADM-02) : formes de ``features/admin/api/import-csv-dto.ts``
+class ImportEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    """Corps des deux appels : la cible et le texte brut du fichier. Les
+    cibles possibles sont celles que les domaines ont déclarées."""
+
+    cible = serializers.ChoiceField(choices=sorted(importation.CIBLES))
+    contenu = serializers.CharField(trim_whitespace=False)
+
+
+class LigneImportSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    numero = serializers.IntegerField()
+    valeurs = serializers.ListField(child=serializers.CharField())
+    erreur = serializers.CharField(allow_null=True)
+
+
+class RapportImportSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    """``RapportImportDto`` : ``colonnes`` dit au web quelles colonnes le
+    serveur attend (I-37)."""
+
+    cible = serializers.CharField()
+    colonnes = serializers.ListField(child=serializers.CharField())
+    lignes = LigneImportSerializer(many=True)
+    nombre_valides = serializers.IntegerField()
+    nombre_erreurs = serializers.IntegerField()
+
+
+class ResultatImportSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    cible = serializers.CharField()
+    nombre_importees = serializers.IntegerField()
