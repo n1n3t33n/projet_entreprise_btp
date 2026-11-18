@@ -28,6 +28,9 @@ from domaines.identite.constantes import (
 )
 from domaines.identite.models import Appareil, DroitAccorde, Perimetre, Permission, Role
 from domaines.identite.permissions import ADroit
+from domaines.identite.selecteurs import appareils as selecteur_appareils
+from domaines.identite.selecteurs import audit as selecteur_audit
+from domaines.identite.selecteurs import comptes as selecteur_comptes
 from domaines.identite.services import appareils as service_appareils
 from domaines.identite.services import audit as service_audit
 from domaines.identite.services import comptes as service_comptes
@@ -176,7 +179,7 @@ class VueComptes(APIView):
 
     @extend_schema(responses={200: s.UtilisateurSerializer(many=True), **ERREURS})
     def get(self, request: Request) -> Response:
-        return Response(s.UtilisateurSerializer(service_comptes.lister(), many=True).data)
+        return Response(s.UtilisateurSerializer(selecteur_comptes.lister(), many=True).data)
 
     @extend_schema(
         request=s.CompteEntreeSerializer,
@@ -276,7 +279,7 @@ class VueAppareils(APIView):
 
     @extend_schema(responses={200: s.AppareilSerializer(many=True), **ERREURS})
     def get(self, request: Request) -> Response:
-        return Response(s.AppareilSerializer(service_appareils.lister(), many=True).data)
+        return Response(s.AppareilSerializer(selecteur_appareils.lister(), many=True).data)
 
 
 class VueRevocation(APIView):
@@ -313,7 +316,7 @@ class VueAudit(APIView):
         filtre = s.FiltreAuditSerializer(data=request.query_params)
         filtre.is_valid(raise_exception=True)
         auteur = filtre.validated_data.get("auteur")
-        entrees = service_audit.lister(
+        entrees = selecteur_audit.lister(
             action=filtre.validated_data.get("action"),
             id_auteur=str(auteur) if auteur else None,
             limite=filtre.validated_data["limite"],

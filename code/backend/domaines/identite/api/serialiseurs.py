@@ -14,8 +14,8 @@ from typing import Any
 from rest_framework import serializers
 
 from domaines.identite.constantes import STATUTS_UTILISATEUR
+from domaines.identite.selecteurs.comptes import affectation_principale
 from domaines.identite.services import audit as service_audit
-from domaines.identite.services.comptes import affectation_principale
 
 
 # --- Erreur (format unique, socle/erreurs.py) -------------------------------

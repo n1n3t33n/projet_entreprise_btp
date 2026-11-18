@@ -2,7 +2,7 @@
 
 Identique à celui des deux fronts (rapport B0 § 3.6) : les comptes du web
 (``lib/mocks/auth-grand-bassam.ts``), ceux du mobile (``ServiceAuthSimule``),
-les équipes du web (``equipes-grand-bassam.ts``), le magasin « GB-CENTRAL » et
+les équipes du web (``equipes-grand-bassam.ts``), les périmètres du pilote et
 la matrice initiale des écrans (``droits-grand-bassam.ts``) et des onglets
 mobiles (``onglet_role.dart``). Seules différences voulues :
   * codes de rôle en UPPER_SNAKE (arbitrage Q8) ;
@@ -15,7 +15,6 @@ A01 », que le MPD ne sait pas représenter ; elle reçoit le chantier.
 Rejouable : chaque chargement met à jour au lieu de dupliquer.
 """
 
-import uuid
 from datetime import date, datetime
 from typing import Any
 
@@ -31,15 +30,9 @@ from domaines.identite.models import (
     Perimetre,
     Utilisateur,
 )
-from domaines.organisation.models import Chantier, Magasin
-
-ESPACE = uuid.UUID("6f1c2d3e-4b5a-4c6d-8e7f-0a1b2c3d4e5f")
-
-
-def uid(nature: str, cle: str) -> uuid.UUID:
-    """Identifiant stable : le même à chaque chargement."""
-    return uuid.uuid5(ESPACE, f"{nature}:{cle}")
-
+from domaines.organisation import demo as demo_organisation
+from domaines.organisation import selecteurs as selecteurs_organisation
+from socle.demo import uid
 
 # (identifiant, prénom, nom, fonction, rôle, périmètre, date de création)
 COMPTES = [
@@ -184,26 +177,16 @@ def _horodatage(jour: date) -> datetime:
     return timezone.make_aware(datetime(jour.year, jour.month, jour.day, 8, 0))
 
 
-def _organisation() -> dict[str, Perimetre]:
-    chantier, _ = Chantier.objects.update_or_create(
-        id_chantier=uid("chantier", "CH-GB"),
-        defaults={
-            "code": "CH-GB",
-            "nom": "Chantier de Grand-Bassam",
-            "programme": "Programme Grand-Bassam — villas et duplex",
-            "date_debut": date(2026, 9, 1),
-            "statut": "ACTIF",
-        },
-    )
-    magasin, _ = Magasin.objects.update_or_create(
-        id_magasin=uid("magasin", "GB-CENTRAL"),
-        defaults={
-            "code": "GB-CENTRAL",
-            "nom": "Magasin central",
-            "actif": True,
-            "chantier": chantier,
-        },
-    )
+def _perimetres() -> dict[str, Perimetre]:
+    """Périmètres du pilote. Le chantier et le magasin appartiennent au
+    domaine « organisation », chargé avant celui-ci : on les LIT par ses
+    sélecteurs, on ne les crée jamais ici (règle de modularité)."""
+    chantier = selecteurs_organisation.chantier_par_code(demo_organisation.CODE_CHANTIER)
+    magasin = selecteurs_organisation.magasin_par_code(demo_organisation.CODE_MAGASIN)
+    if chantier is None or magasin is None:
+        raise LookupError(
+            "Le chantier et le magasin de démonstration doivent être chargés d'abord."
+        )
     perimetres: dict[str, Perimetre] = {}
     definitions: list[tuple[str, str, dict[str, Any]]] = [
         ("programme", "Tout le programme", {"chantier": None, "magasin": None}),
@@ -257,9 +240,9 @@ def _matrice() -> None:
 
 
 @transaction.atomic
-def charger(mot_de_passe: str) -> dict[str, Any]:
+def charger(mot_de_passe: str) -> dict[str, int]:
     """Charge (ou recharge) tout le jeu identité. Rend un petit bilan."""
-    perimetres = _organisation()
+    perimetres = _perimetres()
     for identifiant, prenom, nom, fonction, role, perimetre, cree in COMPTES:
         utilisateur = _utilisateur(identifiant, prenom, nom, fonction, cree, mot_de_passe)
         AffectationRole.objects.update_or_create(
@@ -284,7 +267,7 @@ def charger(mot_de_passe: str) -> dict[str, Any]:
     _matrice()
     return {
         "comptes": len(COMPTES),
-        "membres_sans_acces": len(MEMBRES_SANS_ACCES),
-        "equipes": len(EQUIPES),
-        "perimetres": len(perimetres),
+        "membres sans accès": len(MEMBRES_SANS_ACCES),
+        "équipes": len(EQUIPES),
+        "périmètres": len(perimetres),
     }

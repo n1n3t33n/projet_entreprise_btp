@@ -14,8 +14,12 @@ class ConfigurationIdentite(AppConfig):
 
     def ready(self) -> None:
         # Description OpenAPI du jeton porteur (enregistrée à l'import).
-        from domaines.identite import schema_openapi  # noqa: F401
+        from domaines.identite import demo, schema_openapi  # noqa: F401
         from socle.base_de_donnees.partitions import declarer_table_partitionnee
+        from socle.demo import declarer_chargeur
+
+        # Rang 20 : après l'organisation, dont les périmètres dépendent.
+        declarer_chargeur(20, "identité", demo.charger)
 
         # journal_audit est partitionnée par mois (MPD-1, MPD § 6.5) : la
         # commande creer_partitions doit la connaître.
