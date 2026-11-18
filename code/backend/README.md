@@ -2,26 +2,31 @@
 
 API du poste de pilotage web et de l'application mobile de chantier.
 Modèle de données : `modélisation/` (le MPD fait foi). Contrat d'API :
-[`contrat/CONTRAT.md`](contrat/CONTRAT.md).
+[`contrat/CONTRAT.md`](contrat/CONTRAT.md). Rangement du code, trajet d'une
+requête et où ajouter quoi : [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Organisation
 
 ```
 code/backend/
-├── configuration/        réglages par environnement, routes, WSGI/ASGI
-├── socle/                service technique transverse (journaux JSON, santé,
-│                         erreurs, limitation du taux, partitions, immuabilité)
+├── configuration/        réglages par environnement, routes racines, WSGI/ASGI
+├── socle/                service technique transverse : journaux JSON, santé,
+│                         erreurs, limitation du taux, partitions, import CSV,
+│                         traitements planifiés, métriques, alertes
 ├── domaines/             un dossier par domaine du MERISE
-│   ├── organisation/     MPD-2 (en B1 : chantier, magasin)
 │   ├── identite/         MPD-1 : comptes, rôles, droits, appareils, audit
-│   └── referentiels/ stock/ avancement/ synchronisation/ acquereur/  (à venir)
+│   ├── organisation/     MPD-2 : chantiers, magasins, zones, logements, paramètres
+│   ├── referentiels/     MPD-3 : catalogue, unités, gammes, mouvements, règles
+│   └── stock/ avancement/ synchronisation/ acquereur/  (à venir)
 ├── contrat/              contrat d'API OpenAPI généré et committé
 ├── sql/                  création des rôles PostgreSQL et de la base
 └── requirements/         dépendances épinglées (base, dev, production)
 ```
 
-Dans chaque domaine : `models/` (tables du MPD), `services/` (règles métier),
-`api/` (sérialiseurs, vues, routes), `migrations/`, `tests/`.
+Dans chaque domaine : `models/` (tables du MPD), `services/` (écritures et
+règles métier), `selecteurs/` (lectures), `api/` (sérialiseurs, vues,
+routes), `migrations/`, `tests/`. Le détail est dans
+[`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Installation sur le poste de développement (Windows, PowerShell)
 
@@ -70,6 +75,18 @@ ne touche jamais la base de développement.
 ## Publication (PaaS)
 
 Variables d'environnement : voir `.env.example` (aucun fichier n'est lu en
-production). Étapes de publication : `collectstatic --noinput`,
-`migrate --database migration`, `creer_partitions`. Tâche planifiée
-quotidienne : `creer_partitions`. Serveur : `gunicorn configuration.wsgi`.
+production), y compris le serveur SMTP et les destinataires des alertes
+techniques (`ALERTES_DESTINATAIRES`).
+
+Étapes de publication :
+
+```
+python manage.py collectstatic --noinput
+python manage.py migrate --database migration
+python manage.py creer_partitions
+```
+
+Tâche planifiée quotidienne : `python manage.py lancer_traitement
+creer_partitions`. Chaque passage est tracé dans la table
+`execution_traitement` et visible dans `GET /api/metriques` ; un échec envoie
+une alerte par courriel. Serveur : `gunicorn configuration.wsgi`.
