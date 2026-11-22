@@ -568,6 +568,129 @@ paths:
               schema:
                 $ref: '#/components/schemas/Erreur'
           description: ''
+  /api/fiches-route:
+    get:
+      operationId: fiches_route_list
+      description: |-
+        GET /api/fiches-route?technicien=&statut= — un technicien ne voit que
+        ses fiches ; l'encadrement voit celles de tous.
+      parameters:
+      - in: query
+        name: statut
+        schema:
+          type: string
+      - in: query
+        name: technicien
+        schema:
+          type: string
+      tags:
+      - fiches-route
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FicheRoute'
+          description: ''
+  /api/fiches-route/{id_fiche}:
+    get:
+      operationId: fiches_route_retrieve
+      description: GET /api/fiches-route/{id}.
+      parameters:
+      - in: path
+        name: id_fiche
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - fiches-route
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FicheRoute'
+          description: ''
+  /api/fiches-route/{id_fiche}/cloture:
+    post:
+      operationId: fiches_route_cloture_create
+      description: |-
+        POST /api/fiches-route/{id}/cloture — fin de cycle, report motivé des
+        étapes non faites (EF-AVA-08). Le technicien clôture sa propre fiche.
+      parameters:
+      - in: path
+        name: id_fiche
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - fiches-route
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClotureEntreeRequest'
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FicheRoute'
+          description: ''
+  /api/fiches-route/affectations:
+    post:
+      operationId: fiches_route_affectations_create
+      description: |-
+        POST /api/fiches-route/affectations — affecter un lot d'étapes à un
+        technicien, avec date prévue ; la réaffectation est tracée (RG-A3).
+      tags:
+      - fiches-route
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AffectationEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LigneEtape'
+          description: ''
+  /api/fiches-route/courante:
+    get:
+      operationId: fiches_route_courante_list
+      description: |-
+        GET /api/fiches-route/courante — fiches ouvertes de l'utilisateur
+        (écran « Mes fiches » du mobile, EF-AVA-03).
+      tags:
+      - fiches-route
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FicheRoute'
+          description: ''
   /api/gammes:
     get:
       operationId: gammes_list
@@ -994,6 +1117,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InventaireDetail'
+          description: ''
+  /api/logements/{id_logement}/etapes:
+    get:
+      operationId: logements_etapes_list
+      description: GET /api/logements/{id}/etapes — étapes du logement, dans l'ordre.
+      parameters:
+      - in: path
+        name: id_logement
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - logements
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LigneEtape'
           description: ''
   /api/magasins:
     get:
@@ -1868,6 +2015,26 @@ components:
       - magasin_id_magasin
       - perimetre_id_perimetre
       - role_code_role
+    AffectationEntreeRequest:
+      type: object
+      description: Affecter un lot d'étapes à un technicien, avec date prévue (EF-AVA-02).
+      properties:
+        etapes:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+        technicien_id_utilisateur:
+          type: string
+          format: uuid
+        date_prevue:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - etapes
+      - technicien_id_utilisateur
     Alerte:
       type: object
       properties:
@@ -2166,6 +2333,16 @@ components:
         * `chantiers` - chantiers
         * `magasins` - magasins
         * `stock` - stock
+    ClotureEntreeRequest:
+      type: object
+      description: |-
+        Clôture d'une fiche (EF-AVA-08) : motif de report par étape non faite ;
+        sans motif, « non faite en fin de cycle ».
+      properties:
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportRequest'
     ComptageRequest:
       type: object
       properties:
@@ -2552,6 +2729,47 @@ components:
           type: string
       required:
       - nom_traitement
+    FicheRoute:
+      type: object
+      properties:
+        id_fiche:
+          type: string
+          format: uuid
+          readOnly: true
+        type_cycle:
+          type: string
+          maxLength: 32
+        date_debut:
+          type: string
+          format: date
+        date_fin:
+          type: string
+          format: date
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        date_cloture:
+          type: string
+          format: date-time
+          nullable: true
+        utilisateur_id_utilisateur:
+          type: string
+          format: uuid
+        nom_technicien:
+          type: string
+        lignes:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - id_fiche
+      - lignes
+      - nom_technicien
+      - type_cycle
+      - utilisateur_id_utilisateur
     Gamme:
       type: object
       description: |-
@@ -2691,6 +2909,77 @@ components:
       - magasin_id_magasin
       - nombre_comptees
       - nombre_lignes
+    LigneEtape:
+      type: object
+      description: |-
+        ``LigneEtapeDto`` : une étape avec son logement, son corps d'état, son
+        retard (RG-A8) et l'auteur de sa dernière déclaration.
+      properties:
+        id_etape:
+          type: string
+          format: uuid
+          readOnly: true
+        id_logement:
+          type: string
+          format: uuid
+        numero_logement:
+          type: string
+        libelle_etape:
+          type: string
+        code_corps_etat:
+          type: string
+        libelle_corps_etat:
+          type: string
+        couleur_corps_etat:
+          type: string
+        ordre:
+          type: integer
+        statut:
+          type: string
+          maxLength: 32
+        date_prevue:
+          type: string
+          format: date
+          nullable: true
+        date_fin_declaree:
+          type: string
+          format: date
+          nullable: true
+        date_validation:
+          type: string
+          format: date-time
+          nullable: true
+        poids_effectif:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        controle_requis:
+          type: boolean
+        en_retard:
+          type: boolean
+          readOnly: true
+        id_auteur_declaration:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        nom_auteur_declaration:
+          type: string
+          readOnly: true
+          nullable: true
+      required:
+      - code_corps_etat
+      - controle_requis
+      - couleur_corps_etat
+      - en_retard
+      - id_auteur_declaration
+      - id_etape
+      - id_logement
+      - libelle_corps_etat
+      - libelle_etape
+      - nom_auteur_declaration
+      - numero_logement
+      - ordre
     LigneImport:
       type: object
       properties:
@@ -3383,6 +3672,18 @@ components:
       - champ_teste
       - operateur
       - type_evenement
+    ReportRequest:
+      type: object
+      properties:
+        id_etape:
+          type: string
+          format: uuid
+        motif:
+          type: string
+          minLength: 1
+      required:
+      - id_etape
+      - motif
     Requetes:
       type: object
       properties:

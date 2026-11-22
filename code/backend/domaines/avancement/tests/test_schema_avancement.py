@@ -16,7 +16,8 @@ pytestmark = [pytest.mark.django_db, pytest.mark.integration]
 
 @pytest.fixture
 def evenement(chantier_avancement: dict[str, Any], logement: Any) -> EvenementExecution:
-    etape = EtapeTravaux.objects.create(
+    # Étape instanciée à la création du logement (RG-A1).
+    etape = EtapeTravaux.objects.get(
         logement=logement, etape_modele=chantier_avancement["modeles"][0]
     )
     agregat = AvancementAgrege.objects.create(portee="LOGEMENT", id_cible=str(logement.pk))

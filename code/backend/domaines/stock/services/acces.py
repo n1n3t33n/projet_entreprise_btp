@@ -12,30 +12,23 @@ from typing import Any
 from uuid import UUID
 
 from domaines.identite.constantes import MODULE_API
-from domaines.identite.selecteurs import perimetres as selecteur_perimetres
-from domaines.identite.services import droits
+from domaines.identite.services import portee
 from domaines.organisation import selecteurs as selecteurs_organisation
 from domaines.organisation.models import Magasin
 from socle.erreurs import ErreurApi
 
 
 def magasins_couverts(utilisateur: Any, ressource: str, action: str) -> set[UUID] | None:
-    """Identifiants des magasins couverts, ou ``None`` pour « tous »."""
-    couverture = droits.couverture(utilisateur, MODULE_API, ressource, action)
-    if couverture is droits.TOUT_LE_PROGRAMME:
+    """Identifiants des magasins couverts, ou ``None`` pour « tous ». Un
+    périmètre de chantier couvre tous les magasins de ce chantier."""
+    couverte = portee.portee(utilisateur, MODULE_API, ressource, action)
+    if couverte.tout:
         return None
-    perimetres = couverture if isinstance(couverture, frozenset) else frozenset()
-    chantiers: set[UUID] = set()
-    magasins: set[UUID] = set()
-    for id_chantier, id_magasin in selecteur_perimetres.portees(perimetres):
-        if id_magasin is not None:
-            magasins.add(id_magasin)
-        elif id_chantier is not None:
-            chantiers.add(id_chantier)
-    if chantiers:
+    magasins = set(couverte.magasins)
+    if couverte.chantiers:
         magasins |= set(
             selecteurs_organisation.magasins()
-            .filter(chantier_id__in=chantiers)
+            .filter(chantier_id__in=couverte.chantiers)
             .values_list("id_magasin", flat=True)
         )
     return magasins

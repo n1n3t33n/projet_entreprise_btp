@@ -26,12 +26,7 @@ from socle import alertes
 
 
 def _signaler_absence(id_chantier: Any, cle: str, repli: str) -> None:
-    alertes.alerter(
-        alertes.PARAMETRE_MANQUANT,
-        "Paramètre de chantier manquant",
-        f"Le paramètre « {cle} » n'est pas défini pour le chantier {id_chantier}. "
-        f"{repli} Renseignez-le dans l'écran Paramétrage.",
-    )
+    alertes.parametre_manquant(id_chantier, cle, repli)
 
 
 def entier(id_chantier: Any, cle: str, defaut: int) -> int:
