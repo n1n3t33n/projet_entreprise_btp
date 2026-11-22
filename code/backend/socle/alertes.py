@@ -39,6 +39,17 @@ PARAMETRE_MANQUANT = "PARAMETRE_MANQUANT"
 PREFIXE_SUJET = "[ChantierSync] "
 
 
+def parametre_manquant(id_chantier: object, cle: str, repli: str) -> bool:
+    """Alerte PARAMETRE_MANQUANT commune aux domaines (Q-F, Q-R, Q-Z) :
+    ``repli`` dit ce que le serveur fait en attendant."""
+    return alerter(
+        PARAMETRE_MANQUANT,
+        "Paramètre de chantier manquant",
+        f"Le paramètre « {cle} » n'est pas défini pour le chantier {id_chantier}. "
+        f"{repli} Renseignez-le dans l'écran Paramétrage.",
+    )
+
+
 def alerter(type_alerte: str, sujet: str, message: str) -> bool:
     """Envoie l'alerte si aucune du même type n'est partie dans l'intervalle.
     Rend vrai si l'alerte a été émise (journalisée, et envoyée s'il y a des

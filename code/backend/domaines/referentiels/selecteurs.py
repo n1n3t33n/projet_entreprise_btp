@@ -93,3 +93,15 @@ def facteur_conversion(id_article: Any, code_unite: str) -> Decimal | None:
 def regles_de(type_evenement: str) -> QuerySet[RegleValidation]:
     """Règles de validation d'un type d'événement (RG-S6, RG-S9)."""
     return RegleValidation.objects.filter(type_evenement=type_evenement).order_by("champ_teste")
+
+
+def gamme_active(code_type_logement: str) -> Gamme | None:
+    """La version ACTIVE de la gamme d'un type de logement (au plus une)."""
+    return Gamme.objects.filter(type_logement_id=code_type_logement, statut="ACTIVE").first()
+
+
+def etapes_modele_actives(code_type_logement: str) -> QuerySet[EtapeModele]:
+    """Étapes de la gamme active d'un type de logement, dans leur ordre."""
+    return EtapeModele.objects.filter(
+        gamme__type_logement_id=code_type_logement, gamme__statut="ACTIVE"
+    ).order_by("ordre")

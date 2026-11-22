@@ -204,7 +204,8 @@ ROLES_LECTEURS_REFERENTIELS = [
 # gammes, corps d'état, paramètres et règles — responsable technique (EF-REF-05,
 # 07 à 09) ; catalogue et magasins — gestionnaire de stock (EF-REF-03, 04).
 DROITS_API_SUPPLEMENTAIRES = {
-    "DIRECTION": ["api.audit.lire", "api.stock.lire", "api.mouvements.lire"],
+    "DIRECTION": ["api.audit.lire", "api.stock.lire", "api.mouvements.lire", "api.avancement.lire"],
+    "COMMERCIAL": ["api.avancement.lire"],
     # Stock (B3) : saisie et comptage au magasinier, décisions au gestionnaire
     # (RG-D8 : celui qui saisit ne valide pas), lecture aux rôles de pilotage.
     "MAGASINIER": [
@@ -215,11 +216,34 @@ DROITS_API_SUPPLEMENTAIRES = {
         "api.inventaires.creer",
         "api.inventaires.modifier",
     ],
-    "CHEF_CHANTIER": ["api.stock.lire", "api.mouvements.lire"],
-    "TECHNICIEN": ["api.stock.lire"],
+    # Avancement (B4) : le technicien déclare et lit ses fiches ; chef de
+    # chantier et responsable technique affectent, contrôlent (RG-A4) et
+    # clôturent ; RG-D11 empêche de contrôler sa propre déclaration.
+    "CHEF_CHANTIER": [
+        "api.stock.lire",
+        "api.mouvements.lire",
+        "api.avancement.lire",
+        "api.etapes.modifier",
+        "api.etapes.valider",
+        "api.fiches-route.lire",
+        "api.fiches-route.creer",
+        "api.fiches-route.modifier",
+    ],
+    "TECHNICIEN": [
+        "api.stock.lire",
+        "api.avancement.lire",
+        "api.etapes.modifier",
+        "api.fiches-route.lire",
+    ],
     "RESPONSABLE_TECHNIQUE": [
         "api.stock.lire",
         "api.mouvements.lire",
+        "api.avancement.lire",
+        "api.etapes.modifier",
+        "api.etapes.valider",
+        "api.fiches-route.lire",
+        "api.fiches-route.creer",
+        "api.fiches-route.modifier",
         "api.corps-etat.creer",
         "api.corps-etat.modifier",
         "api.gammes.creer",

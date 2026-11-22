@@ -7,6 +7,8 @@ l'entreprise). Tout vient de l'environnement ; DEBUG reste faux.
   3. python manage.py creer_partitions
 Tâches planifiées (chaque passage est tracé dans execution_traitement, 6.5) :
   * chaque jour : python manage.py lancer_traitement creer_partitions
+  * chaque jour : python manage.py lancer_traitement cycler_fiches_route
+  * chaque nuit : python manage.py lancer_traitement consolider_avancement
   * chaque heure : python manage.py lancer_traitement relancer_validations
 """
 

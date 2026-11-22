@@ -20,7 +20,7 @@ from django.db.models import Max
 from django.utils import timezone
 
 from domaines.identite.services import audit
-from domaines.referentiels import selecteurs
+from domaines.referentiels import selecteurs, signaux
 from domaines.referentiels.constantes import (
     STATUT_GAMME_ACTIVE,
     STATUT_GAMME_ARCHIVEE,
@@ -140,6 +140,8 @@ def publier(id_gamme: str) -> Gamme:
     gamme.statut = STATUT_GAMME_ACTIVE
     gamme.date_activation = timezone.now()
     gamme.save(update_fields=["statut", "date_activation"])
+    # Les abonnés (avancement) agissent dans la même transaction.
+    signaux.gamme_publiee.send(sender=Gamme, gamme=gamme)
     return gamme
 
 
