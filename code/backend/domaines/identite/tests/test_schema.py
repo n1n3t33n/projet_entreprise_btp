@@ -11,7 +11,7 @@ from django.db import connection, models
 
 pytestmark = [pytest.mark.django_db, pytest.mark.integration]
 
-# Tables du MPD présentes à ce jalon : MPD-1 (B1), MPD-2 et MPD-3 (B2), MPD-4 (B3).
+# Tables du MPD présentes à ce jalon : MPD-1 (B1), MPD-2 et MPD-3 (B2), MPD-4 (B3), MPD-5 hors notifications (B4).
 TABLES_MPD = {
     # MPD-1
     "utilisateur",
@@ -51,6 +51,12 @@ TABLES_MPD = {
     "alerte",
     "inventaire",
     "ligne_inventaire",
+    # MPD-5 (les trois tables de notification arrivent en B6)
+    "etape_travaux",
+    "evenement_execution",
+    "fiche_route",
+    "ligne_fiche_route",
+    "avancement_agrege",
 }
 
 # Tables techniques hors MPD, validées (écart Q9/Q-G : trace des traitements
@@ -69,6 +75,15 @@ TABLES_DJANGO = {
 }
 
 CONTRAINTES_MPD = {
+    # MPD-5 (+ écarts validés Q-V, Q-AA)
+    "ck_etape_travaux_statut",
+    "ck_fiche_route_type_cycle",
+    "ck_fiche_route_statut",
+    "ck_evenement_execution_statut_avant",
+    "ck_evenement_execution_statut_apres",
+    "ck_avancement_agrege_portee",
+    "uq_avancement_agrege_portee_id_cible",
+    "uq_etape_travaux_logement_etape_modele",
     # MPD-4 (+ écarts validés Q-L, Q-O)
     "ck_mouvement_stock_statut_validation",
     "ck_mouvement_stock_quantites_positives",
@@ -104,6 +119,16 @@ CONTRAINTES_MPD = {
 }
 
 INDEX_MPD = {
+    # MPD-5
+    "ix_etape_travaux_logement_id_logement",
+    "ix_etape_travaux_etape_modele_id_etape_modele",
+    "ix_etape_travaux_statut",
+    "ix_fiche_route_utilisateur_id_utilisateur",
+    "ix_evenement_execution_etape_travaux_id_etape",
+    "ix_evenement_execution_utilisateur_id_utilisateur",
+    "ix_evenement_execution_motif_blocage_code_motif",
+    "ix_evenement_execution_article_id_article",
+    "ix_evenement_execution_avancement_agrege_id_avancement",
     # MPD-4
     "ix_mouvement_stock_type_mouvement_code_type_mouvement",
     "ix_mouvement_stock_article_id_article",
@@ -177,6 +202,16 @@ NULLITE_CLES_ETRANGERES = {
     ("inventaire", "magasin_id_magasin"): "NO",
     ("ligne_inventaire", "inventaire_id_inventaire"): "NO",
     ("ligne_inventaire", "article_id_article"): "NO",
+    # MPD-5
+    ("etape_travaux", "logement_id_logement"): "NO",
+    ("etape_travaux", "etape_modele_id_etape_modele"): "NO",
+    ("fiche_route", "utilisateur_id_utilisateur"): "NO",
+    ("evenement_execution", "etape_travaux_id_etape"): "NO",
+    ("evenement_execution", "utilisateur_id_utilisateur"): "NO",
+    ("evenement_execution", "motif_blocage_code_motif"): "YES",
+    ("evenement_execution", "article_id_article"): "YES",
+    ("evenement_execution", "avancement_agrege_id_avancement"): "NO",
+    ("evenement_execution", "pour_le_compte_de_id_utilisateur"): "YES",
 }
 
 
@@ -237,7 +272,8 @@ def test_les_cles_composites_du_mpd_sont_respectees() -> None:
             "  ON kcu.constraint_name = tc.constraint_name AND kcu.table_name = tc.table_name "
             "WHERE tc.constraint_type = 'PRIMARY KEY' "
             "AND tc.table_name IN ('droit_accorde', 'affectation_role', 'membre_equipe', "
-            "'journal_audit', 'evenement_validation', 'stock_courant') "
+            "'journal_audit', 'evenement_validation', 'stock_courant', "
+            "'evenement_execution', 'ligne_fiche_route') "
             "GROUP BY tc.table_name"
         )
         cles = dict(curseur.fetchall())
@@ -248,6 +284,8 @@ def test_les_cles_composites_du_mpd_sont_respectees() -> None:
         "journal_audit": "id_entree,horodatage",
         "evenement_validation": "uuid,horodatage_serveur",
         "stock_courant": "seuil_stock_id_seuil",
+        "evenement_execution": "uuid,horodatage_serveur",
+        "ligne_fiche_route": "fiche_route_id_fiche,etape_travaux_id_etape",
     }
 
 
