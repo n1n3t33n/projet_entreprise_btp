@@ -8,6 +8,7 @@ permissions sont des données (migration ``avancement 0003``).
 from typing import Any
 
 from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -15,8 +16,8 @@ from rest_framework.views import APIView
 
 from domaines.avancement import selecteurs
 from domaines.avancement.api import serialiseurs as s
-from domaines.avancement.constantes import FICHE_OUVERTE
-from domaines.avancement.services import acces, fiches
+from domaines.avancement.constantes import FICHE_OUVERTE, TERMINEE_DECLAREE
+from domaines.avancement.services import acces, declarations, fiches
 from domaines.identite.permissions import ADroit
 
 LIMITE_FICHES = 100
@@ -135,3 +136,113 @@ class VueCloture(APIView):
         motifs = {str(r["id_etape"]): r["motif"] for r in donnees.get("reports", [])}
         fiches.verifier_motifs(fiche, motifs)
         return Response(s.FicheRouteSerializer(fiches.cloturer(fiche, motifs)).data)
+
+
+# --- Déclarations et contrôle (EF-AVA-04 à 07, EF-AVA-10) -------------------------------
+def _statut(cree: bool) -> int:
+    """201 au premier envoi, 200 pour un rejeu déjà reçu (idempotence)."""
+    return status.HTTP_201_CREATED if cree else status.HTTP_200_OK
+
+
+class VueDeclaration(APIView):
+    """POST /api/etapes/{id}/declaration — étape terminée (EF-AVA-04), en
+    délégation si l'auteur n'est pas le technicien affecté (EF-AVA-07). Rend
+    un ou deux événements (validation implicite sans contrôle, Q-X)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("etapes", "MODIFIER")
+
+    @extend_schema(
+        request=s.DeclarationEntreeSerializer, responses={201: s.EvenementSerializer(many=True)}
+    )
+    def post(self, request: Request, id_etape: str) -> Response:
+        donnees = _valider(s.DeclarationEntreeSerializer, request.data)
+        evenements, cree = declarations.declarer_terminee(
+            request.user,
+            id_etape,
+            uuid=donnees.get("uuid"),
+            horodatage_appareil=donnees.get("horodatage_appareil"),
+            commentaire=donnees.get("commentaire"),
+        )
+        return Response(s.EvenementSerializer(evenements, many=True).data, status=_statut(cree))
+
+
+class VueBlocage(APIView):
+    """POST /api/etapes/{id}/blocage — blocage motivé (EF-AVA-05, RG-A10)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("etapes", "MODIFIER")
+
+    @extend_schema(request=s.BlocageEntreeSerializer, responses={201: s.EvenementSerializer})
+    def post(self, request: Request, id_etape: str) -> Response:
+        donnees = _valider(s.BlocageEntreeSerializer, request.data)
+        evenement, cree = declarations.bloquer(
+            request.user,
+            id_etape,
+            donnees["code_motif"],
+            commentaire=donnees.get("commentaire"),
+            id_article=donnees.get("article_id_article"),
+            uuid=donnees.get("uuid"),
+            horodatage_appareil=donnees.get("horodatage_appareil"),
+        )
+        return Response(s.EvenementSerializer(evenement).data, status=_statut(cree))
+
+
+class VueLeveeBlocage(APIView):
+    """POST /api/etapes/{id}/levee-blocage — reprise après blocage (ET-1)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("etapes", "MODIFIER")
+
+    @extend_schema(request=s.LeveeEntreeSerializer, responses={201: s.EvenementSerializer})
+    def post(self, request: Request, id_etape: str) -> Response:
+        donnees = _valider(s.LeveeEntreeSerializer, request.data)
+        evenement, cree = declarations.lever_blocage(
+            request.user, id_etape, commentaire=donnees.get("commentaire"), uuid=donnees.get("uuid")
+        )
+        return Response(s.EvenementSerializer(evenement).data, status=_statut(cree))
+
+
+class VueValidationEtape(APIView):
+    """POST /api/etapes/{id}/validation — contrôle d'une étape (EF-AVA-06) ;
+    le déclarant ne contrôle pas sa propre étape (RG-D11)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("etapes", "VALIDER")
+
+    @extend_schema(request=s.DecisionEtapeEntreeSerializer, responses={201: s.EvenementSerializer})
+    def post(self, request: Request, id_etape: str) -> Response:
+        donnees = _valider(s.DecisionEtapeEntreeSerializer, request.data)
+        evenement, cree = declarations.decider(
+            request.user, id_etape, donnees["decision"], donnees.get("motif"), donnees.get("uuid")
+        )
+        return Response(s.EvenementSerializer(evenement).data, status=_statut(cree))
+
+
+class VueEvenementsEtape(APIView):
+    """GET /api/etapes/{id}/evenements — historique complet (EF-AVA-10)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.EvenementSerializer(many=True))
+    def get(self, request: Request, id_etape: str) -> Response:
+        etape = acces.etape_autorisee(request.user, id_etape, "avancement", "LIRE")
+        evenements = selecteurs.evenements_de_l_etape(etape.pk)
+        return Response(s.EvenementSerializer(evenements, many=True).data)
+
+
+class VueEtapesAValider(APIView):
+    """GET /api/avancement/etapes-a-valider — étapes à contrôle déclarées,
+    en attente du chef de chantier ou du responsable technique (RG-A4)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("etapes", "VALIDER")
+
+    @extend_schema(responses=s.LigneEtapeSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        couverts = acces.chantiers_couverts(request.user, "etapes", "VALIDER")
+        etapes = selecteurs.etapes(couverts).filter(
+            statut=TERMINEE_DECLAREE, etape_modele__controle_requis=True
+        )
+        return Response(s.LigneEtapeSerializer(etapes, many=True).data)

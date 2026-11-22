@@ -6,6 +6,26 @@ from domaines.avancement.api import vues
 
 urlpatterns = [
     path(
+        "etapes/<uuid:id_etape>/declaration",
+        vues.VueDeclaration.as_view(),
+        name="etape-declaration",
+    ),
+    path("etapes/<uuid:id_etape>/blocage", vues.VueBlocage.as_view(), name="etape-blocage"),
+    path(
+        "etapes/<uuid:id_etape>/levee-blocage", vues.VueLeveeBlocage.as_view(), name="etape-levee"
+    ),
+    path(
+        "etapes/<uuid:id_etape>/validation",
+        vues.VueValidationEtape.as_view(),
+        name="etape-validation",
+    ),
+    path(
+        "etapes/<uuid:id_etape>/evenements",
+        vues.VueEvenementsEtape.as_view(),
+        name="etape-evenements",
+    ),
+    path("avancement/etapes-a-valider", vues.VueEtapesAValider.as_view(), name="etapes-a-valider"),
+    path(
         "logements/<uuid:id_logement>/etapes",
         vues.VueEtapesLogement.as_view(),
         name="etapes-logement",

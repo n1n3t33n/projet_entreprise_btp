@@ -15,7 +15,9 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from domaines.avancement import selecteurs
+from domaines.avancement.constantes import LONGUEUR_COMMENTAIRE
 from domaines.avancement.models import EtapeTravaux, EvenementExecution, FicheRoute
+from domaines.avancement.services.declarations import DECISIONS
 from domaines.identite.selecteurs import comptes
 
 
@@ -161,3 +163,43 @@ class ClotureEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
     sans motif, « non faite en fin de cycle »."""
 
     reports = ReportSerializer(many=True, required=False)
+
+
+# --- Déclarations (EF-AVA-04 à 07) ------------------------------------------------------
+# ``uuid`` : identifiant de l'événement généré par le téléphone (rejeu sans
+# doublon) ; ``horodatage_appareil`` : heure de la saisie hors ligne (RG-A5).
+def _commentaire() -> serializers.CharField:
+    return serializers.CharField(
+        max_length=LONGUEUR_COMMENTAIRE, required=False, allow_null=True, allow_blank=True
+    )
+
+
+class DeclarationEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    uuid = serializers.UUIDField(required=False)
+    horodatage_appareil = serializers.DateTimeField(required=False)
+    commentaire = _commentaire()
+
+
+class BlocageEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    """Corps du web (``code_motif``, ``commentaire``) ; ``article_id_article``
+    pour un manque de matériel (RG-A10)."""
+
+    code_motif = serializers.CharField(max_length=32)
+    commentaire = _commentaire()
+    article_id_article = serializers.UUIDField(required=False, allow_null=True)
+    uuid = serializers.UUIDField(required=False)
+    horodatage_appareil = serializers.DateTimeField(required=False)
+
+
+class LeveeEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    commentaire = _commentaire()
+    uuid = serializers.UUIDField(required=False)
+
+
+class DecisionEtapeEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    """ACCEPTE ou REFUSE (motif obligatoire au rejet). Le web envoie encore
+    « valider » / « rejeter » (I-30) : il s'alignera (F-13)."""
+
+    decision = serializers.ChoiceField(choices=list(DECISIONS))
+    motif = _commentaire()
+    uuid = serializers.UUIDField(required=False)

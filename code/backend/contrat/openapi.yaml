@@ -392,6 +392,25 @@ paths:
               schema:
                 $ref: '#/components/schemas/Erreur'
           description: ''
+  /api/avancement/etapes-a-valider:
+    get:
+      operationId: avancement_etapes_a_valider_list
+      description: |-
+        GET /api/avancement/etapes-a-valider — étapes à contrôle déclarées,
+        en attente du chef de chantier ou du responsable technique (RG-A4).
+      tags:
+      - avancement
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LigneEtape'
+          description: ''
   /api/chantiers/{id_chantier}/logements:
     get:
       operationId: chantiers_logements_list
@@ -567,6 +586,147 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Erreur'
+          description: ''
+  /api/etapes/{id_etape}/blocage:
+    post:
+      operationId: etapes_blocage_create
+      description: POST /api/etapes/{id}/blocage — blocage motivé (EF-AVA-05, RG-A10).
+      parameters:
+      - in: path
+        name: id_etape
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - etapes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlocageEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evenement'
+          description: ''
+  /api/etapes/{id_etape}/declaration:
+    post:
+      operationId: etapes_declaration_create
+      description: |-
+        POST /api/etapes/{id}/declaration — étape terminée (EF-AVA-04), en
+        délégation si l'auteur n'est pas le technicien affecté (EF-AVA-07). Rend
+        un ou deux événements (validation implicite sans contrôle, Q-X).
+      parameters:
+      - in: path
+        name: id_etape
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - etapes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeclarationEntreeRequest'
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Evenement'
+          description: ''
+  /api/etapes/{id_etape}/evenements:
+    get:
+      operationId: etapes_evenements_list
+      description: GET /api/etapes/{id}/evenements — historique complet (EF-AVA-10).
+      parameters:
+      - in: path
+        name: id_etape
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - etapes
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Evenement'
+          description: ''
+  /api/etapes/{id_etape}/levee-blocage:
+    post:
+      operationId: etapes_levee_blocage_create
+      description: POST /api/etapes/{id}/levee-blocage — reprise après blocage (ET-1).
+      parameters:
+      - in: path
+        name: id_etape
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - etapes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeveeEntreeRequest'
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evenement'
+          description: ''
+  /api/etapes/{id_etape}/validation:
+    post:
+      operationId: etapes_validation_create
+      description: |-
+        POST /api/etapes/{id}/validation — contrôle d'une étape (EF-AVA-06) ;
+        le déclarant ne contrôle pas sa propre étape (RG-D11).
+      parameters:
+      - in: path
+        name: id_etape
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - etapes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionEtapeEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evenement'
           description: ''
   /api/fiches-route:
     get:
@@ -2248,6 +2408,32 @@ components:
       - id_article
       - origine
       - unite_base
+    BlocageEntreeRequest:
+      type: object
+      description: |-
+        Corps du web (``code_motif``, ``commentaire``) ; ``article_id_article``
+        pour un manque de matériel (RG-A10).
+      properties:
+        code_motif:
+          type: string
+          minLength: 1
+          maxLength: 32
+        commentaire:
+          type: string
+          nullable: true
+          maxLength: 120
+        article_id_article:
+          type: string
+          format: uuid
+          nullable: true
+        uuid:
+          type: string
+          format: uuid
+        horodatage_appareil:
+          type: string
+          format: date-time
+      required:
+      - code_motif
     Categorie:
       type: object
       description: |-
@@ -2483,6 +2669,36 @@ components:
       description: |-
         * `ACCEPTE` - ACCEPTE
         * `REFUSE` - REFUSE
+    DecisionEtapeEntreeRequest:
+      type: object
+      description: |-
+        ACCEPTE ou REFUSE (motif obligatoire au rejet). Le web envoie encore
+        « valider » / « rejeter » (I-30) : il s'alignera (F-13).
+      properties:
+        decision:
+          $ref: '#/components/schemas/DecisionEnum'
+        motif:
+          type: string
+          nullable: true
+          maxLength: 120
+        uuid:
+          type: string
+          format: uuid
+      required:
+      - decision
+    DeclarationEntreeRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        horodatage_appareil:
+          type: string
+          format: date-time
+        commentaire:
+          type: string
+          nullable: true
+          maxLength: 120
     DroitAccorde:
       type: object
       properties:
@@ -2709,6 +2925,70 @@ components:
       - date_calcul
       - niveau_alerte
       - quantite
+    Evenement:
+      type: object
+      description: |-
+        ``EvenementExecutionDto``. ``est_delegation`` : déclaré pour le compte
+        d'un autre (RG-A9, Q-W) ; ``pour_le_compte_de`` est un ajout compatible.
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        etape_travaux_id_etape:
+          type: string
+          format: uuid
+        statut_avant:
+          type: string
+          nullable: true
+          maxLength: 32
+        statut_apres:
+          type: string
+          maxLength: 32
+        horodatage_appareil:
+          type: string
+          format: date-time
+        horodatage_serveur:
+          type: string
+          format: date-time
+        commentaire:
+          type: string
+          nullable: true
+          maxLength: 120
+        utilisateur_id_utilisateur:
+          type: string
+          format: uuid
+        nom_auteur:
+          type: string
+        est_delegation:
+          type: boolean
+          readOnly: true
+        pour_le_compte_de_id_utilisateur:
+          type: string
+          format: uuid
+          nullable: true
+        nom_pour_le_compte_de:
+          type: string
+          nullable: true
+          readOnly: true
+        motif_blocage_code_motif:
+          type: string
+          nullable: true
+        article_id_article:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - article_id_article
+      - est_delegation
+      - etape_travaux_id_etape
+      - motif_blocage_code_motif
+      - nom_auteur
+      - nom_pour_le_compte_de
+      - pour_le_compte_de_id_utilisateur
+      - statut_apres
+      - utilisateur_id_utilisateur
+      - uuid
     Execution:
       type: object
       properties:
@@ -2909,6 +3189,16 @@ components:
       - magasin_id_magasin
       - nombre_comptees
       - nombre_lignes
+    LeveeEntreeRequest:
+      type: object
+      properties:
+        commentaire:
+          type: string
+          nullable: true
+          maxLength: 120
+        uuid:
+          type: string
+          format: uuid
     LigneEtape:
       type: object
       description: |-
