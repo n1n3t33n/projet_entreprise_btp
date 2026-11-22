@@ -1054,6 +1054,86 @@ paths:
               schema:
                 $ref: '#/components/schemas/Mouvement'
           description: ''
+  /api/mouvements/{uuid_mouvement}/annulation:
+    post:
+      operationId: mouvements_annulation_create
+      description: |-
+        POST /api/mouvements/{uuid}/annulation — contre-mouvement justifié
+        (RG-S8) ; rend le contre-mouvement créé.
+      parameters:
+      - in: path
+        name: uuid_mouvement
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - mouvements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnulationEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mouvement'
+          description: ''
+  /api/mouvements/{uuid_mouvement}/validation:
+    post:
+      operationId: mouvements_validation_create
+      description: |-
+        POST /api/mouvements/{uuid}/validation — ACCEPTE ou REFUSE (motif
+        obligatoire pour un refus) ; l'auteur du mouvement ne peut pas décider
+        (RG-D8, RG-D11).
+      parameters:
+      - in: path
+        name: uuid_mouvement
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - mouvements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mouvement'
+          description: ''
+  /api/mouvements/a-valider:
+    get:
+      operationId: mouvements_a_valider_list
+      description: |-
+        GET /api/mouvements/a-valider — sorties en attente de décision, les plus
+        anciennes d'abord (statut A_VALIDER ou EN_ALERTE).
+      tags:
+      - mouvements
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mouvement'
+          description: ''
   /api/parametrage/parametres:
     get:
       operationId: parametrage_parametres_list
@@ -1669,6 +1749,15 @@ components:
       - niveau
       - statut
       - type_alerte
+    AnnulationEntreeRequest:
+      type: object
+      description: 'Contre-mouvement (RG-S8, EF-STK-11) : la justification est obligatoire.'
+      properties:
+        motif:
+          type: string
+          minLength: 1
+      required:
+      - motif
     Appareil:
       type: object
       description: '``AppareilDto`` (web, Administration › Appareils).'
@@ -2025,6 +2114,30 @@ components:
       - couleur
       - libelle
       - ordre
+    DecisionEntreeRequest:
+      type: object
+      description: |-
+        Décision sur un mouvement à valider (EF-STK-09). Motif obligatoire
+        pour un refus (ET-2 « rejeté (motif) »).
+      properties:
+        decision:
+          $ref: '#/components/schemas/DecisionEnum'
+        motif:
+          type: string
+          nullable: true
+        uuid:
+          type: string
+          format: uuid
+      required:
+      - decision
+    DecisionEnum:
+      enum:
+      - ACCEPTE
+      - REFUSE
+      type: string
+      description: |-
+        * `ACCEPTE` - ACCEPTE
+        * `REFUSE` - REFUSE
     DroitAccorde:
       type: object
       properties:

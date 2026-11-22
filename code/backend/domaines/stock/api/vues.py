@@ -1,4 +1,4 @@
-"""Points d'entrée du domaine « stock » (UC-1 ; EF-STK-01 à 03, 05 à 07, 10).
+"""Points d'entrée du domaine « stock » (UC-1 ; EF-STK-01 à 03, 05 à 07, 09 à 11).
 
 Chaque vue déclare son droit (``ADroit``, EF-AUT-07) ; ``services.acces``
 vérifie en plus que le magasin demandé est couvert par ce droit (périmètre).
@@ -20,7 +20,7 @@ from domaines.identite.permissions import ADroit
 from domaines.organisation import selecteurs as selecteurs_organisation
 from domaines.stock import selecteurs
 from domaines.stock.api import serialiseurs as s
-from domaines.stock.services import acces, mouvements, parametres, seuils
+from domaines.stock.services import acces, annulation, mouvements, parametres, seuils, validation
 from socle.api_outils import donnee_invalide
 
 LIMITE_PAR_DEFAUT = 200
@@ -198,4 +198,57 @@ class VueMouvementsArticle(APIView):
         lignes = selecteurs.mouvements().filter(magasin=magasin, article_id=id_article)
         return Response(
             s.MouvementSerializer(lignes[:LIMITE_PAR_DEFAUT], many=True, context=contexte()).data
+        )
+
+
+# --- Validation et annulation (EF-STK-09, EF-STK-11) ---------------------------------
+class VueMouvementsAValider(APIView):
+    """GET /api/mouvements/a-valider — sorties en attente de décision, les plus
+    anciennes d'abord (statut A_VALIDER ou EN_ALERTE)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("mouvements", "VALIDER")
+
+    @extend_schema(responses=s.MouvementSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        couverts = acces.magasins_couverts(request.user, "mouvements", "VALIDER")
+        lignes = selecteurs.en_attente(couverts)[:LIMITE_MAXIMALE]
+        return Response(s.MouvementSerializer(lignes, many=True, context=contexte()).data)
+
+
+class VueDecision(APIView):
+    """POST /api/mouvements/{uuid}/validation — ACCEPTE ou REFUSE (motif
+    obligatoire pour un refus) ; l'auteur du mouvement ne peut pas décider
+    (RG-D8, RG-D11)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("mouvements", "VALIDER")
+
+    @extend_schema(request=s.DecisionEntreeSerializer, responses=s.MouvementSerializer)
+    def post(self, request: Request, uuid_mouvement: str) -> Response:
+        donnees = _valider(s.DecisionEntreeSerializer, request.data)
+        mouvement = validation.decider(
+            request.user,
+            uuid_mouvement,
+            donnees["decision"],
+            donnees.get("motif"),
+            donnees.get("uuid"),
+        )
+        return Response(s.MouvementSerializer(mouvement, context=contexte()).data)
+
+
+class VueAnnulation(APIView):
+    """POST /api/mouvements/{uuid}/annulation — contre-mouvement justifié
+    (RG-S8) ; rend le contre-mouvement créé."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("mouvements", "VALIDER")
+
+    @extend_schema(request=s.AnnulationEntreeSerializer, responses={201: s.MouvementSerializer})
+    def post(self, request: Request, uuid_mouvement: str) -> Response:
+        donnees = _valider(s.AnnulationEntreeSerializer, request.data)
+        contre = annulation.annuler(request.user, uuid_mouvement, donnees["motif"])
+        relu = selecteurs.mouvements().get(pk=contre.pk)
+        return Response(
+            s.MouvementSerializer(relu, context=contexte()).data, status=status.HTTP_201_CREATED
         )

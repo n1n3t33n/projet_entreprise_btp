@@ -17,80 +17,17 @@ from domaines.organisation.models import (
     Logement,
     Magasin,
     ParametreChantier,
-    TypeLogement,
     Zone,
 )
 from domaines.referentiels.models import (
-    Article,
-    Conditionnement,
-    CorpsEtat,
-    RegleValidation,
-    TypeMouvement,
     UniteMesure,
 )
-from domaines.stock.models import Alerte, MouvementStock, StockCourant
+from domaines.stock.models import Alerte, MouvementStock
+from domaines.stock.tests.outils import corps_mouvement, corps_sortie, stock_de
 
 pytestmark = pytest.mark.django_db
 
 Client = Callable[..., APIClient]
-
-
-@pytest.fixture
-def chantier_stock(magasin: Magasin) -> dict[str, Any]:
-    kg = UniteMesure.objects.create(code_unite="KG", libelle="kg", type_unite="MASSE")
-    tonne = UniteMesure.objects.create(code_unite="T", libelle="tonne", type_unite="MASSE")
-    ciment = Article.objects.create(
-        code="A1", designation="Ciment", origine="ACHAT", unite_mesure=kg
-    )
-    Conditionnement.objects.create(article=ciment, unite_mesure=tonne, facteur_conversion=1000)
-    villa = TypeLogement.objects.create(code_type="VILLA3", libelle="Villa 3 pièces")
-    zone = Zone.objects.create(
-        code="A", nom="Îlot A", type_zone="TRANCHE", chantier=magasin.chantier
-    )
-    logement = Logement.objects.create(numero="A01", zone=zone, type_logement=villa)
-    TypeMouvement.objects.create(code_type_mouvement="ENT_RECEPTION", libelle="Réception", sens=1)
-    TypeMouvement.objects.create(
-        code_type_mouvement="SOR_LOGEMENT",
-        libelle="Sortie",
-        sens=-1,
-        destination_obligatoire=True,
-    )
-    TypeMouvement.objects.create(
-        code_type_mouvement="SOR_PERTE", libelle="Perte", sens=-1, motif_obligatoire=True
-    )
-    CorpsEtat.objects.create(code_corps_etat="GO", libelle="Gros œuvre", ordre=1)
-    RegleValidation.objects.create(
-        type_evenement="MOUVEMENT_STOCK",
-        champ_teste="quantite_base",
-        operateur="SUPERIEUR_EGAL",
-        valeur_seuil=Decimal("100"),
-    )
-    return {"magasin": magasin, "ciment": ciment, "logement": logement}
-
-
-def _corps(donnees: dict[str, Any], type_mouvement: str, quantite: str, **champs: Any) -> dict:
-    return {
-        "magasin_id_magasin": str(donnees["magasin"].pk),
-        "article_id_article": str(donnees["ciment"].pk),
-        "type_mouvement_code_type_mouvement": type_mouvement,
-        "quantite_saisie": quantite,
-        **champs,
-    }
-
-
-def _sortie(donnees: dict[str, Any], quantite: str, **champs: Any) -> dict:
-    destination = {
-        "logement_id_logement": str(donnees["logement"].pk),
-        "corps_etat": "GO",
-        "beneficiaire": "Équipe A",
-    }
-    return _corps(donnees, "SOR_LOGEMENT", quantite, **{**destination, **champs})
-
-
-def _stock(donnees: dict[str, Any]) -> StockCourant:
-    return StockCourant.objects.get(
-        seuil_stock__magasin=donnees["magasin"], seuil_stock__article=donnees["ciment"]
-    )
 
 
 # --- Saisie et projection (RG-S1, RG-S2) -------------------------------------------
@@ -99,7 +36,7 @@ def test_une_reception_alimente_le_stock_et_cree_le_seuil(
 ) -> None:
     reponse = client_authentifie().post(
         "/api/mouvements",
-        _corps(chantier_stock, "ENT_RECEPTION", "2", code_unite="T"),
+        corps_mouvement(chantier_stock, "ENT_RECEPTION", "2", code_unite="T"),
         format="json",
     )
     assert reponse.status_code == 201
@@ -110,7 +47,7 @@ def test_une_reception_alimente_le_stock_et_cree_le_seuil(
         "T",
     )
     assert corps["statut_validation"] == "VALIDE"
-    stock = _stock(chantier_stock)
+    stock = stock_de(chantier_stock)
     assert stock.quantite == Decimal("2000")
     assert stock.seuil_stock.actif is False
 
@@ -121,7 +58,7 @@ def test_une_unite_etrangere_a_l_article_est_refusee(
     UniteMesure.objects.create(code_unite="L", libelle="litre", type_unite="VOLUME")
     reponse = client_authentifie().post(
         "/api/mouvements",
-        _corps(chantier_stock, "ENT_RECEPTION", "1", code_unite="L"),
+        corps_mouvement(chantier_stock, "ENT_RECEPTION", "1", code_unite="L"),
         format="json",
     )
     assert reponse.status_code == 400
@@ -132,7 +69,9 @@ def test_un_type_reserve_au_serveur_ne_se_saisit_pas(
     client_authentifie: Client, chantier_stock: dict[str, Any]
 ) -> None:
     reponse = client_authentifie().post(
-        "/api/mouvements", _corps(chantier_stock, "AJU_INVENTAIRE_PLUS", "1"), format="json"
+        "/api/mouvements",
+        corps_mouvement(chantier_stock, "AJU_INVENTAIRE_PLUS", "1"),
+        format="json",
     )
     assert reponse.status_code == 400
 
@@ -142,13 +81,13 @@ def test_un_envoi_rejoue_n_est_inscrit_qu_une_fois(
     client_authentifie: Client, chantier_stock: dict[str, Any]
 ) -> None:
     client = client_authentifie()
-    corps = _corps(chantier_stock, "ENT_RECEPTION", "10", uuid=str(uuid.uuid4()))
+    corps = corps_mouvement(chantier_stock, "ENT_RECEPTION", "10", uuid=str(uuid.uuid4()))
     assert client.post("/api/mouvements", corps, format="json").status_code == 201
     rejeu = client.post("/api/mouvements", corps, format="json")
     assert rejeu.status_code == 200
     assert rejeu.json()["uuid"] == corps["uuid"]
     assert MouvementStock.objects.count() == 1
-    assert _stock(chantier_stock).quantite == Decimal("10")
+    assert stock_de(chantier_stock).quantite == Decimal("10")
     autre = client.post("/api/mouvements", {**corps, "quantite_saisie": "11"}, format="json")
     assert autre.status_code == 409
     assert autre.json()["motif"] == "UUID_DEJA_UTILISE"
@@ -160,11 +99,11 @@ def test_une_sortie_exige_sa_destination_complete(
 ) -> None:
     client = client_authentifie()
     sans_logement = client.post(
-        "/api/mouvements", _corps(chantier_stock, "SOR_LOGEMENT", "1"), format="json"
+        "/api/mouvements", corps_mouvement(chantier_stock, "SOR_LOGEMENT", "1"), format="json"
     )
     assert "logement_id_logement" in sans_logement.json()["details"]
     sans_beneficiaire = client.post(
-        "/api/mouvements", _sortie(chantier_stock, "1", beneficiaire=""), format="json"
+        "/api/mouvements", corps_sortie(chantier_stock, "1", beneficiaire=""), format="json"
     )
     assert "beneficiaire" in sans_beneficiaire.json()["details"]
 
@@ -179,7 +118,7 @@ def test_un_logement_d_un_autre_chantier_est_refuse(
     )
     reponse = client_authentifie().post(
         "/api/mouvements",
-        _sortie(chantier_stock, "1", logement_id_logement=str(ailleurs.pk)),
+        corps_sortie(chantier_stock, "1", logement_id_logement=str(ailleurs.pk)),
         format="json",
     )
     assert reponse.status_code == 400
@@ -189,7 +128,7 @@ def test_une_perte_exige_un_motif(
     client_authentifie: Client, chantier_stock: dict[str, Any]
 ) -> None:
     reponse = client_authentifie().post(
-        "/api/mouvements", _corps(chantier_stock, "SOR_PERTE", "1"), format="json"
+        "/api/mouvements", corps_mouvement(chantier_stock, "SOR_PERTE", "1"), format="json"
     )
     assert "motif" in reponse.json()["details"]
 
@@ -198,22 +137,28 @@ def test_une_grosse_sortie_est_effective_mais_a_valider(
     client_authentifie: Client, chantier_stock: dict[str, Any]
 ) -> None:
     client = client_authentifie()
-    client.post("/api/mouvements", _corps(chantier_stock, "ENT_RECEPTION", "500"), format="json")
-    petite = client.post("/api/mouvements", _sortie(chantier_stock, "10"), format="json").json()
-    grosse = client.post("/api/mouvements", _sortie(chantier_stock, "150"), format="json").json()
+    client.post(
+        "/api/mouvements", corps_mouvement(chantier_stock, "ENT_RECEPTION", "500"), format="json"
+    )
+    petite = client.post(
+        "/api/mouvements", corps_sortie(chantier_stock, "10"), format="json"
+    ).json()
+    grosse = client.post(
+        "/api/mouvements", corps_sortie(chantier_stock, "150"), format="json"
+    ).json()
     assert petite["statut_validation"] == "VALIDE"
     assert grosse["statut_validation"] == "A_VALIDER"
-    assert _stock(chantier_stock).quantite == Decimal("340")
+    assert stock_de(chantier_stock).quantite == Decimal("340")
 
 
 def test_le_stock_negatif_est_autorise_et_signale(
     client_authentifie: Client, chantier_stock: dict[str, Any]
 ) -> None:
     reponse = client_authentifie().post(
-        "/api/mouvements", _sortie(chantier_stock, "5"), format="json"
+        "/api/mouvements", corps_sortie(chantier_stock, "5"), format="json"
     )
     assert reponse.status_code == 201
-    stock = _stock(chantier_stock)
+    stock = stock_de(chantier_stock)
     assert (stock.quantite, stock.niveau_alerte) == (Decimal("-5"), "VIDE")
     assert Alerte.objects.filter(type_alerte="STOCK_NEGATIF", statut="OUVERTE").count() == 1
 
@@ -228,7 +173,7 @@ def test_le_chantier_peut_interdire_le_stock_negatif(
         chantier=chantier_stock["magasin"].chantier,
     )
     reponse = client_authentifie().post(
-        "/api/mouvements", _sortie(chantier_stock, "5"), format="json"
+        "/api/mouvements", corps_sortie(chantier_stock, "5"), format="json"
     )
     assert reponse.status_code == 409
     assert reponse.json()["motif"] == "STOCK_INSUFFISANT"
@@ -241,13 +186,13 @@ def test_une_saisie_tardive_exige_une_justification(
     il_y_a_3_jours = (timezone.now() - timedelta(days=3)).isoformat()
     sans = client.post(
         "/api/mouvements",
-        _corps(chantier_stock, "ENT_RECEPTION", "1", date_operation=il_y_a_3_jours),
+        corps_mouvement(chantier_stock, "ENT_RECEPTION", "1", date_operation=il_y_a_3_jours),
         format="json",
     )
     assert "motif" in sans.json()["details"]
     avec = client.post(
         "/api/mouvements",
-        _corps(
+        corps_mouvement(
             chantier_stock,
             "ENT_RECEPTION",
             "1",
@@ -260,7 +205,7 @@ def test_une_saisie_tardive_exige_une_justification(
     demain = (timezone.now() + timedelta(days=1)).isoformat()
     futur = client.post(
         "/api/mouvements",
-        _corps(chantier_stock, "ENT_RECEPTION", "1", date_operation=demain),
+        corps_mouvement(chantier_stock, "ENT_RECEPTION", "1", date_operation=demain),
         format="json",
     )
     assert "date_operation" in futur.json()["details"]
@@ -274,7 +219,7 @@ def test_une_derive_d_horloge_est_signalee_sans_bloquer(
         client_authentifie()
         .post(
             "/api/mouvements",
-            _corps(chantier_stock, "ENT_RECEPTION", "1", horodatage_appareil=decale),
+            corps_mouvement(chantier_stock, "ENT_RECEPTION", "1", horodatage_appareil=decale),
             format="json",
         )
         .json()
@@ -287,7 +232,9 @@ def test_definir_un_seuil_reclasse_le_stock_et_ouvre_une_alerte(
     client_authentifie: Client, chantier_stock: dict[str, Any]
 ) -> None:
     client = client_authentifie()
-    client.post("/api/mouvements", _corps(chantier_stock, "ENT_RECEPTION", "20"), format="json")
+    client.post(
+        "/api/mouvements", corps_mouvement(chantier_stock, "ENT_RECEPTION", "20"), format="json"
+    )
     url = (
         f"/api/magasins/{chantier_stock['magasin'].pk}/articles/{chantier_stock['ciment'].pk}/seuil"
     )
@@ -295,7 +242,7 @@ def test_definir_un_seuil_reclasse_le_stock_et_ouvre_une_alerte(
         client.put(url, {"seuil_minimal": "80", "seuil_critique": "30"}, format="json").status_code
         == 204
     )
-    assert _stock(chantier_stock).niveau_alerte == "CRITIQUE"
+    assert stock_de(chantier_stock).niveau_alerte == "CRITIQUE"
     alertes = client.get("/api/stock/alertes").json()
     assert [a["type_alerte"] for a in alertes] == ["SEUIL_CRITIQUE"]
     incoherent = client.put(url, {"seuil_minimal": "10", "seuil_critique": "30"}, format="json")
@@ -306,7 +253,9 @@ def test_la_ligne_de_stock_a_la_forme_de_l_ecran(
     client_authentifie: Client, chantier_stock: dict[str, Any]
 ) -> None:
     client = client_authentifie()
-    client.post("/api/mouvements", _corps(chantier_stock, "ENT_RECEPTION", "20"), format="json")
+    client.post(
+        "/api/mouvements", corps_mouvement(chantier_stock, "ENT_RECEPTION", "20"), format="json"
+    )
     ligne = client.get(f"/api/magasins/{chantier_stock['magasin'].pk}/stock").json()[0]
     assert ligne["article"]["unite_base"]["code_unite"] == "KG"
     assert ligne["stock"]["quantite"] == "20.000"
@@ -317,8 +266,10 @@ def test_la_ligne_de_stock_a_la_forme_de_l_ecran(
 
 def test_l_historique_se_filtre(client_authentifie: Client, chantier_stock: dict[str, Any]) -> None:
     client = client_authentifie()
-    client.post("/api/mouvements", _corps(chantier_stock, "ENT_RECEPTION", "20"), format="json")
-    client.post("/api/mouvements", _sortie(chantier_stock, "2"), format="json")
+    client.post(
+        "/api/mouvements", corps_mouvement(chantier_stock, "ENT_RECEPTION", "20"), format="json"
+    )
+    client.post("/api/mouvements", corps_sortie(chantier_stock, "2"), format="json")
     vers_logement = client.get(
         "/api/mouvements", {"logement": str(chantier_stock["logement"].pk)}
     ).json()
@@ -332,7 +283,7 @@ def test_sans_le_droit_de_creer_la_saisie_est_interdite(
     client_authentifie: Client, chantier_stock: dict[str, Any]
 ) -> None:
     reponse = client_authentifie("TECHNICIEN").post(
-        "/api/mouvements", _corps(chantier_stock, "ENT_RECEPTION", "1"), format="json"
+        "/api/mouvements", corps_mouvement(chantier_stock, "ENT_RECEPTION", "1"), format="json"
     )
     assert reponse.status_code == 403
 

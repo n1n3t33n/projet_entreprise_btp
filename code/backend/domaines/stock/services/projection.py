@@ -61,7 +61,7 @@ def stock_courant_verrouille(id_magasin: Any, id_article: Any) -> StockCourant:
     )
 
 
-def _ouvrir(stock: StockCourant, type_alerte: str, message: str) -> None:
+def ouvrir_alerte(stock: StockCourant, type_alerte: str, message: str) -> None:
     """Ouvre une alerte, sauf si la même est déjà ouverte pour ce stock (un
     stock critique qui devient vide ne crée pas une seconde alerte)."""
     if Alerte.objects.filter(
@@ -77,7 +77,7 @@ def _ouvrir(stock: StockCourant, type_alerte: str, message: str) -> None:
     )
 
 
-def _fermer(stock: StockCourant, types: list[str]) -> None:
+def fermer_alertes(stock: StockCourant, types: list[str]) -> None:
     Alerte.objects.filter(stock_courant=stock, statut=ALERTE_OUVERTE, type_alerte__in=types).update(
         statut=ALERTE_TRAITEE
     )
@@ -97,22 +97,24 @@ def recalculer(stock: StockCourant, nouvelle_quantite: Decimal) -> StockCourant:
     article, magasin = seuil.article, seuil.magasin
     libelle = f"{article.designation} ({article.code}), magasin {magasin.code}"
     if nouvelle_quantite < 0 <= ancienne_quantite:
-        _ouvrir(stock, ALERTE_STOCK_NEGATIF, f"{libelle} : stock négatif ({nouvelle_quantite}).")
+        ouvrir_alerte(
+            stock, ALERTE_STOCK_NEGATIF, f"{libelle} : stock négatif ({nouvelle_quantite})."
+        )
     if nouvelle_quantite >= 0:
-        _fermer(stock, [ALERTE_STOCK_NEGATIF])
+        fermer_alertes(stock, [ALERTE_STOCK_NEGATIF])
     if seuil.actif and GRAVITE[stock.niveau_alerte] > GRAVITE[ancien_niveau]:
         if stock.niveau_alerte == NIVEAU_MINIMAL:
-            _ouvrir(
+            ouvrir_alerte(
                 stock,
                 ALERTE_SEUIL_MINIMAL,
                 f"{libelle} : {nouvelle_quantite} sous le seuil minimal ({seuil.seuil_minimal}).",
             )
         else:
-            _ouvrir(
+            ouvrir_alerte(
                 stock,
                 ALERTE_SEUIL_CRITIQUE,
                 f"{libelle} : {nouvelle_quantite} sous le seuil critique ({seuil.seuil_critique}).",
             )
     if stock.niveau_alerte == NIVEAU_NORMAL:
-        _fermer(stock, [ALERTE_SEUIL_MINIMAL, ALERTE_SEUIL_CRITIQUE])
+        fermer_alertes(stock, [ALERTE_SEUIL_MINIMAL, ALERTE_SEUIL_CRITIQUE])
     return stock

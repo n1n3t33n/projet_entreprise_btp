@@ -6,7 +6,15 @@ from typing import Any
 
 import pytest
 
-from domaines.referentiels.models import Article, TypeMouvement, UniteMesure
+from domaines.organisation.models import Logement, Magasin, TypeLogement, Zone
+from domaines.referentiels.models import (
+    Article,
+    Conditionnement,
+    CorpsEtat,
+    RegleValidation,
+    TypeMouvement,
+    UniteMesure,
+)
 from domaines.stock.models import MouvementStock, SeuilStock, StockCourant
 
 
@@ -43,3 +51,36 @@ def mouvement(
         stock_courant=stock_courant,
         unite_mesure=catalogue["sac"],
     )
+
+
+@pytest.fixture
+def chantier_stock(magasin: Magasin) -> dict[str, Any]:
+    kg = UniteMesure.objects.create(code_unite="KG", libelle="kg", type_unite="MASSE")
+    tonne = UniteMesure.objects.create(code_unite="T", libelle="tonne", type_unite="MASSE")
+    ciment = Article.objects.create(
+        code="A1", designation="Ciment", origine="ACHAT", unite_mesure=kg
+    )
+    Conditionnement.objects.create(article=ciment, unite_mesure=tonne, facteur_conversion=1000)
+    villa = TypeLogement.objects.create(code_type="VILLA3", libelle="Villa 3 pièces")
+    zone = Zone.objects.create(
+        code="A", nom="Îlot A", type_zone="TRANCHE", chantier=magasin.chantier
+    )
+    logement = Logement.objects.create(numero="A01", zone=zone, type_logement=villa)
+    TypeMouvement.objects.create(code_type_mouvement="ENT_RECEPTION", libelle="Réception", sens=1)
+    TypeMouvement.objects.create(
+        code_type_mouvement="SOR_LOGEMENT",
+        libelle="Sortie",
+        sens=-1,
+        destination_obligatoire=True,
+    )
+    TypeMouvement.objects.create(
+        code_type_mouvement="SOR_PERTE", libelle="Perte", sens=-1, motif_obligatoire=True
+    )
+    CorpsEtat.objects.create(code_corps_etat="GO", libelle="Gros œuvre", ordre=1)
+    RegleValidation.objects.create(
+        type_evenement="MOUVEMENT_STOCK",
+        champ_teste="quantite_base",
+        operateur="SUPERIEUR_EGAL",
+        valeur_seuil=Decimal("100"),
+    )
+    return {"magasin": magasin, "ciment": ciment, "logement": logement}
