@@ -6,7 +6,7 @@ logements, ses types de logement et ses paramètres, tels que les simule le web
 
 Différences voulues avec le web : statut des logements dans leur cycle de vie
 {A_VENIR, EN_COURS, LIVRE} (Q-A) ; paramètre ``delai_relance_validation_h``
-ajouté (Q-F), absent du web.
+ajouté (Q-F), absent du web ; paramètres RG-S10 et RG-S11 ajoutés en B3.
 """
 
 from datetime import date
@@ -57,6 +57,9 @@ PARAMETRES = [
         "ENTIER",
         "Délai avant relance d'un mouvement sans décision (heures)",
     ),
+    # Valeurs du cahier des charges (RG-S10, RG-S11), lues par le stock (B3).
+    ("delai_saisie_retroactive_h", "48", "ENTIER", "Délai de saisie rétroactive (heures)"),
+    ("derive_horloge_max_min", "5", "ENTIER", "Dérive d'horloge tolérée (minutes)"),
 ]
 
 

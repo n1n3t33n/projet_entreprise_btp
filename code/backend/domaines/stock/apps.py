@@ -14,7 +14,11 @@ class ConfigurationStock(AppConfig):
     verbose_name = "Stock et journal immuable"
 
     def ready(self) -> None:
+        from domaines.stock import demo
         from socle.base_de_donnees.partitions import declarer_table_partitionnee
+        from socle.demo import declarer_chargeur
 
         # Partitions mensuelles préparées par le traitement creer_partitions.
         declarer_table_partitionnee("evenement_validation")
+        # Rang 30 : après l'identité (auteurs des mouvements).
+        declarer_chargeur(30, "stock", demo.charger)
