@@ -19,7 +19,9 @@ code/backend/
 │   ├── referentiels/     MPD-3 : catalogue, unités, gammes, mouvements, règles
 │   ├── stock/            MPD-4 : mouvements immuables, validations, seuils,
 │   │                     stock courant, alertes, inventaires
-│   └── avancement/ synchronisation/ acquereur/  (à venir)
+│   ├── avancement/       MPD-5 : étapes, journal d'exécution, fiches de route,
+│   │                     avancement agrégé (notifications en B6)
+│   └── synchronisation/ acquereur/  (à venir)
 ├── contrat/              contrat d'API OpenAPI généré et committé
 ├── sql/                  création des rôles PostgreSQL et de la base
 └── requirements/         dépendances épinglées (base, dev, production)
@@ -88,8 +90,8 @@ python manage.py migrate --database migration
 python manage.py creer_partitions
 ```
 
-Tâches planifiées : `python manage.py lancer_traitement creer_partitions`
-chaque jour, `python manage.py lancer_traitement relancer_validations` chaque
-heure (relance des sorties restées sans décision). Chaque passage est tracé dans la table
+Tâches planifiées, toutes par `python manage.py lancer_traitement <nom>` :
+`creer_partitions` et `cycler_fiches_route` chaque jour,
+`consolider_avancement` chaque nuit, `relancer_validations` chaque heure. Chaque passage est tracé dans la table
 `execution_traitement` et visible dans `GET /api/metriques` ; un échec envoie
 une alerte par courriel. Serveur : `gunicorn configuration.wsgi`.

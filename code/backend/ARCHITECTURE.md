@@ -15,8 +15,9 @@ colonne peut ne jamais sortir de l'API.
 
 `domaines/` contient le métier, un dossier par domaine du MERISE :
 `identite` (MPD-1), `organisation` (MPD-2), `referentiels` (MPD-3), `stock`
-(MPD-4). Les domaines avancement, synchronisation et acquéreur viendront
-s'ajouter au même endroit, sur le même modèle.
+(MPD-4), `avancement` (MPD-5 ; les notifications arriveront en B6). Les
+domaines synchronisation et acquéreur viendront s'ajouter au même endroit,
+sur le même modèle.
 
 `socle/` contient ce qui sert à tous les domaines sans appartenir à aucun :
 journaux JSON et identifiant de corrélation, format d'erreur unique,
@@ -227,9 +228,40 @@ de journaliser (un champ de plus, une autre table), seul son service bouge.
 
 Les dépendances vont dans un seul sens : organisation ne dépend de personne,
 référentiels dépend d'organisation, identité lit organisation pour ses
-périmètres, stock dépend des trois (magasins et logements, articles et types
-de mouvement, auteurs et valideurs). Les couches `api/` de tous les domaines
-utilisent `identite.permissions`, qui est transverse.
+périmètres, stock et avancement dépendent des trois (magasins et logements,
+articles, types de mouvement et gammes, auteurs et valideurs). Les couches
+`api/` de tous les domaines utilisent `identite.permissions`, qui est
+transverse, et `identite.services.portee`, qui traduit la couverture d'un
+droit en chantiers et en magasins (le stock filtre par magasin, l'avancement
+par chantier).
+
+## Réagir à un autre domaine sans en dépendre à l'envers
+
+Quand un logement est créé, ou qu'une gamme est publiée, l'avancement doit
+créer des étapes. L'organisation et les référentiels ne doivent pas
+connaître l'avancement : c'est l'avancement qui s'abonne à leurs événements,
+dans son `apps.py` :
+
+```python
+post_save.connect(
+    recepteurs.logement_enregistre, sender=Logement, dispatch_uid="avancement"
+)
+signaux.gamme_publiee.connect(recepteurs.gamme_publiee, dispatch_uid="avancement")
+```
+
+`post_save` est le signal de Django ; `gamme_publiee` est un signal déclaré
+par les référentiels (`referentiels/signaux.py`) et émis par leur service de
+publication. Les récepteurs (`avancement/recepteurs.py`) appellent un
+service du domaine. Un domaine qui veut réagir à un autre fait de même :
+l'émetteur déclare un signal, le récepteur s'abonne, la dépendance reste dans
+un seul sens.
+
+Le journal d'exécution de l'avancement suit les mêmes règles que ceux du
+stock : table immuable et partitionnée, écriture par une seule fonction
+(`avancement/services/journal.ecrire`), qui met aussi à jour le statut de
+l'étape et recalcule l'avancement agrégé dans la même transaction. Ici le
+verrou est un `SELECT … FOR UPDATE` ordinaire : il porte sur `etape_travaux`,
+table modifiable, et non sur le journal.
 
 ## Les journaux immuables du stock
 
@@ -307,7 +339,9 @@ Les registres existants :
 Le domaine stock s'y inscrit quatre fois : chargeur de démonstration (rang
 30, après l'identité qui fournit les auteurs), cible d'import « stock »,
 traitement `relancer_validations` et table partitionnée
-`evenement_validation` (`stock/apps.py`).
+`evenement_validation` (`stock/apps.py`). L'avancement s'inscrit de même :
+chargeur de rang 40, traitements `cycler_fiches_route` et
+`consolider_avancement`, table `evenement_execution`.
 
 ## Les rôles PostgreSQL
 
@@ -364,6 +398,10 @@ Ajoute enfin la table à `TABLES_MPD` dans
    ```python
    magasin = acces.magasin_autorise(request.user, id_magasin, "stock", "LIRE")
    ```
+
+   Pour une donnée qui appartient à un chantier (une étape, un logement),
+   l'avancement fait la même chose avec `avancement/services/acces.py`
+   (`etape_autorisee`, `logement_autorise`).
 4. La permission, si elle est nouvelle, dans une migration de données qui
    appelle `socle/permissions_donnees.py`. L'administrateur la reçoit
    automatiquement ; les autres rôles se règlent dans la matrice (et dans
@@ -392,8 +430,10 @@ arrive, ajoute aussi une contrainte en base.
 un bilan en une phrase, inscrite avec `declarer_traitement` dans le `ready()`
 du domaine. La plateforme la lance avec `manage.py lancer_traitement <nom>` ;
 chaque passage est tracé dans `execution_traitement` et un échec envoie une
-alerte. Il en existe deux : `creer_partitions` (quotidien) et
-`relancer_validations` (horaire, `stock/services/relance.py`).
+alerte. Il en existe quatre : `creer_partitions` (quotidien),
+`relancer_validations` (horaire, `stock/services/relance.py`),
+`cycler_fiches_route` (quotidien, `avancement/services/fiches.py`) et
+`consolider_avancement` (nocturne, `avancement/services/agregats.py`).
 
 ## Les tests
 

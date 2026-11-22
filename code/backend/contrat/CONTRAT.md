@@ -59,10 +59,10 @@ jamais de code interne (charte § 8). `details`, `secondes_restantes` et
 | --- | --- |
 | 400 | `DONNEES_INVALIDES`, `FORMAT_NON_PRIS_EN_CHARGE` |
 | 401 | `NON_AUTHENTIFIE`, `JETON_INVALIDE`, `JETON_EXPIRE` (le mobile redemande le mot de passe) ; `APPAREIL_REVOQUE`, `COMPTE_DESACTIVE` (le mobile **efface ses données locales**, SQ-5 étapes 14-15) ; `APPAREIL_INACTIF` ; à la connexion : `IDENTIFIANTS` |
-| 403 | `ACCES_REFUSE` ; `SEPARATION_DES_TACHES` (celui qui a saisi ou compté ne valide pas, RG-D8) ; à la connexion : `COMPTE_INACTIF`, `AUCUNE_AFFECTATION`, `APPAREIL_REVOQUE` |
+| 403 | `ACCES_REFUSE` ; `SEPARATION_DES_TACHES` (celui qui a saisi, compté ou déclaré ne valide pas, RG-D8, RG-D11) ; `DECLARATION_INTERDITE` (RG-A3) ; à la connexion : `COMPTE_INACTIF`, `AUCUNE_AFFECTATION`, `APPAREIL_REVOQUE` |
 | 404 | `INTROUVABLE` |
 | 405 | `METHODE_NON_AUTORISEE` |
-| 409 | `VERROUILLAGE_ADMINISTRATION` ; gammes : `BROUILLON_EXISTANT`, `GAMME_PUBLIEE`, `GAMME_NON_BROUILLON`, `GAMME_VIDE`, `GAMME_NON_ACTIVE` ; import : `RIEN_A_IMPORTER` ; stock : `UUID_DEJA_UTILISE`, `STOCK_INSUFFISANT`, `DECISION_IMPOSSIBLE`, `DEJA_ANNULE`, `CONTRE_MOUVEMENT`, `STOCK_INITIAL_EXISTANT` ; inventaire : `INVENTAIRE_EN_COURS`, `COMPTAGE_INCOMPLET`, `ETAPE_INVENTAIRE`, `LIGNE_DEJA_TRAITEE` |
+| 409 | `VERROUILLAGE_ADMINISTRATION` ; gammes : `BROUILLON_EXISTANT`, `GAMME_PUBLIEE`, `GAMME_NON_BROUILLON`, `GAMME_VIDE`, `GAMME_NON_ACTIVE` ; import : `RIEN_A_IMPORTER` ; stock : `UUID_DEJA_UTILISE`, `STOCK_INSUFFISANT`, `DECISION_IMPOSSIBLE`, `DEJA_ANNULE`, `CONTRE_MOUVEMENT`, `STOCK_INITIAL_EXISTANT` ; inventaire : `INVENTAIRE_EN_COURS`, `COMPTAGE_INCOMPLET`, `ETAPE_INVENTAIRE`, `LIGNE_DEJA_TRAITEE` ; avancement : `TRANSITION_IMPOSSIBLE`, `DECISION_IMPOSSIBLE`, `ETAPE_TERMINEE`, `FICHE_CLOTUREE` |
 | 429 | `VERROUILLE` (connexion, EF-AUT-04) ; `TROP_DE_REQUETES` ; en-tête `Retry-After` |
 | 500 | `ERREUR_INTERNE` + `id_correlation` |
 
@@ -131,6 +131,25 @@ colonnes possibles dans `details.contenu`.
   `/annulation`, `GET /api/stock/alertes` et toutes les routes
   `/api/inventaires`.
 
+## Avancement (B4)
+
+- Les étapes d'un logement naissent de la gamme active de son type ; il n'y a
+  pas de route de création. Statuts : `A_FAIRE`, `EN_COURS`,
+  `TERMINEE_DECLAREE`, `BLOQUEE`, `VALIDEE`.
+- `POST /api/etapes/{id}/declaration`, `/blocage`, `/levee-blocage` et
+  `/validation` sont idempotents sur l'`uuid` de l'événement (téléphone hors
+  ligne) : `201` au premier envoi, `200` au rejeu. La déclaration rend un ou
+  deux événements : une étape sans contrôle est validée implicitement.
+- Décision de contrôle : `{"decision": "ACCEPTE" | "REFUSE", "motif"}`,
+  motif obligatoire au rejet.
+- `est_delegation` vaut vrai quand l'auteur a déclaré pour le compte du
+  technicien affecté (`pour_le_compte_de_id_utilisateur`,
+  `nom_pour_le_compte_de`).
+- Pourcentages en chaîne à trois décimales ; `id_cible` d'un agrégat de
+  corps d'état : « id du chantier:code du corps d'état ».
+- Routes sans écran web à ce jour (F-13) : `/api/fiches-route*`,
+  `/api/etapes/{id}/declaration`, `/api/etapes/{id}/levee-blocage`.
+
 ## Écarts avec le contrat simulé des fronts (à reprendre en phase F-06)
 
 - Codes de rôle en `UPPER_SNAKE` (le web les simule en minuscules).
@@ -173,3 +192,15 @@ colonnes possibles dans `details.contenu`.
   ne se saisissent pas. Le mobile n'a qu'`AJU_INVENTAIRE` (I-21).
 - Niveau `VIDE` (stock nul ou négatif) ajouté aux niveaux du MPD, comme le
   web l'affiche.
+
+Écarts introduits en B4 (avancement) :
+
+- Décision de contrôle d'une étape en `ACCEPTE` / `REFUSE` ; le web envoie
+  encore `valider` / `rejeter` (I-30).
+- Troisième forme de la zone (`ZoneDto` du module Avancement : `nom`,
+  `id_chantier`), servie par `GET /api/avancement/zones`.
+- Corps de `POST /api/etapes/{id}/blocage` : `article_id_article` ajouté
+  pour un manque de matériel (RG-A10).
+- Le mobile manipule des notions absentes du MPD (pointage, pause, gravité
+  et retard estimé d'un blocage, métré, points de contrôle) : non servies
+  (Q-AC).
