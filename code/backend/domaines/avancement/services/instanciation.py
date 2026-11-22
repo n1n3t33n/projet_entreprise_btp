@@ -15,6 +15,7 @@ elle n'écrit pas d'événement ; le premier événement est l'affectation (ET-1
 from typing import Any
 
 from domaines.avancement.models import EtapeTravaux
+from domaines.avancement.services import agregats
 from domaines.organisation import selecteurs as selecteurs_organisation
 from domaines.referentiels import selecteurs as selecteurs_referentiels
 
@@ -31,6 +32,9 @@ def generer(logement: Any) -> int:
         if modele.pk not in existantes
     ]
     EtapeTravaux.objects.bulk_create(nouvelles, ignore_conflicts=True)
+    if nouvelles:
+        # De nouvelles étapes changent le total des poids (RG-A6).
+        agregats.recalculer(logement, {e.etape_modele.corps_etat_id for e in nouvelles})
     return len(nouvelles)
 
 

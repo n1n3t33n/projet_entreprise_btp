@@ -411,6 +411,57 @@ paths:
                 items:
                   $ref: '#/components/schemas/LigneEtape'
           description: ''
+  /api/avancement/logements:
+    get:
+      operationId: avancement_logements_list
+      description: GET /api/avancement/logements — un logement par ligne (H11).
+      tags:
+      - avancement
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LigneLogement'
+          description: ''
+  /api/avancement/synthese:
+    get:
+      operationId: avancement_synthese_retrieve
+      description: |-
+        GET /api/avancement/synthese — avancement déclaré et validé (RG-A6) et
+        nombres à surveiller, sur les chantiers couverts.
+      tags:
+      - avancement
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Synthese'
+          description: ''
+  /api/avancement/zones:
+    get:
+      operationId: avancement_zones_list
+      description: GET /api/avancement/zones.
+      tags:
+      - avancement
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ZoneAvancement'
+          description: ''
   /api/chantiers/{id_chantier}/logements:
     get:
       operationId: chantiers_logements_list
@@ -1738,6 +1789,95 @@ paths:
               schema:
                 $ref: '#/components/schemas/Regle'
           description: ''
+  /api/pilotage/alertes-etapes:
+    get:
+      operationId: pilotage_alertes_etapes_list
+      description: |-
+        GET /api/pilotage/alertes-etapes — étapes en retard ou bloquées (RG-A8,
+        EF-AVA-09) ; la remontée par notification relève de B6.
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AlerteEtape'
+          description: ''
+  /api/pilotage/avancement/chantier:
+    get:
+      operationId: pilotage_avancement_chantier_retrieve
+      description: |-
+        GET /api/pilotage/avancement/chantier — le chantier (le premier couvert
+        ; un seul au pilote).
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvancementAgrege'
+          description: ''
+  /api/pilotage/avancement/corps-etat:
+    get:
+      operationId: pilotage_avancement_corps_etat_list
+      description: |-
+        GET /api/pilotage/avancement/corps-etat — par corps d'état et par
+        chantier (RG-A6).
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvancementAgrege'
+          description: ''
+  /api/pilotage/avancement/logements:
+    get:
+      operationId: pilotage_avancement_logements_list
+      description: GET /api/pilotage/avancement/logements.
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvancementAgrege'
+          description: ''
+  /api/pilotage/avancement/zones:
+    get:
+      operationId: pilotage_avancement_zones_list
+      description: GET /api/pilotage/avancement/zones.
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvancementAgrege'
+          description: ''
   /api/referentiels/articles:
     get:
       operationId: referentiels_articles_list
@@ -2233,6 +2373,55 @@ components:
       - niveau
       - statut
       - type_alerte
+    AlerteEtape:
+      type: object
+      description: '``AlerteEtapeDto`` : étape en retard ou bloquée (RG-A8).'
+      properties:
+        id_etape:
+          type: string
+          format: uuid
+        id_logement:
+          type: string
+          format: uuid
+        numero_logement:
+          type: string
+        libelle_zone:
+          type: string
+        libelle_etape:
+          type: string
+        libelle_corps_etat:
+          type: string
+        couleur_corps_etat:
+          type: string
+        statut:
+          type: string
+        date_prevue:
+          type: string
+          format: date
+          nullable: true
+        jours_de_retard:
+          type: integer
+          readOnly: true
+        code_motif_blocage:
+          type: string
+          nullable: true
+        libelle_motif_blocage:
+          type: string
+          nullable: true
+        commentaire:
+          type: string
+          nullable: true
+      required:
+      - couleur_corps_etat
+      - date_prevue
+      - id_etape
+      - id_logement
+      - jours_de_retard
+      - libelle_corps_etat
+      - libelle_etape
+      - libelle_zone
+      - numero_logement
+      - statut
     AnnulationEntreeRequest:
       type: object
       description: 'Contre-mouvement (RG-S8, EF-STK-11) : la justification est obligatoire.'
@@ -2408,6 +2597,54 @@ components:
       - id_article
       - origine
       - unite_base
+    AvancementAgrege:
+      type: object
+      description: '``AvancementAgregeDto`` du pilotage.'
+      properties:
+        portee:
+          type: string
+        id_cible:
+          type: string
+        libelle_cible:
+          type: string
+        libelle_secondaire:
+          type: string
+          nullable: true
+        couleur:
+          type: string
+          nullable: true
+        pourcentage_declare:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        pourcentage_valide:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        nombre_etapes:
+          type: integer
+        nombre_validees:
+          type: integer
+        nombre_bloquees:
+          type: integer
+        nombre_en_retard:
+          type: integer
+        date_calcul:
+          type: string
+          format: date-time
+      required:
+      - couleur
+      - date_calcul
+      - id_cible
+      - libelle_cible
+      - libelle_secondaire
+      - nombre_bloquees
+      - nombre_en_retard
+      - nombre_etapes
+      - nombre_validees
+      - portee
+      - pourcentage_declare
+      - pourcentage_valide
     BlocageEntreeRequest:
       type: object
       description: |-
@@ -3331,6 +3568,48 @@ components:
       - id_ligne
       - quantite_theorique
       - uuid_ajustement
+    LigneLogement:
+      type: object
+      properties:
+        id_logement:
+          type: string
+          format: uuid
+        numero:
+          type: string
+        libelle_zone:
+          type: string
+        libelle_type:
+          type: string
+        statut:
+          type: string
+        pourcentage_declare:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        pourcentage_valide:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        nombre_etapes:
+          type: integer
+        nombre_validees:
+          type: integer
+        nombre_bloquees:
+          type: integer
+        nombre_en_retard:
+          type: integer
+      required:
+      - id_logement
+      - libelle_type
+      - libelle_zone
+      - nombre_bloquees
+      - nombre_en_retard
+      - nombre_etapes
+      - nombre_validees
+      - numero
+      - pourcentage_declare
+      - pourcentage_valide
+      - statut
     LigneStock:
       type: object
       description: '``LigneStockDto`` : l''article, ses seuils et son stock courant.'
@@ -4102,6 +4381,32 @@ components:
         * `A_VENIR` - A_VENIR
         * `EN_COURS` - EN_COURS
         * `LIVRE` - LIVRE
+    Synthese:
+      type: object
+      properties:
+        pourcentage_declare:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        pourcentage_valide:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        nombre_logements:
+          type: integer
+        nombre_etapes_a_valider:
+          type: integer
+        nombre_etapes_bloquees:
+          type: integer
+        nombre_etapes_en_retard:
+          type: integer
+      required:
+      - nombre_etapes_a_valider
+      - nombre_etapes_bloquees
+      - nombre_etapes_en_retard
+      - nombre_logements
+      - pourcentage_declare
+      - pourcentage_valide
     TypeEvenementEnum:
       enum:
       - DECLARATION_ETAPE
@@ -4291,6 +4596,26 @@ components:
       required:
       - logements
       - zone
+    ZoneAvancement:
+      type: object
+      description: '``ZoneDto`` du module Avancement (troisième forme de la zone,
+        I-30).'
+      properties:
+        id_zone:
+          type: string
+          format: uuid
+        code:
+          type: string
+        nom:
+          type: string
+        id_chantier:
+          type: string
+          format: uuid
+      required:
+      - code
+      - id_chantier
+      - id_zone
+      - nom
     ZoneRequest:
       type: object
       properties:

@@ -7,6 +7,7 @@ permissions sont des données (migration ``avancement 0003``).
 
 from typing import Any
 
+from django.utils import timezone
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -16,9 +17,18 @@ from rest_framework.views import APIView
 
 from domaines.avancement import selecteurs
 from domaines.avancement.api import serialiseurs as s
-from domaines.avancement.constantes import FICHE_OUVERTE, TERMINEE_DECLAREE
-from domaines.avancement.services import acces, declarations, fiches
+from domaines.avancement.constantes import (
+    BLOQUEE,
+    FICHE_OUVERTE,
+    PORTEE_CHANTIER,
+    PORTEE_CORPS_ETAT,
+    PORTEE_LOGEMENT,
+    PORTEE_ZONE,
+    TERMINEE_DECLAREE,
+)
+from domaines.avancement.services import acces, agregats, declarations, fiches
 from domaines.identite.permissions import ADroit
+from domaines.organisation import selecteurs as selecteurs_organisation
 
 LIMITE_FICHES = 100
 
@@ -246,3 +256,275 @@ class VueEtapesAValider(APIView):
             statut=TERMINEE_DECLAREE, etape_modele__controle_requis=True
         )
         return Response(s.LigneEtapeSerializer(etapes, many=True).data)
+
+
+# --- Lectures d'avancement (écran Avancement du web) ------------------------------------
+def _couverts(request: Request) -> set[Any] | None:
+    return acces.chantiers_couverts(request.user, "avancement", "LIRE")
+
+
+def _etapes_couvertes(request: Request) -> Any:
+    return selecteurs.etapes(_couverts(request))
+
+
+class VueZonesAvancement(APIView):
+    """GET /api/avancement/zones."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.ZoneAvancementSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        zones = selecteurs_organisation.zones().order_by("code")
+        couverts = _couverts(request)
+        if couverts is not None:
+            zones = zones.filter(chantier_id__in=couverts)
+        return Response(s.ZoneAvancementSerializer(zones, many=True).data)
+
+
+class VueSynthese(APIView):
+    """GET /api/avancement/synthese — avancement déclaré et validé (RG-A6) et
+    nombres à surveiller, sur les chantiers couverts."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.SyntheseSerializer)
+    def get(self, request: Request) -> Response:
+        etapes = _etapes_couvertes(request)
+        declare, valide, _nombre = agregats.mesurer(etapes)
+        corps = {
+            "pourcentage_declare": declare,
+            "pourcentage_valide": valide,
+            "nombre_logements": etapes.values("logement_id").distinct().count(),
+            "nombre_etapes_a_valider": etapes.filter(
+                statut=TERMINEE_DECLAREE, etape_modele__controle_requis=True
+            ).count(),
+            "nombre_etapes_bloquees": etapes.filter(statut=BLOQUEE).count(),
+            "nombre_etapes_en_retard": etapes.filter(
+                selecteurs.filtre_retard(timezone.localdate())
+            ).count(),
+        }
+        return Response(s.SyntheseSerializer(corps).data)
+
+
+def _lignes_logements(request: Request) -> list[dict[str, Any]]:
+    couverts = _couverts(request)
+    etapes = selecteurs.etapes(couverts)
+    comptes = selecteurs.comptes_par("logement_id", etapes, timezone.localdate())
+    lus = selecteurs.agregats(PORTEE_LOGEMENT)
+    logements = selecteurs_organisation.logements().select_related("zone", "type_logement")
+    if couverts is not None:
+        logements = logements.filter(zone__chantier_id__in=couverts)
+    lignes = []
+    for logement in logements.order_by("numero"):
+        agregat = lus.get(str(logement.pk))
+        lignes.append(
+            {
+                "logement": logement,
+                "agregat": agregat,
+                "comptes": comptes.get(logement.pk, {}),
+            }
+        )
+    return lignes
+
+
+class VueLogementsAvancement(APIView):
+    """GET /api/avancement/logements — un logement par ligne (H11)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.LigneLogementSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        corps = [
+            {
+                "id_logement": ligne["logement"].pk,
+                "numero": ligne["logement"].numero,
+                "libelle_zone": ligne["logement"].zone.nom,
+                "libelle_type": ligne["logement"].type_logement.libelle,
+                "statut": ligne["logement"].statut,
+                "pourcentage_declare": _pct(ligne["agregat"], "pourcentage_declare"),
+                "pourcentage_valide": _pct(ligne["agregat"], "pourcentage_valide"),
+                **_comptes(ligne["comptes"]),
+            }
+            for ligne in _lignes_logements(request)
+        ]
+        return Response(s.LigneLogementSerializer(corps, many=True).data)
+
+
+def _pct(agregat: Any, champ: str) -> Any:
+    return getattr(agregat, champ) if agregat is not None else 0
+
+
+def _comptes(comptes: dict[str, int]) -> dict[str, int]:
+    return {
+        cle: comptes.get(cle, 0)
+        for cle in ("nombre_etapes", "nombre_validees", "nombre_bloquees", "nombre_en_retard")
+    }
+
+
+# --- Pilotage (AvancementAgregeDto, AlerteEtapeDto) ---------------------------------------
+def _agregat_dto(
+    portee: str,
+    id_cible: str,
+    libelle: str,
+    agregat: Any,
+    comptes: dict[str, int],
+    libelle_secondaire: str | None = None,
+    couleur: str | None = None,
+) -> dict[str, Any]:
+    return {
+        "portee": portee,
+        "id_cible": id_cible,
+        "libelle_cible": libelle,
+        "libelle_secondaire": libelle_secondaire,
+        "couleur": couleur,
+        "pourcentage_declare": _pct(agregat, "pourcentage_declare"),
+        "pourcentage_valide": _pct(agregat, "pourcentage_valide"),
+        **_comptes(comptes),
+        "date_calcul": agregat.date_calcul if agregat is not None else timezone.now(),
+    }
+
+
+class VuePilotageChantier(APIView):
+    """GET /api/pilotage/avancement/chantier — le chantier (le premier couvert
+    ; un seul au pilote)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.AvancementAgregeSerializer)
+    def get(self, request: Request) -> Response:
+        couverts = _couverts(request)
+        chantiers = selecteurs_organisation.chantiers()
+        if couverts is not None:
+            chantiers = chantiers.filter(id_chantier__in=couverts)
+        chantier = chantiers.first()
+        if chantier is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        etapes = selecteurs.etapes({chantier.pk})
+        comptes = selecteurs.comptes_par(
+            "logement__zone__chantier_id", etapes, timezone.localdate()
+        )
+        dto = _agregat_dto(
+            PORTEE_CHANTIER,
+            str(chantier.pk),
+            chantier.nom,
+            selecteurs.agregats(PORTEE_CHANTIER).get(str(chantier.pk)),
+            comptes.get(chantier.pk, {}),
+        )
+        return Response(s.AvancementAgregeSerializer(dto).data)
+
+
+class VuePilotageZones(APIView):
+    """GET /api/pilotage/avancement/zones."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.AvancementAgregeSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        couverts = _couverts(request)
+        comptes = selecteurs.comptes_par(
+            "logement__zone_id", selecteurs.etapes(couverts), timezone.localdate()
+        )
+        lus = selecteurs.agregats(PORTEE_ZONE)
+        zones = selecteurs_organisation.zones().select_related("chantier").order_by("code")
+        if couverts is not None:
+            zones = zones.filter(chantier_id__in=couverts)
+        corps = [
+            _agregat_dto(
+                PORTEE_ZONE,
+                str(z.pk),
+                z.nom,
+                lus.get(str(z.pk)),
+                comptes.get(z.pk, {}),
+                z.chantier.nom,
+            )
+            for z in zones
+        ]
+        return Response(s.AvancementAgregeSerializer(corps, many=True).data)
+
+
+class VuePilotageLogements(APIView):
+    """GET /api/pilotage/avancement/logements."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.AvancementAgregeSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        corps = [
+            _agregat_dto(
+                PORTEE_LOGEMENT,
+                str(ligne["logement"].pk),
+                ligne["logement"].numero,
+                ligne["agregat"],
+                ligne["comptes"],
+                ligne["logement"].zone.nom,
+            )
+            for ligne in _lignes_logements(request)
+        ]
+        return Response(s.AvancementAgregeSerializer(corps, many=True).data)
+
+
+class VuePilotageCorpsEtat(APIView):
+    """GET /api/pilotage/avancement/corps-etat — par corps d'état et par
+    chantier (RG-A6)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.AvancementAgregeSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        etapes = selecteurs.etapes(_couverts(request))
+        lus = selecteurs.agregats(PORTEE_CORPS_ETAT)
+        groupes = (
+            etapes.order_by()
+            .values(
+                "logement__zone__chantier_id",
+                "etape_modele__corps_etat_id",
+                "etape_modele__corps_etat__libelle",
+                "etape_modele__corps_etat__couleur",
+                "etape_modele__corps_etat__ordre",
+            )
+            .distinct()
+        )
+        corps = []
+        for groupe in sorted(groupes, key=lambda g: g["etape_modele__corps_etat__ordre"]):
+            cible = agregats.cible_corps_etat(
+                groupe["logement__zone__chantier_id"], groupe["etape_modele__corps_etat_id"]
+            )
+            corps.append(
+                _agregat_dto(
+                    PORTEE_CORPS_ETAT,
+                    cible,
+                    groupe["etape_modele__corps_etat__libelle"],
+                    lus.get(cible),
+                    # Compté chantier par chantier : un corps d'état n'est pas
+                    # agrégé d'un chantier à l'autre.
+                    selecteurs.comptes_par(
+                        "etape_modele__corps_etat_id",
+                        etapes.filter(
+                            logement__zone__chantier_id=groupe["logement__zone__chantier_id"]
+                        ),
+                        timezone.localdate(),
+                    ).get(groupe["etape_modele__corps_etat_id"], {}),
+                    couleur=groupe["etape_modele__corps_etat__couleur"],
+                )
+            )
+        return Response(s.AvancementAgregeSerializer(corps, many=True).data)
+
+
+class VueAlertesEtapes(APIView):
+    """GET /api/pilotage/alertes-etapes — étapes en retard ou bloquées (RG-A8,
+    EF-AVA-09) ; la remontée par notification relève de B6."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.AlerteEtapeSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        lignes = selecteurs.alertes(_couverts(request), timezone.localdate())
+        return Response(s.AlerteEtapeSerializer(lignes, many=True).data)

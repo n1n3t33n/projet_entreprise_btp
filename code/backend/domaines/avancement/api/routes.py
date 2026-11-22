@@ -5,6 +5,26 @@ from django.urls import path
 from domaines.avancement.api import vues
 
 urlpatterns = [
+    path("avancement/zones", vues.VueZonesAvancement.as_view(), name="avancement-zones"),
+    path("avancement/synthese", vues.VueSynthese.as_view(), name="avancement-synthese"),
+    path(
+        "avancement/logements", vues.VueLogementsAvancement.as_view(), name="avancement-logements"
+    ),
+    path(
+        "pilotage/avancement/chantier", vues.VuePilotageChantier.as_view(), name="pilotage-chantier"
+    ),
+    path("pilotage/avancement/zones", vues.VuePilotageZones.as_view(), name="pilotage-zones"),
+    path(
+        "pilotage/avancement/logements",
+        vues.VuePilotageLogements.as_view(),
+        name="pilotage-logements",
+    ),
+    path(
+        "pilotage/avancement/corps-etat",
+        vues.VuePilotageCorpsEtat.as_view(),
+        name="pilotage-corps-etat",
+    ),
+    path("pilotage/alertes-etapes", vues.VueAlertesEtapes.as_view(), name="pilotage-alertes"),
     path(
         "etapes/<uuid:id_etape>/declaration",
         vues.VueDeclaration.as_view(),

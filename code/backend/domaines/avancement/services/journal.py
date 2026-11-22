@@ -48,4 +48,6 @@ def ecrire(
     if etape.statut != statut_apres:
         etape.statut = statut_apres
         etape.save(update_fields=["statut"])
+        # RG-A6 : l'avancement déclaré ou validé bouge avec le statut.
+        agregats.recalculer(etape.logement, {etape.etape_modele.corps_etat_id})
     return evenement

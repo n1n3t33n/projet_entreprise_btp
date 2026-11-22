@@ -112,12 +112,15 @@ def charger(mot_de_passe: str) -> dict[str, int]:
     negatif = articles[RANG_STOCK_NEGATIF]
     _, critique_negatif = ECHELLE_SEUIL.get(negatif.unite_mesure_id, ECHELLE_SEUIL["U"])
     _sortie(magasinier, magasin, "sortie-negative", negatif, round(critique_negatif * 0.2))
-    # Une sortie au-delà du seuil de validation, en attente de décision.
+    # Une sortie au-delà du seuil de validation, en attente de décision. La clé
+    # porte le code de l'article : changer d'article ne heurte pas, au rejeu,
+    # une sortie déjà inscrite au journal immuable sous l'ancienne clé.
+    a_valider = articles[RANG_SORTIE_A_VALIDER]
     _sortie(
         magasinier,
         magasin,
-        "sortie-a-valider",
-        articles[RANG_SORTIE_A_VALIDER],
+        f"sortie-a-valider-{a_valider.code}",
+        a_valider,
         QUANTITE_SORTIE_A_VALIDER,
     )
     return {

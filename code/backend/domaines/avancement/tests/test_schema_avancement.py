@@ -20,7 +20,8 @@ def evenement(chantier_avancement: dict[str, Any], logement: Any) -> EvenementEx
     etape = EtapeTravaux.objects.get(
         logement=logement, etape_modele=chantier_avancement["modeles"][0]
     )
-    agregat = AvancementAgrege.objects.create(portee="LOGEMENT", id_cible=str(logement.pk))
+    # Agrégat du logement, créé avec ses étapes (RG-A6).
+    agregat = AvancementAgrege.objects.get(portee="LOGEMENT", id_cible=str(logement.pk))
     return EvenementExecution.objects.create(
         statut_avant="A_FAIRE",
         statut_apres="EN_COURS",

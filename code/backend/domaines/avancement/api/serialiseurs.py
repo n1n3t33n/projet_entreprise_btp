@@ -203,3 +203,76 @@ class DecisionEtapeEntreeSerializer(serializers.Serializer):  # type: ignore[typ
     decision = serializers.ChoiceField(choices=list(DECISIONS))
     motif = _commentaire()
     uuid = serializers.UUIDField(required=False)
+
+
+# --- Lectures d'avancement et de pilotage (RG-A6, RG-A8) ----------------------------------
+class ZoneAvancementSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    """``ZoneDto`` du module Avancement (troisième forme de la zone, I-30)."""
+
+    id_zone = serializers.UUIDField()
+    code = serializers.CharField()
+    nom = serializers.CharField()
+    id_chantier = serializers.UUIDField(source="chantier_id")
+
+
+class SyntheseSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    pourcentage_declare = _quantite()
+    pourcentage_valide = _quantite()
+    nombre_logements = serializers.IntegerField()
+    nombre_etapes_a_valider = serializers.IntegerField()
+    nombre_etapes_bloquees = serializers.IntegerField()
+    nombre_etapes_en_retard = serializers.IntegerField()
+
+
+class LigneLogementSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    id_logement = serializers.UUIDField()
+    numero = serializers.CharField()
+    libelle_zone = serializers.CharField()
+    libelle_type = serializers.CharField()
+    statut = serializers.CharField()
+    pourcentage_declare = _quantite()
+    pourcentage_valide = _quantite()
+    nombre_etapes = serializers.IntegerField()
+    nombre_validees = serializers.IntegerField()
+    nombre_bloquees = serializers.IntegerField()
+    nombre_en_retard = serializers.IntegerField()
+
+
+class AvancementAgregeSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    """``AvancementAgregeDto`` du pilotage."""
+
+    portee = serializers.CharField()
+    id_cible = serializers.CharField()
+    libelle_cible = serializers.CharField()
+    libelle_secondaire = serializers.CharField(allow_null=True)
+    couleur = serializers.CharField(allow_null=True)
+    pourcentage_declare = _quantite()
+    pourcentage_valide = _quantite()
+    nombre_etapes = serializers.IntegerField()
+    nombre_validees = serializers.IntegerField()
+    nombre_bloquees = serializers.IntegerField()
+    nombre_en_retard = serializers.IntegerField()
+    date_calcul = serializers.DateTimeField()
+
+
+class AlerteEtapeSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    """``AlerteEtapeDto`` : étape en retard ou bloquée (RG-A8)."""
+
+    id_etape = serializers.UUIDField()
+    id_logement = serializers.UUIDField(source="logement_id")
+    numero_logement = serializers.CharField(source="logement.numero")
+    libelle_zone = serializers.CharField(source="logement.zone.nom")
+    libelle_etape = serializers.CharField(source="etape_modele.libelle")
+    libelle_corps_etat = serializers.CharField(source="etape_modele.corps_etat.libelle")
+    couleur_corps_etat = serializers.CharField(source="etape_modele.corps_etat.couleur")
+    statut = serializers.CharField()
+    date_prevue = serializers.DateField(allow_null=True)
+    jours_de_retard = serializers.SerializerMethodField()
+    code_motif_blocage = serializers.CharField(allow_null=True, default=None)
+    libelle_motif_blocage = serializers.CharField(allow_null=True, default=None)
+    commentaire = serializers.CharField(source="commentaire_blocage", allow_null=True, default=None)
+
+    def get_jours_de_retard(self, obj: EtapeTravaux) -> int:
+        if not selecteurs.en_retard(obj, timezone.localdate()):
+            return 0
+        return (timezone.localdate() - obj.date_prevue).days  # type: ignore[operator]

@@ -16,11 +16,12 @@ class ConfigurationAvancement(AppConfig):
     def ready(self) -> None:
         from django.db.models.signals import post_save
 
-        from domaines.avancement import recepteurs
-        from domaines.avancement.services import fiches
+        from domaines.avancement import demo, recepteurs
+        from domaines.avancement.services import agregats, fiches
         from domaines.organisation.models import Logement
         from domaines.referentiels import signaux
         from socle.base_de_donnees.partitions import declarer_table_partitionnee
+        from socle.demo import declarer_chargeur
         from socle.traitements import declarer_traitement
 
         # Partitions mensuelles préparées par le traitement creer_partitions.
@@ -32,3 +33,7 @@ class ConfigurationAvancement(AppConfig):
         signaux.gamme_publiee.connect(recepteurs.gamme_publiee, dispatch_uid="avancement")
         # Clôture quotidienne des fiches de route en fin de cycle (RG-A7).
         declarer_traitement("cycler_fiches_route", fiches.cycler)
+        # Consolidation nocturne de l'avancement (RG-A6, Q-AB).
+        declarer_traitement("consolider_avancement", agregats.consolider)
+        # Rang 40 : après l'identité (techniciens) et le stock (articles).
+        declarer_chargeur(40, "avancement", demo.charger)

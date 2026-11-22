@@ -9,11 +9,21 @@ from datetime import date
 from typing import Any
 from uuid import UUID
 
-from django.db.models import CharField, OuterRef, QuerySet, Subquery, Value
+from django.db.models import CharField, Count, OuterRef, Q, QuerySet, Subquery, Value
 from django.db.models.functions import Concat
 
-from domaines.avancement.constantes import STATUTS_TERMINES, TERMINEE_DECLAREE
-from domaines.avancement.models import EtapeTravaux, EvenementExecution, FicheRoute
+from domaines.avancement.constantes import (
+    BLOQUEE,
+    STATUTS_TERMINES,
+    TERMINEE_DECLAREE,
+    VALIDEE,
+)
+from domaines.avancement.models import (
+    AvancementAgrege,
+    EtapeTravaux,
+    EvenementExecution,
+    FicheRoute,
+)
 
 
 def _derniere_declaration() -> QuerySet[EvenementExecution]:
@@ -73,3 +83,53 @@ def fiches(id_technicien: Any = None) -> QuerySet[FicheRoute]:
     if id_technicien is not None:
         requete = requete.filter(utilisateur_id=id_technicien)
     return requete.order_by("-date_debut")
+
+
+# --- Pilotage de l'avancement (RG-A6, RG-A8, EF-DSH) ---------------------------------
+def filtre_retard(aujourd_hui: date) -> Q:
+    """RG-A8 exprimé en requête : date prévue dépassée, étape pas terminée."""
+    return Q(date_prevue__lt=aujourd_hui) & ~Q(statut__in=STATUTS_TERMINES)
+
+
+def comptes_par(
+    cle: str, etapes_qs: QuerySet[EtapeTravaux], aujourd_hui: date
+) -> dict[Any, dict[str, int]]:
+    """Nombres d'étapes, validées, bloquées et en retard, groupés par ``cle``
+    (ex. ``logement_id``), en une requête."""
+    lignes = (
+        etapes_qs.order_by()
+        .values(cle)
+        .annotate(
+            nombre_etapes=Count("pk"),
+            nombre_validees=Count("pk", filter=Q(statut=VALIDEE)),
+            nombre_bloquees=Count("pk", filter=Q(statut=BLOQUEE)),
+            nombre_en_retard=Count("pk", filter=filtre_retard(aujourd_hui)),
+        )
+    )
+    return {ligne.pop(cle): ligne for ligne in lignes}
+
+
+def agregats(portee: str) -> dict[str, AvancementAgrege]:
+    """Agrégats d'une portée, par cible."""
+    return {a.id_cible: a for a in AvancementAgrege.objects.filter(portee=portee)}
+
+
+def _dernier_blocage() -> QuerySet[EvenementExecution]:
+    return EvenementExecution.objects.filter(
+        etape_travaux=OuterRef("pk"), statut_apres=BLOQUEE
+    ).order_by("-horodatage_serveur")
+
+
+def alertes(chantiers: set[UUID] | None, aujourd_hui: date) -> QuerySet[EtapeTravaux]:
+    """Étapes en retard ou bloquées (RG-A8, EF-AVA-09), avec le motif et le
+    commentaire de leur dernier blocage."""
+    return (
+        etapes(chantiers)
+        .filter(Q(statut=BLOQUEE) | filtre_retard(aujourd_hui))
+        .annotate(
+            code_motif_blocage=Subquery(_dernier_blocage().values("motif_blocage_id")[:1]),
+            libelle_motif_blocage=Subquery(_dernier_blocage().values("motif_blocage__libelle")[:1]),
+            commentaire_blocage=Subquery(_dernier_blocage().values("commentaire")[:1]),
+        )
+        .order_by("date_prevue", "logement__numero")
+    )
