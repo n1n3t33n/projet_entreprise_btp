@@ -17,7 +17,9 @@ code/backend/
 │   ├── identite/         MPD-1 : comptes, rôles, droits, appareils, audit
 │   ├── organisation/     MPD-2 : chantiers, magasins, zones, logements, paramètres
 │   ├── referentiels/     MPD-3 : catalogue, unités, gammes, mouvements, règles
-│   └── stock/ avancement/ synchronisation/ acquereur/  (à venir)
+│   ├── stock/            MPD-4 : mouvements immuables, validations, seuils,
+│   │                     stock courant, alertes, inventaires
+│   └── avancement/ synchronisation/ acquereur/  (à venir)
 ├── contrat/              contrat d'API OpenAPI généré et committé
 ├── sql/                  création des rôles PostgreSQL et de la base
 └── requirements/         dépendances épinglées (base, dev, production)
@@ -86,7 +88,8 @@ python manage.py migrate --database migration
 python manage.py creer_partitions
 ```
 
-Tâche planifiée quotidienne : `python manage.py lancer_traitement
-creer_partitions`. Chaque passage est tracé dans la table
+Tâches planifiées : `python manage.py lancer_traitement creer_partitions`
+chaque jour, `python manage.py lancer_traitement relancer_validations` chaque
+heure (relance des sorties restées sans décision). Chaque passage est tracé dans la table
 `execution_traitement` et visible dans `GET /api/metriques` ; un échec envoie
 une alerte par courriel. Serveur : `gunicorn configuration.wsgi`.
