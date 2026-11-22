@@ -204,8 +204,22 @@ ROLES_LECTEURS_REFERENTIELS = [
 # gammes, corps d'état, paramètres et règles — responsable technique (EF-REF-05,
 # 07 à 09) ; catalogue et magasins — gestionnaire de stock (EF-REF-03, 04).
 DROITS_API_SUPPLEMENTAIRES = {
-    "DIRECTION": ["api.audit.lire"],
+    "DIRECTION": ["api.audit.lire", "api.stock.lire", "api.mouvements.lire"],
+    # Stock (B3) : saisie et comptage au magasinier, décisions au gestionnaire
+    # (RG-D8 : celui qui saisit ne valide pas), lecture aux rôles de pilotage.
+    "MAGASINIER": [
+        "api.stock.lire",
+        "api.mouvements.lire",
+        "api.mouvements.creer",
+        "api.inventaires.lire",
+        "api.inventaires.creer",
+        "api.inventaires.modifier",
+    ],
+    "CHEF_CHANTIER": ["api.stock.lire", "api.mouvements.lire"],
+    "TECHNICIEN": ["api.stock.lire"],
     "RESPONSABLE_TECHNIQUE": [
+        "api.stock.lire",
+        "api.mouvements.lire",
         "api.corps-etat.creer",
         "api.corps-etat.modifier",
         "api.gammes.creer",
@@ -217,6 +231,15 @@ DROITS_API_SUPPLEMENTAIRES = {
         "api.regles.modifier",
     ],
     "GESTIONNAIRE_STOCK": [
+        "api.stock.lire",
+        "api.mouvements.lire",
+        "api.mouvements.creer",
+        "api.mouvements.valider",
+        "api.seuils.modifier",
+        "api.inventaires.lire",
+        "api.inventaires.creer",
+        "api.inventaires.modifier",
+        "api.inventaires.valider",
         "api.articles.creer",
         "api.articles.modifier",
         "api.magasins.creer",

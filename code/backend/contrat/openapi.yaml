@@ -838,6 +838,163 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResultatImport'
           description: ''
+  /api/inventaires:
+    get:
+      operationId: inventaires_list
+      description: GET /api/inventaires?magasin= et POST /api/inventaires (ouverture).
+      parameters:
+      - in: query
+        name: magasin
+        schema:
+          type: string
+      tags:
+      - inventaires
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Inventaire'
+          description: ''
+    post:
+      operationId: inventaires_create
+      description: GET /api/inventaires?magasin= et POST /api/inventaires (ouverture).
+      tags:
+      - inventaires
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OuvertureInventaireRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventaireDetail'
+          description: ''
+  /api/inventaires/{id_inventaire}:
+    get:
+      operationId: inventaires_retrieve
+      description: GET /api/inventaires/{id} — l'inventaire et ses lignes.
+      parameters:
+      - in: path
+        name: id_inventaire
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - inventaires
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventaireDetail'
+          description: ''
+  /api/inventaires/{id_inventaire}/lignes/{id_ligne}:
+    put:
+      operationId: inventaires_lignes_update
+      description: PUT /api/inventaires/{id}/lignes/{id} — quantité comptée.
+      parameters:
+      - in: path
+        name: id_inventaire
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: id_ligne
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - inventaires
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComptageRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LigneInventaire'
+          description: ''
+  /api/inventaires/{id_inventaire}/lignes/{id_ligne}/validation:
+    post:
+      operationId: inventaires_lignes_validation_create
+      description: |-
+        POST /api/inventaires/{id}/lignes/{id}/validation — ACCEPTE inscrit
+        l'ajustement (à valider une seconde fois au-delà de la règle
+        ECART_INVENTAIRE, RG-S9) ; REFUSE renvoie la ligne au comptage.
+      parameters:
+      - in: path
+        name: id_inventaire
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: id_ligne
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - inventaires
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventaireDetail'
+          description: ''
+  /api/inventaires/{id_inventaire}/soumission:
+    post:
+      operationId: inventaires_soumission_create
+      description: POST /api/inventaires/{id}/soumission — fin du comptage.
+      parameters:
+      - in: path
+        name: id_inventaire
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - inventaires
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventaireDetail'
+          description: ''
   /api/magasins:
     get:
       operationId: magasins_list
@@ -854,6 +1011,92 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MagasinStock'
+          description: ''
+  /api/magasins/{id_magasin}/articles/{id_article}/mouvements:
+    get:
+      operationId: magasins_articles_mouvements_list
+      description: GET /api/magasins/{id}/articles/{id}/mouvements — fiche article.
+      parameters:
+      - in: path
+        name: id_article
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: id_magasin
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - magasins
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mouvement'
+          description: ''
+  /api/magasins/{id_magasin}/articles/{id_article}/seuil:
+    put:
+      operationId: magasins_articles_seuil_update
+      description: PUT /api/magasins/{id}/articles/{id}/seuil — seuils minimal et
+        critique.
+      parameters:
+      - in: path
+        name: id_article
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: id_magasin
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - magasins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeuilEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '204':
+          description: No response body
+  /api/magasins/{id_magasin}/stock:
+    get:
+      operationId: magasins_stock_list
+      description: GET /api/magasins/{id}/stock — articles suivis, seuils et stock
+        courant.
+      parameters:
+      - in: path
+        name: id_magasin
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - magasins
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LigneStock'
           description: ''
   /api/metriques:
     get:
@@ -888,6 +1131,165 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MotifBlocage'
+          description: ''
+  /api/mouvements:
+    get:
+      operationId: mouvements_list
+      description: |-
+        GET /api/mouvements (historique filtrable, EF-STK-10) et POST
+        /api/mouvements (saisie, idempotente sur ``uuid``).
+      parameters:
+      - in: query
+        name: article
+        schema:
+          type: string
+      - in: query
+        name: auteur
+        schema:
+          type: string
+      - in: query
+        name: debut
+        schema:
+          type: string
+        description: AAAA-MM-JJ
+      - in: query
+        name: fin
+        schema:
+          type: string
+        description: AAAA-MM-JJ
+      - in: query
+        name: limite
+        schema:
+          type: integer
+        description: 1 à 1000, 200 par défaut
+      - in: query
+        name: logement
+        schema:
+          type: string
+      - in: query
+        name: magasin
+        schema:
+          type: string
+      tags:
+      - mouvements
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mouvement'
+          description: ''
+    post:
+      operationId: mouvements_create
+      description: |-
+        GET /api/mouvements (historique filtrable, EF-STK-10) et POST
+        /api/mouvements (saisie, idempotente sur ``uuid``).
+      tags:
+      - mouvements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MouvementEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mouvement'
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mouvement'
+          description: ''
+  /api/mouvements/{uuid_mouvement}/annulation:
+    post:
+      operationId: mouvements_annulation_create
+      description: |-
+        POST /api/mouvements/{uuid}/annulation — contre-mouvement justifié
+        (RG-S8) ; rend le contre-mouvement créé.
+      parameters:
+      - in: path
+        name: uuid_mouvement
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - mouvements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnulationEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mouvement'
+          description: ''
+  /api/mouvements/{uuid_mouvement}/validation:
+    post:
+      operationId: mouvements_validation_create
+      description: |-
+        POST /api/mouvements/{uuid}/validation — ACCEPTE ou REFUSE (motif
+        obligatoire pour un refus) ; l'auteur du mouvement ne peut pas décider
+        (RG-D8, RG-D11).
+      parameters:
+      - in: path
+        name: uuid_mouvement
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - mouvements
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mouvement'
+          description: ''
+  /api/mouvements/a-valider:
+    get:
+      operationId: mouvements_a_valider_list
+      description: |-
+        GET /api/mouvements/a-valider — sorties en attente de décision, les plus
+        anciennes d'abord (statut A_VALIDER ou EN_ALERTE).
+      tags:
+      - mouvements
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mouvement'
           description: ''
   /api/parametrage/parametres:
     get:
@@ -1377,6 +1779,40 @@ paths:
               schema:
                 $ref: '#/components/schemas/Zone'
           description: ''
+  /api/stock/alertes:
+    get:
+      operationId: stock_alertes_list
+      description: GET /api/stock/alertes — alertes de stock ouvertes (EF-STK-07).
+      tags:
+      - stock
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alerte'
+          description: ''
+  /api/stock/arborescence:
+    get:
+      operationId: stock_arborescence_list
+      description: GET /api/stock/arborescence — chantier › magasin › familles.
+      tags:
+      - stock
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NoeudStock'
+          description: ''
   /api/types-mouvement:
     get:
       operationId: types_mouvement_list
@@ -1432,6 +1868,53 @@ components:
       - magasin_id_magasin
       - perimetre_id_perimetre
       - role_code_role
+    Alerte:
+      type: object
+      properties:
+        id_alerte:
+          type: string
+          format: uuid
+          readOnly: true
+        type_alerte:
+          type: string
+          maxLength: 32
+        niveau:
+          type: string
+          maxLength: 32
+        message:
+          type: string
+        date_emission:
+          type: string
+          format: date-time
+        statut:
+          type: string
+          maxLength: 32
+        article_id_article:
+          type: string
+          format: uuid
+        magasin_id_magasin:
+          type: string
+          format: uuid
+        designation:
+          type: string
+      required:
+      - article_id_article
+      - designation
+      - id_alerte
+      - magasin_id_magasin
+      - message
+      - niveau
+      - statut
+      - type_alerte
+    AnnulationEntreeRequest:
+      type: object
+      description: 'Contre-mouvement (RG-S8, EF-STK-11) : la justification est obligatoire.'
+      properties:
+        motif:
+          type: string
+          minLength: 1
+      required:
+      - motif
     Appareil:
       type: object
       description: '``AppareilDto`` (web, Administration › Appareils).'
@@ -1566,6 +2049,38 @@ components:
       - designation
       - origine
       - unite_mesure_code_unite
+    ArticleStock:
+      type: object
+      description: '``ArticleDto`` de l''écran Stock : unité de base imbriquée (I-30).'
+      properties:
+        id_article:
+          type: string
+          format: uuid
+        code:
+          type: string
+        designation:
+          type: string
+        origine:
+          type: string
+        code_barre:
+          type: string
+          nullable: true
+        actif:
+          type: boolean
+        unite_base:
+          $ref: '#/components/schemas/UniteBase'
+        code_categorie:
+          type: string
+          nullable: true
+      required:
+      - actif
+      - code
+      - code_barre
+      - code_categorie
+      - designation
+      - id_article
+      - origine
+      - unite_base
     Categorie:
       type: object
       description: |-
@@ -1644,11 +2159,22 @@ components:
       - articles
       - chantiers
       - magasins
+      - stock
       type: string
       description: |-
         * `articles` - articles
         * `chantiers` - chantiers
         * `magasins` - magasins
+        * `stock` - stock
+    ComptageRequest:
+      type: object
+      properties:
+        quantite_comptee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+      required:
+      - quantite_comptee
     CompteEntreeRequest:
       type: object
       description: |-
@@ -1756,6 +2282,30 @@ components:
       - couleur
       - libelle
       - ordre
+    DecisionEntreeRequest:
+      type: object
+      description: |-
+        Décision sur un mouvement à valider (EF-STK-09). Motif obligatoire
+        pour un refus (ET-2 « rejeté (motif) »).
+      properties:
+        decision:
+          $ref: '#/components/schemas/DecisionEnum'
+        motif:
+          type: string
+          nullable: true
+        uuid:
+          type: string
+          format: uuid
+      required:
+      - decision
+    DecisionEnum:
+      enum:
+      - ACCEPTE
+      - REFUSE
+      type: string
+      description: |-
+        * `ACCEPTE` - ACCEPTE
+        * `REFUSE` - REFUSE
     DroitAccorde:
       type: object
       properties:
@@ -1966,6 +2516,22 @@ components:
             $ref: '#/components/schemas/EtapeModeleEntreeRequest'
       required:
       - etapes
+    EtatStock:
+      type: object
+      properties:
+        quantite:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        date_calcul:
+          type: string
+          format: date-time
+        niveau_alerte:
+          type: string
+      required:
+      - date_calcul
+      - niveau_alerte
+      - quantite
     Execution:
       type: object
       properties:
@@ -2050,6 +2616,81 @@ components:
       required:
       - cible
       - contenu
+    Inventaire:
+      type: object
+      properties:
+        id_inventaire:
+          type: string
+          format: uuid
+          readOnly: true
+        date_debut:
+          type: string
+          format: date
+        date_fin:
+          type: string
+          format: date
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        magasin_id_magasin:
+          type: string
+          format: uuid
+        libelle_magasin:
+          type: string
+        nombre_lignes:
+          type: integer
+          readOnly: true
+        nombre_comptees:
+          type: integer
+          readOnly: true
+      required:
+      - id_inventaire
+      - libelle_magasin
+      - magasin_id_magasin
+      - nombre_comptees
+      - nombre_lignes
+    InventaireDetail:
+      type: object
+      properties:
+        id_inventaire:
+          type: string
+          format: uuid
+          readOnly: true
+        date_debut:
+          type: string
+          format: date
+        date_fin:
+          type: string
+          format: date
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        magasin_id_magasin:
+          type: string
+          format: uuid
+        libelle_magasin:
+          type: string
+        nombre_lignes:
+          type: integer
+          readOnly: true
+        nombre_comptees:
+          type: integer
+          readOnly: true
+        lignes:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - id_inventaire
+      - libelle_magasin
+      - lignes
+      - magasin_id_magasin
+      - nombre_comptees
+      - nombre_lignes
     LigneImport:
       type: object
       properties:
@@ -2066,6 +2707,69 @@ components:
       - erreur
       - numero
       - valeurs
+    LigneInventaire:
+      type: object
+      properties:
+        id_ligne:
+          type: string
+          format: uuid
+          readOnly: true
+        article_id_article:
+          type: string
+          format: uuid
+        code_article:
+          type: string
+        designation:
+          type: string
+        code_unite:
+          type: string
+        quantite_theorique:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        quantite_comptee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+          nullable: true
+        ecart:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        uuid_ajustement:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - article_id_article
+      - code_article
+      - code_unite
+      - designation
+      - id_ligne
+      - quantite_theorique
+      - uuid_ajustement
+    LigneStock:
+      type: object
+      description: '``LigneStockDto`` : l''article, ses seuils et son stock courant.'
+      properties:
+        article:
+          $ref: '#/components/schemas/ArticleStock'
+        libelle_famille:
+          type: string
+          readOnly: true
+        seuil:
+          $ref: '#/components/schemas/Seuil'
+        stock:
+          $ref: '#/components/schemas/EtatStock'
+      required:
+      - article
+      - libelle_famille
+      - seuil
+      - stock
     Logement:
       type: object
       description: |-
@@ -2272,6 +2976,177 @@ components:
       required:
       - code_motif
       - libelle
+    Mouvement:
+      type: object
+      description: |-
+        ``MouvementStockDto``. Contexte attendu : ``parametres``, un
+        ``ParametresParChantier`` (délai de relance Q-F, dérive d'horloge
+        RG-S11, lus une fois par chantier et par requête).
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        article_id_article:
+          type: string
+          format: uuid
+        magasin_id_magasin:
+          type: string
+          format: uuid
+        logement_id_logement:
+          type: string
+          format: uuid
+          nullable: true
+        type_mouvement_code_type_mouvement:
+          type: string
+        sens:
+          type: integer
+        quantite_saisie:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        quantite_base:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        code_unite:
+          type: string
+        date_operation:
+          type: string
+          format: date-time
+        horodatage_appareil:
+          type: string
+          format: date-time
+        horodatage_serveur:
+          type: string
+          format: date-time
+        statut_validation:
+          type: string
+          readOnly: true
+        reference_externe:
+          type: string
+          nullable: true
+          maxLength: 120
+        utilisateur_id_utilisateur:
+          type: string
+          format: uuid
+        nom_auteur:
+          type: string
+        motif:
+          type: string
+          nullable: true
+        corps_etat:
+          type: string
+          nullable: true
+        beneficiaire:
+          type: string
+          nullable: true
+          maxLength: 120
+        mouvement_annule_uuid:
+          type: string
+          format: uuid
+          nullable: true
+        derive_horloge:
+          type: boolean
+          description: |-
+            RG-S11 : dérive entre l'heure de l'appareil et celle du serveur
+            au-delà de ``derive_horloge_max_min`` (signalée, jamais bloquante).
+          readOnly: true
+      required:
+      - article_id_article
+      - code_unite
+      - corps_etat
+      - derive_horloge
+      - logement_id_logement
+      - magasin_id_magasin
+      - mouvement_annule_uuid
+      - nom_auteur
+      - quantite_base
+      - quantite_saisie
+      - sens
+      - statut_validation
+      - type_mouvement_code_type_mouvement
+      - utilisateur_id_utilisateur
+      - uuid
+    MouvementEntreeRequest:
+      type: object
+      description: |-
+        Corps de ``POST /mouvements`` (champs envoyés par le web et le mobile).
+        ``uuid`` : identifiant généré par le client, pour l'idempotence.
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        magasin_id_magasin:
+          type: string
+          format: uuid
+        article_id_article:
+          type: string
+          format: uuid
+        type_mouvement_code_type_mouvement:
+          type: string
+          minLength: 1
+        quantite_saisie:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        code_unite:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 32
+        logement_id_logement:
+          type: string
+          format: uuid
+          nullable: true
+        corps_etat:
+          type: string
+          minLength: 1
+          nullable: true
+        beneficiaire:
+          type: string
+          nullable: true
+          maxLength: 120
+        motif:
+          type: string
+          nullable: true
+        reference_externe:
+          type: string
+          nullable: true
+          maxLength: 120
+        date_operation:
+          type: string
+          format: date-time
+        horodatage_appareil:
+          type: string
+          format: date-time
+      required:
+      - article_id_article
+      - magasin_id_magasin
+      - quantite_saisie
+      - type_mouvement_code_type_mouvement
+    NoeudStock:
+      type: object
+      description: '``NoeudStock`` : chantier › magasin › familles.'
+      properties:
+        id:
+          type: string
+        libelle:
+          type: string
+        type:
+          type: string
+        nombreArticles:
+          type: integer
+        enfants:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - enfants
+      - id
+      - libelle
+      - type
     OperateurEnum:
       enum:
       - INFERIEUR_EGAL
@@ -2296,6 +3171,14 @@ components:
         * `ACHAT` - ACHAT
         * `PRODUCTION_INTERNE` - PRODUCTION_INTERNE
         * `RECUPERATION` - RECUPERATION
+    OuvertureInventaireRequest:
+      type: object
+      properties:
+        magasin_id_magasin:
+          type: string
+          format: uuid
+      required:
+      - magasin_id_magasin
     Parametre:
       type: object
       description: |-
@@ -2575,6 +3458,41 @@ components:
       - id_appareil
       - jeton
       - utilisateur
+    Seuil:
+      type: object
+      properties:
+        id_seuil:
+          type: string
+          format: uuid
+        seuil_minimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        seuil_critique:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        actif:
+          type: boolean
+      required:
+      - actif
+      - id_seuil
+      - seuil_critique
+      - seuil_minimal
+    SeuilEntreeRequest:
+      type: object
+      properties:
+        seuil_minimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        seuil_critique:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+      required:
+      - seuil_critique
+      - seuil_minimal
     StatutActiviteEnum:
       enum:
       - ACTIF
@@ -2679,6 +3597,19 @@ components:
         type_unite:
           type: string
           maxLength: 32
+      required:
+      - code_unite
+      - libelle
+      - type_unite
+    UniteBase:
+      type: object
+      properties:
+        code_unite:
+          type: string
+        libelle:
+          type: string
+        type_unite:
+          type: string
       required:
       - code_unite
       - libelle

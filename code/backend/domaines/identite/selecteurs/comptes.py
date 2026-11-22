@@ -18,3 +18,8 @@ def affectation_principale(utilisateur: Any) -> AffectationRole | None:
     ``UtilisateurDto`` (role_code_role, perimetre_id_perimetre). Le modèle en
     permet plusieurs (EF-AUT-02) ; les autres sont servies par /auth/moi."""
     return affectations_actives(utilisateur).first()
+
+
+def par_identifiant(identifiant: str) -> Utilisateur | None:
+    """Un compte par son identifiant de connexion (démonstration, import)."""
+    return Utilisateur.objects.filter(identifiant=identifiant).first()

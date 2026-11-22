@@ -1,6 +1,7 @@
 """Lectures du domaine « référentiels et catalogue »."""
 
 from decimal import Decimal
+from typing import Any
 
 from django.db.models import Count, DecimalField, QuerySet, Sum, Value
 from django.db.models.functions import Coalesce
@@ -8,6 +9,7 @@ from django.db.models.functions import Coalesce
 from domaines.referentiels.models import (
     Article,
     CategorieArticle,
+    Conditionnement,
     CorpsEtat,
     EtapeModele,
     Gamme,
@@ -67,3 +69,27 @@ def motifs_blocage() -> QuerySet[MotifBlocage]:
 
 def regles() -> QuerySet[RegleValidation]:
     return RegleValidation.objects.order_by("type_evenement", "champ_teste")
+
+
+def type_mouvement(code: str) -> TypeMouvement | None:
+    return TypeMouvement.objects.filter(code_type_mouvement=code).first()
+
+
+def facteur_conversion(id_article: Any, code_unite: str) -> Decimal | None:
+    """RG-S1 : facteur qui ramène une unité de conditionnement à l'unité de
+    base de l'article (1 sac = 50 kg). ``None`` si l'unité n'est ni l'unité de
+    base ni un conditionnement déclaré de l'article."""
+    article = Article.objects.filter(id_article=id_article).first()
+    if article is None:
+        return None
+    if article.unite_mesure_id == code_unite:
+        return Decimal("1")
+    conditionnement = Conditionnement.objects.filter(
+        article_id=id_article, unite_mesure_id=code_unite
+    ).first()
+    return conditionnement.facteur_conversion if conditionnement else None
+
+
+def regles_de(type_evenement: str) -> QuerySet[RegleValidation]:
+    """Règles de validation d'un type d'événement (RG-S6, RG-S9)."""
+    return RegleValidation.objects.filter(type_evenement=type_evenement).order_by("champ_teste")

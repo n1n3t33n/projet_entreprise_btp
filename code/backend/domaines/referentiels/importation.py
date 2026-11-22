@@ -8,6 +8,8 @@ Colonnes tirées du MPD-3 (I-37) : la simulation du web demandait
 dont le code existe déjà MET À JOUR l'article.
 """
 
+from typing import Any
+
 from domaines.referentiels import selecteurs
 from domaines.referentiels.constantes import ORIGINES_ARTICLE
 from domaines.referentiels.models import Article
@@ -48,7 +50,7 @@ def _preparer() -> Validateur:
     return valider
 
 
-def _enregistrer(lignes: list[Ligne]) -> int:
+def _enregistrer(lignes: list[Ligne], utilisateur: Any) -> int:
     for ligne in lignes:
         Article.objects.update_or_create(
             code=ligne["code"],

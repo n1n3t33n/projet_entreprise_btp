@@ -10,6 +10,7 @@ fichier corrigé est sans danger).
 """
 
 from datetime import date, datetime
+from typing import Any
 
 from domaines.organisation import selecteurs
 from domaines.organisation.constantes import STATUT_CHANTIER_ACTIF
@@ -42,7 +43,7 @@ def _preparer_chantiers() -> Validateur:
     return valider
 
 
-def _enregistrer_chantiers(lignes: list[Ligne]) -> int:
+def _enregistrer_chantiers(lignes: list[Ligne], utilisateur: Any) -> int:
     for ligne in lignes:
         valeurs = {
             "nom": ligne["nom"],
@@ -87,7 +88,7 @@ def _preparer_magasins() -> Validateur:
     return valider
 
 
-def _enregistrer_magasins(lignes: list[Ligne]) -> int:
+def _enregistrer_magasins(lignes: list[Ligne], utilisateur: Any) -> int:
     chantiers = {chantier.code: chantier for chantier in selecteurs.chantiers()}
     for ligne in lignes:
         Magasin.objects.update_or_create(

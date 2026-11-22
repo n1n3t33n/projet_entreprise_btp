@@ -59,10 +59,10 @@ jamais de code interne (charte § 8). `details`, `secondes_restantes` et
 | --- | --- |
 | 400 | `DONNEES_INVALIDES`, `FORMAT_NON_PRIS_EN_CHARGE` |
 | 401 | `NON_AUTHENTIFIE`, `JETON_INVALIDE`, `JETON_EXPIRE` (le mobile redemande le mot de passe) ; `APPAREIL_REVOQUE`, `COMPTE_DESACTIVE` (le mobile **efface ses données locales**, SQ-5 étapes 14-15) ; `APPAREIL_INACTIF` ; à la connexion : `IDENTIFIANTS` |
-| 403 | `ACCES_REFUSE` ; à la connexion : `COMPTE_INACTIF`, `AUCUNE_AFFECTATION`, `APPAREIL_REVOQUE` |
+| 403 | `ACCES_REFUSE` ; `SEPARATION_DES_TACHES` (celui qui a saisi ou compté ne valide pas, RG-D8) ; à la connexion : `COMPTE_INACTIF`, `AUCUNE_AFFECTATION`, `APPAREIL_REVOQUE` |
 | 404 | `INTROUVABLE` |
 | 405 | `METHODE_NON_AUTORISEE` |
-| 409 | `VERROUILLAGE_ADMINISTRATION` ; gammes : `BROUILLON_EXISTANT`, `GAMME_PUBLIEE`, `GAMME_NON_BROUILLON`, `GAMME_VIDE`, `GAMME_NON_ACTIVE` ; import : `RIEN_A_IMPORTER` |
+| 409 | `VERROUILLAGE_ADMINISTRATION` ; gammes : `BROUILLON_EXISTANT`, `GAMME_PUBLIEE`, `GAMME_NON_BROUILLON`, `GAMME_VIDE`, `GAMME_NON_ACTIVE` ; import : `RIEN_A_IMPORTER` ; stock : `UUID_DEJA_UTILISE`, `STOCK_INSUFFISANT`, `DECISION_IMPOSSIBLE`, `DEJA_ANNULE`, `CONTRE_MOUVEMENT`, `STOCK_INITIAL_EXISTANT` ; inventaire : `INVENTAIRE_EN_COURS`, `COMPTAGE_INCOMPLET`, `ETAPE_INVENTAIRE`, `LIGNE_DEJA_TRAITEE` |
 | 429 | `VERROUILLE` (connexion, EF-AUT-04) ; `TROP_DE_REQUETES` ; en-tête `Retry-After` |
 | 500 | `ERREUR_INTERNE` + `id_correlation` |
 
@@ -89,8 +89,8 @@ le droit « technique / metriques / LIRE » et sert à l'exploitation, pas aux
 ## Import CSV des référentiels (EF-ADM-02)
 
 `POST /api/import/analyse` puis `POST /api/import/confirmation`, avec le même
-corps `{"cible": "articles" | "magasins" | "chantiers", "contenu": "<texte du
-fichier>"}`. La première ligne du fichier est l'en-tête ; les colonnes sont
+corps `{"cible": "articles" | "chantiers" | "magasins" | "stock", "contenu":
+"<texte du fichier>"}`. La première ligne du fichier est l'en-tête ; les colonnes sont
 reconnues par leur nom, dans n'importe quel ordre ; séparateur `;` ou `,`.
 
 | Cible | Colonnes obligatoires | Colonnes facultatives |
@@ -98,12 +98,38 @@ reconnues par leur nom, dans n'importe quel ordre ; séparateur `;` ou `,`.
 | `articles` | `code`, `designation`, `unite` | `origine`, `famille`, `code_barre` |
 | `magasins` | `code`, `nom`, `chantier` (code) | — |
 | `chantiers` | `code`, `nom` | `programme`, `date_debut` (AAAA-MM-JJ ou JJ/MM/AAAA) |
+| `stock` | `magasin` (code), `article` (code), `quantite` | `seuil_minimal` et `seuil_critique` (ensemble) |
+
+La cible `stock` inscrit le stock de départ comme un mouvement
+`ENT_STOCK_INITIAL` au nom de la personne qui importe ; une ligne est
+identifiée par le couple (magasin, article) et un article n'a qu'un stock de
+départ par magasin.
 
 L'analyse n'écrit rien et rend `colonnes`, une ligne de rapport par ligne de
 données et les totaux. La confirmation refait l'analyse, écrit les lignes
 valides (création ou mise à jour par code) et journalise `IMPORT_CSV`. Un
 en-tête inconnu ou incomplet rend `400 DONNEES_INVALIDES` avec la liste des
 colonnes possibles dans `details.contenu`.
+
+## Stock (B3)
+
+- `POST /api/mouvements` est idempotent sur `uuid`, généré par le client
+  (téléphone hors ligne) : premier envoi `201`, rejeu identique `200` avec le
+  même mouvement, même `uuid` et contenu différent `409 UUID_DEJA_UTILISE`.
+  Sans `uuid`, le serveur en attribue un. Même règle pour une décision
+  (`uuid` de l'événement).
+- `statut_validation` servi est dérivé : `VALIDE`, `A_VALIDER`,
+  `EN_ALERTE` (au-delà du délai de relance), `REJETE`, `ANNULE`. En base, seul
+  le statut d'insertion est écrit.
+- Un mouvement ne se corrige pas : `POST /api/mouvements/{uuid}/annulation`
+  inscrit un contre-mouvement (`ANN_PLUS` ou `ANN_MOINS`) relié à l'original
+  par `mouvement_annule_uuid`.
+- Un magasin hors du périmètre de l'utilisateur répond `404`, comme un magasin
+  inexistant.
+- Routes sans écran web à ce jour (forme définie côté serveur, F-12) :
+  `GET /api/mouvements/a-valider`, `POST /api/mouvements/{uuid}/validation`,
+  `/annulation`, `GET /api/stock/alertes` et toutes les routes
+  `/api/inventaires`.
 
 ## Écarts avec le contrat simulé des fronts (à reprendre en phase F-06)
 
@@ -132,3 +158,18 @@ colonnes possibles dans `details.contenu`.
 - Colonnes de l'import tirées du MPD et non de la simulation (I-37).
 - Énumération `{ACTIF, INACTIF}` nommée `StatutActiviteEnum` dans le schéma
   (anciennement `StatutEnum`, mêmes valeurs).
+
+Écarts introduits en B3 (stock) :
+
+- Corps de `POST /api/mouvements` : le web envoie déjà `corps_etat`,
+  `beneficiaire`, `motif` et `code_unite`, qui n'existaient pas au MPD-4 ;
+  ils sont désormais en base (écarts Q-L). Ajouts compatibles en sortie :
+  `code_unite`, `corps_etat`, `beneficiaire`, `horodatage_appareil`,
+  `mouvement_annule_uuid`, `derive_horloge` (RG-S11).
+- `ArticleDto` de l'écran Stock : `code_categorie` peut valoir `null`
+  (article sans famille).
+- Types de mouvement employés par le serveur : `ENT_STOCK_INITIAL`,
+  `AJU_INVENTAIRE_PLUS`, `AJU_INVENTAIRE_MOINS`, `ANN_PLUS`, `ANN_MOINS` ; ils
+  ne se saisissent pas. Le mobile n'a qu'`AJU_INVENTAIRE` (I-21).
+- Niveau `VIDE` (stock nul ou négatif) ajouté aux niveaux du MPD, comme le
+  web l'affiche.

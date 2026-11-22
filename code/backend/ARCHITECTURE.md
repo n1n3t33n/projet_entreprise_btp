@@ -14,9 +14,9 @@ colonne peut ne jamais sortir de l'API.
 ## Les dossiers
 
 `domaines/` contient le métier, un dossier par domaine du MERISE :
-`identite` (MPD-1), `organisation` (MPD-2), `referentiels` (MPD-3). Les
-domaines stock, avancement, synchronisation et acquéreur viendront s'ajouter
-au même endroit, sur le même modèle.
+`identite` (MPD-1), `organisation` (MPD-2), `referentiels` (MPD-3), `stock`
+(MPD-4). Les domaines avancement, synchronisation et acquéreur viendront
+s'ajouter au même endroit, sur le même modèle.
 
 `socle/` contient ce qui sert à tous les domaines sans appartenir à aucun :
 journaux JSON et identifiant de corrélation, format d'erreur unique,
@@ -227,8 +227,56 @@ de journaliser (un champ de plus, une autre table), seul son service bouge.
 
 Les dépendances vont dans un seul sens : organisation ne dépend de personne,
 référentiels dépend d'organisation, identité lit organisation pour ses
-périmètres. Les couches `api/` de tous les domaines utilisent
-`identite.permissions`, qui est transverse.
+périmètres, stock dépend des trois (magasins et logements, articles et types
+de mouvement, auteurs et valideurs). Les couches `api/` de tous les domaines
+utilisent `identite.permissions`, qui est transverse.
+
+## Les journaux immuables du stock
+
+`mouvement_stock` et `evenement_validation` ne se modifient ni ne se
+suppriment (RG-S8), exactement comme le journal d'audit : déclencheurs qui
+refusent `UPDATE`, `DELETE` et `TRUNCATE`, et rôle applicatif réduit à
+`SELECT` et `INSERT` (`stock/migrations/0002_journaux_immuables.py`). Trois
+conséquences dans le code.
+
+Le statut d'un mouvement ne s'écrit qu'une fois, à l'insertion :
+`ENREGISTRE`, ou `A_VALIDER` si une règle de validation s'est déclenchée.
+Ce que l'écran affiche est calculé à la lecture, à partir des décisions et
+d'un éventuel contre-mouvement (`stock/selecteurs.py`) :
+
+```python
+if getattr(mouvement, "est_annule", False):
+    return STATUT_ANNULE
+decision = getattr(mouvement, "derniere_decision", None)
+if decision == DECISION_ACCEPTE:
+    return STATUT_VALIDE
+```
+
+`selecteurs.mouvements()` pose ces deux annotations en une seule requête ;
+une vue qui sert des mouvements passe toujours par lui.
+
+On ne corrige jamais un mouvement : on l'annule par un contre-mouvement de
+sens opposé, justifié par un motif et relié à l'original
+(`services/annulation.py`). Toute écriture au journal passe par une seule
+fonction, `services/mouvements.inscrire`, qui recalcule aussi la projection
+`stock_courant` dans la même transaction (RG-S2 : le stock est la somme des
+mouvements). La saisie, les ajustements d'inventaire, les annulations et
+l'import du stock de départ l'appellent tous.
+
+Enfin, `SELECT … FOR UPDATE` est impossible sur ces tables : PostgreSQL exige
+le droit `UPDATE` pour poser ce verrou, et le rôle applicatif ne l'a pas.
+Deux décisions simultanées sur un même mouvement sont donc sérialisées par
+un verrou consultatif (`services/validation.py`) :
+
+```python
+curseur.execute(
+    "SELECT pg_advisory_xact_lock(hashtext(%s))", [f"mouvement:{uuid_mouvement}"]
+)
+```
+
+Les tests tournent sous le rôle propriétaire et ne verraient pas ce piège :
+`test_la_decision_fonctionne_sous_le_role_applicatif` repasse sous le rôle
+applicatif pour le prouver.
 
 ## Le socle et les inscriptions au démarrage
 
@@ -256,6 +304,11 @@ Les registres existants :
 | `socle/traitements.py` | `declarer_traitement(nom, fonction)` | `manage.py lancer_traitement <nom>` |
 | `socle/base_de_donnees/partitions.py` | `declarer_table_partitionnee(nom)` | traitement `creer_partitions` |
 
+Le domaine stock s'y inscrit quatre fois : chargeur de démonstration (rang
+30, après l'identité qui fournit les auteurs), cible d'import « stock »,
+traitement `relancer_validations` et table partitionnée
+`evenement_validation` (`stock/apps.py`).
+
 ## Les rôles PostgreSQL
 
 Django tourne sous `chantiersync_application`, un rôle qui n'est
@@ -270,7 +323,8 @@ python manage.py migrate --database migration
 Un simple `migrate` échoue, et c'est voulu. Les droits du rôle applicatif
 sur les tables futures sont posés une fois pour toutes par
 `socle/migrations/0001_fonctions_et_droits.py`. Une nouvelle table n'a donc
-besoin d'aucun `GRANT`.
+besoin d'aucun `GRANT` ; une table immuable, au contraire, se voit retirer
+`UPDATE` et `DELETE` par sa propre migration (`identite 0003`, `stock 0002`).
 
 ## Où ajouter quoi
 
@@ -301,6 +355,15 @@ Ajoute enfin la table à `TABLES_MPD` dans
 
 3. Le chemin dans `api/routes.py`. Si c'est le premier du domaine, inclure
    `routes.py` dans `configuration/urls.py`.
+
+   Si la donnée appartient à un magasin, `ADroit` ne suffit pas : il dit si
+   l'utilisateur a le droit, pas sur quel magasin. Le service vérifie en plus
+   la portée avec `stock/services/acces.py` (un magasin hors périmètre répond
+   404) :
+
+   ```python
+   magasin = acces.magasin_autorise(request.user, id_magasin, "stock", "LIRE")
+   ```
 4. La permission, si elle est nouvelle, dans une migration de données qui
    appelle `socle/permissions_donnees.py`. L'administrateur la reçoit
    automatiquement ; les autres rôles se règlent dans la matrice (et dans
@@ -329,7 +392,8 @@ arrive, ajoute aussi une contrainte en base.
 un bilan en une phrase, inscrite avec `declarer_traitement` dans le `ready()`
 du domaine. La plateforme la lance avec `manage.py lancer_traitement <nom>` ;
 chaque passage est tracé dans `execution_traitement` et un échec envoie une
-alerte.
+alerte. Il en existe deux : `creer_partitions` (quotidien) et
+`relancer_validations` (horaire, `stock/services/relance.py`).
 
 ## Les tests
 

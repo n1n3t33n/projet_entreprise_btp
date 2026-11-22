@@ -173,7 +173,9 @@ MOTIFS_BLOCAGE = [
 REGLES = [
     ("R-001", "VALIDATION_ETAPE", "delai_validation", "INFERIEUR_EGAL", None, 72),
     ("R-002", "ECART_INVENTAIRE", "ecart_pourcent", "SUPERIEUR_EGAL", Decimal("5.000"), None),
-    ("R-003", "MOUVEMENT_STOCK", "montant", "SUPERIEUR_EGAL", Decimal("500000.000"), None),
+    # RG-S6 sur la quantité : le MPD n'a pas de prix, un seuil « de valeur »
+    # ne s'évalue pas (Q-M). Valeur de démonstration, à fixer avec Italia (H13).
+    ("R-003", "MOUVEMENT_STOCK", "quantite_base", "SUPERIEUR_EGAL", Decimal("100.000"), None),
 ]
 
 

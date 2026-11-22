@@ -11,7 +11,7 @@ from django.db import connection, models
 
 pytestmark = [pytest.mark.django_db, pytest.mark.integration]
 
-# Tables du MPD présentes à ce jalon : MPD-1 (B1), MPD-2 et MPD-3 (B2).
+# Tables du MPD présentes à ce jalon : MPD-1 (B1), MPD-2 et MPD-3 (B2), MPD-4 (B3).
 TABLES_MPD = {
     # MPD-1
     "utilisateur",
@@ -43,6 +43,14 @@ TABLES_MPD = {
     "type_mouvement",
     "motif_blocage",
     "regle_validation",
+    # MPD-4
+    "mouvement_stock",
+    "evenement_validation",
+    "seuil_stock",
+    "stock_courant",
+    "alerte",
+    "inventaire",
+    "ligne_inventaire",
 }
 
 # Tables techniques hors MPD, validées (écart Q9/Q-G : trace des traitements
@@ -61,6 +69,17 @@ TABLES_DJANGO = {
 }
 
 CONTRAINTES_MPD = {
+    # MPD-4 (+ écarts validés Q-L, Q-O)
+    "ck_mouvement_stock_statut_validation",
+    "ck_mouvement_stock_quantites_positives",
+    "ck_evenement_validation_decision",
+    "ck_stock_courant_niveau_alerte",
+    "ck_alerte_type_alerte",
+    "ck_alerte_niveau",
+    "ck_alerte_statut",
+    "ck_inventaire_statut",
+    "ck_ligne_inventaire_statut",
+    "uq_seuil_stock_magasin_article",
     "uq_utilisateur_identifiant",
     "ck_utilisateur_statut",
     "uq_equipe_code",
@@ -85,6 +104,25 @@ CONTRAINTES_MPD = {
 }
 
 INDEX_MPD = {
+    # MPD-4
+    "ix_mouvement_stock_type_mouvement_code_type_mouvement",
+    "ix_mouvement_stock_article_id_article",
+    "ix_mouvement_stock_magasin_id_magasin",
+    "ix_mouvement_stock_logement_id_logement",
+    "ix_mouvement_stock_utilisateur_id_utilisateur",
+    "ix_mouvement_stock_stock_courant_seuil_stock_id_seuil",
+    "ix_mouvement_stock_ligne_inventaire_id_ligne",
+    "ix_mouvement_stock_a_valider",
+    "ix_evenement_validation_mouvement_stock_uuid",
+    "ix_evenement_validation_regle_validation_id_regle",
+    "ix_evenement_validation_utilisateur_id_utilisateur",
+    "ix_seuil_stock_magasin_id_magasin",
+    "ix_seuil_stock_article_id_article",
+    "ix_stock_courant_alerte",
+    "ix_alerte_stock_courant_seuil_stock_id_seuil",
+    "ix_inventaire_magasin_id_magasin",
+    "ix_ligne_inventaire_inventaire_id_inventaire",
+    "ix_ligne_inventaire_article_id_article",
     "ix_perimetre_chantier_id_chantier",
     "ix_perimetre_magasin_id_magasin",
     "ix_appareil_utilisateur_id_utilisateur",
@@ -122,6 +160,23 @@ NULLITE_CLES_ETRANGERES = {
     ("gamme", "type_logement_code_type"): "NO",
     ("etape_modele", "gamme_id_gamme"): "NO",
     ("etape_modele", "corps_etat_code_corps_etat"): "NO",
+    # MPD-4 (logement : NULL malgré le (1,1) du MCD, I-38)
+    ("mouvement_stock", "type_mouvement_code_type_mouvement"): "NO",
+    ("mouvement_stock", "article_id_article"): "NO",
+    ("mouvement_stock", "magasin_id_magasin"): "NO",
+    ("mouvement_stock", "utilisateur_id_utilisateur"): "NO",
+    ("mouvement_stock", "stock_courant_seuil_stock_id_seuil"): "NO",
+    ("mouvement_stock", "logement_id_logement"): "YES",
+    ("mouvement_stock", "ligne_inventaire_id_ligne"): "YES",
+    ("evenement_validation", "mouvement_stock_uuid"): "NO",
+    ("evenement_validation", "regle_validation_id_regle"): "YES",
+    ("evenement_validation", "utilisateur_id_utilisateur"): "NO",
+    ("seuil_stock", "magasin_id_magasin"): "NO",
+    ("seuil_stock", "article_id_article"): "NO",
+    ("alerte", "stock_courant_seuil_stock_id_seuil"): "NO",
+    ("inventaire", "magasin_id_magasin"): "NO",
+    ("ligne_inventaire", "inventaire_id_inventaire"): "NO",
+    ("ligne_inventaire", "article_id_article"): "NO",
 }
 
 
@@ -181,7 +236,8 @@ def test_les_cles_composites_du_mpd_sont_respectees() -> None:
             "JOIN information_schema.key_column_usage kcu "
             "  ON kcu.constraint_name = tc.constraint_name AND kcu.table_name = tc.table_name "
             "WHERE tc.constraint_type = 'PRIMARY KEY' "
-            "AND tc.table_name IN ('droit_accorde', 'affectation_role', 'membre_equipe', 'journal_audit') "
+            "AND tc.table_name IN ('droit_accorde', 'affectation_role', 'membre_equipe', "
+            "'journal_audit', 'evenement_validation', 'stock_courant') "
             "GROUP BY tc.table_name"
         )
         cles = dict(curseur.fetchall())
@@ -190,6 +246,8 @@ def test_les_cles_composites_du_mpd_sont_respectees() -> None:
         "affectation_role": "role_code_role,perimetre_id_perimetre,utilisateur_id_utilisateur",
         "membre_equipe": "utilisateur_id_utilisateur,equipe_id_equipe",
         "journal_audit": "id_entree,horodatage",
+        "evenement_validation": "uuid,horodatage_serveur",
+        "stock_courant": "seuil_stock_id_seuil",
     }
 
 
