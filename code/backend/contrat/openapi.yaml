@@ -838,6 +838,163 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResultatImport'
           description: ''
+  /api/inventaires:
+    get:
+      operationId: inventaires_list
+      description: GET /api/inventaires?magasin= et POST /api/inventaires (ouverture).
+      parameters:
+      - in: query
+        name: magasin
+        schema:
+          type: string
+      tags:
+      - inventaires
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Inventaire'
+          description: ''
+    post:
+      operationId: inventaires_create
+      description: GET /api/inventaires?magasin= et POST /api/inventaires (ouverture).
+      tags:
+      - inventaires
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OuvertureInventaireRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventaireDetail'
+          description: ''
+  /api/inventaires/{id_inventaire}:
+    get:
+      operationId: inventaires_retrieve
+      description: GET /api/inventaires/{id} — l'inventaire et ses lignes.
+      parameters:
+      - in: path
+        name: id_inventaire
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - inventaires
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventaireDetail'
+          description: ''
+  /api/inventaires/{id_inventaire}/lignes/{id_ligne}:
+    put:
+      operationId: inventaires_lignes_update
+      description: PUT /api/inventaires/{id}/lignes/{id} — quantité comptée.
+      parameters:
+      - in: path
+        name: id_inventaire
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: id_ligne
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - inventaires
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComptageRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LigneInventaire'
+          description: ''
+  /api/inventaires/{id_inventaire}/lignes/{id_ligne}/validation:
+    post:
+      operationId: inventaires_lignes_validation_create
+      description: |-
+        POST /api/inventaires/{id}/lignes/{id}/validation — ACCEPTE inscrit
+        l'ajustement (à valider une seconde fois au-delà de la règle
+        ECART_INVENTAIRE, RG-S9) ; REFUSE renvoie la ligne au comptage.
+      parameters:
+      - in: path
+        name: id_inventaire
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: id_ligne
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - inventaires
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventaireDetail'
+          description: ''
+  /api/inventaires/{id_inventaire}/soumission:
+    post:
+      operationId: inventaires_soumission_create
+      description: POST /api/inventaires/{id}/soumission — fin du comptage.
+      parameters:
+      - in: path
+        name: id_inventaire
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - inventaires
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventaireDetail'
+          description: ''
   /api/magasins:
     get:
       operationId: magasins_list
@@ -2002,11 +2159,22 @@ components:
       - articles
       - chantiers
       - magasins
+      - stock
       type: string
       description: |-
         * `articles` - articles
         * `chantiers` - chantiers
         * `magasins` - magasins
+        * `stock` - stock
+    ComptageRequest:
+      type: object
+      properties:
+        quantite_comptee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+      required:
+      - quantite_comptee
     CompteEntreeRequest:
       type: object
       description: |-
@@ -2448,6 +2616,81 @@ components:
       required:
       - cible
       - contenu
+    Inventaire:
+      type: object
+      properties:
+        id_inventaire:
+          type: string
+          format: uuid
+          readOnly: true
+        date_debut:
+          type: string
+          format: date
+        date_fin:
+          type: string
+          format: date
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        magasin_id_magasin:
+          type: string
+          format: uuid
+        libelle_magasin:
+          type: string
+        nombre_lignes:
+          type: integer
+          readOnly: true
+        nombre_comptees:
+          type: integer
+          readOnly: true
+      required:
+      - id_inventaire
+      - libelle_magasin
+      - magasin_id_magasin
+      - nombre_comptees
+      - nombre_lignes
+    InventaireDetail:
+      type: object
+      properties:
+        id_inventaire:
+          type: string
+          format: uuid
+          readOnly: true
+        date_debut:
+          type: string
+          format: date
+        date_fin:
+          type: string
+          format: date
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        magasin_id_magasin:
+          type: string
+          format: uuid
+        libelle_magasin:
+          type: string
+        nombre_lignes:
+          type: integer
+          readOnly: true
+        nombre_comptees:
+          type: integer
+          readOnly: true
+        lignes:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - id_inventaire
+      - libelle_magasin
+      - lignes
+      - magasin_id_magasin
+      - nombre_comptees
+      - nombre_lignes
     LigneImport:
       type: object
       properties:
@@ -2464,6 +2707,51 @@ components:
       - erreur
       - numero
       - valeurs
+    LigneInventaire:
+      type: object
+      properties:
+        id_ligne:
+          type: string
+          format: uuid
+          readOnly: true
+        article_id_article:
+          type: string
+          format: uuid
+        code_article:
+          type: string
+        designation:
+          type: string
+        code_unite:
+          type: string
+        quantite_theorique:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        quantite_comptee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+          nullable: true
+        ecart:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+          nullable: true
+        statut:
+          type: string
+          maxLength: 32
+        uuid_ajustement:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - article_id_article
+      - code_article
+      - code_unite
+      - designation
+      - id_ligne
+      - quantite_theorique
+      - uuid_ajustement
     LigneStock:
       type: object
       description: '``LigneStockDto`` : l''article, ses seuils et son stock courant.'
@@ -2883,6 +3171,14 @@ components:
         * `ACHAT` - ACHAT
         * `PRODUCTION_INTERNE` - PRODUCTION_INTERNE
         * `RECUPERATION` - RECUPERATION
+    OuvertureInventaireRequest:
+      type: object
+      properties:
+        magasin_id_magasin:
+          type: string
+          format: uuid
+      required:
+      - magasin_id_magasin
     Parametre:
       type: object
       description: |-

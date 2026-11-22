@@ -159,6 +159,6 @@ def importer_csv(utilisateur: Any, cible: str, contenu: str, adresse_ip: str | N
     """Second temps de l'import CSV (EF-ADM-02) : écrit les lignes valides et
     journalise l'opération dans la même transaction (EF-AUT-08). L'audit est
     écrit par le service du domaine identité (règle de modularité)."""
-    nombre = importation.importer(cible, contenu)
+    nombre = importation.importer(cible, contenu, utilisateur)
     audit.consigner(utilisateur, AUDIT_IMPORT_CSV, OBJET_REFERENTIEL, adresse_ip, cible)
     return nombre

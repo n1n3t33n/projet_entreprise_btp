@@ -18,7 +18,13 @@ from domaines.organisation import selecteurs as selecteurs_organisation
 from domaines.referentiels import selecteurs as selecteurs_referentiels
 from domaines.stock import selecteurs
 from domaines.stock.constantes import DECISIONS
-from domaines.stock.models import Alerte, MouvementStock, SeuilStock
+from domaines.stock.models import (
+    Alerte,
+    Inventaire,
+    LigneInventaire,
+    MouvementStock,
+    SeuilStock,
+)
 
 
 def _quantite(**options: Any) -> serializers.DecimalField:
@@ -211,3 +217,78 @@ class AlerteSerializer(serializers.ModelSerializer):  # type: ignore[type-arg]
             "magasin_id_magasin",
             "designation",
         ]
+
+
+# --- Inventaires (EF-STK-08, SQ-4) ---------------------------------------------------
+# Aucun écran web ne les appelle encore : forme définie côté serveur (F-12),
+# proche de l'écran Inventaire du mobile (ecran_inventaire.dart).
+class LigneInventaireSerializer(serializers.ModelSerializer):  # type: ignore[type-arg]
+    article_id_article = serializers.UUIDField(source="article_id")
+    code_article = serializers.CharField(source="article.code")
+    designation = serializers.CharField(source="article.designation")
+    code_unite = serializers.CharField(source="article.unite_mesure_id")
+    uuid_ajustement = serializers.SerializerMethodField()
+
+    class Meta:
+        model = LigneInventaire
+        fields = [
+            "id_ligne",
+            "article_id_article",
+            "code_article",
+            "designation",
+            "code_unite",
+            "quantite_theorique",
+            "quantite_comptee",
+            "ecart",
+            "statut",
+            "uuid_ajustement",
+        ]
+
+    def get_uuid_ajustement(self, obj: LigneInventaire) -> str | None:
+        ajustement = obj.ajustements.first()
+        return str(ajustement.pk) if ajustement else None
+
+
+class InventaireSerializer(serializers.ModelSerializer):  # type: ignore[type-arg]
+    magasin_id_magasin = serializers.UUIDField(source="magasin_id")
+    libelle_magasin = serializers.CharField(source="magasin.nom")
+    nombre_lignes = serializers.SerializerMethodField()
+    nombre_comptees = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Inventaire
+        fields = [
+            "id_inventaire",
+            "date_debut",
+            "date_fin",
+            "statut",
+            "magasin_id_magasin",
+            "libelle_magasin",
+            "nombre_lignes",
+            "nombre_comptees",
+        ]
+
+    def get_nombre_lignes(self, obj: Inventaire) -> int:
+        return obj.lignes.count()
+
+    def get_nombre_comptees(self, obj: Inventaire) -> int:
+        return obj.lignes.exclude(statut="A_COMPTER").count()
+
+
+class InventaireDetailSerializer(InventaireSerializer):
+    lignes = serializers.SerializerMethodField()
+
+    class Meta(InventaireSerializer.Meta):
+        fields = [*InventaireSerializer.Meta.fields, "lignes"]
+
+    def get_lignes(self, obj: Inventaire) -> list[dict[str, Any]]:
+        lignes = obj.lignes.select_related("article").order_by("article__code")
+        return list(LigneInventaireSerializer(lignes, many=True).data)
+
+
+class OuvertureInventaireSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    magasin_id_magasin = serializers.UUIDField()
+
+
+class ComptageSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    quantite_comptee = _quantite(min_value=Decimal("0"))

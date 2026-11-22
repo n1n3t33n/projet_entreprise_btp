@@ -25,13 +25,14 @@ from domaines.referentiels.models import RegleValidation
 from domaines.stock import selecteurs
 from domaines.stock.constantes import (
     DECISION_REFUSE,
+    EVENEMENT_ECART_INVENTAIRE,
     EVENEMENT_MOUVEMENT,
     OBJET_MOUVEMENT,
     STATUT_A_VALIDER,
     STATUT_EN_ALERTE,
 )
 from domaines.stock.models import EvenementValidation, MouvementStock
-from domaines.stock.services import acces, parametres, regles, relance
+from domaines.stock.services import acces, inventaires, parametres, regles, relance
 from socle.api_outils import conflit, donnee_invalide
 from socle.erreurs import ErreurApi
 
@@ -56,7 +57,10 @@ def mouvement_autorise(utilisateur: Any, uuid_mouvement: Any, action: str) -> Mo
 
 def _regle(mouvement: MouvementStock) -> RegleValidation | None:
     """Règle qui a soumis le mouvement à validation, recalculée (le MPD la
-    relie à l'événement, pas au mouvement)."""
+    relie à l'événement, pas au mouvement). Un ajustement d'inventaire relève
+    de la règle ECART_INVENTAIRE (RG-S9)."""
+    if mouvement.ligne_inventaire_id:
+        return regles.premiere_regle(EVENEMENT_ECART_INVENTAIRE)
     return regles.regle_declenchee(EVENEMENT_MOUVEMENT, {"quantite_base": mouvement.quantite_base})
 
 
@@ -84,6 +88,10 @@ def decider(
             motif="SEPARATION_DES_TACHES",
             message="Vous avez saisi ce mouvement : une autre personne doit le valider.",
         )
+    if mouvement.ligne_inventaire_id:
+        # Double validation d'un écart d'inventaire (RG-S9) : le compteur est
+        # exclu lui aussi (RG-D11).
+        inventaires.controler_valideur(mouvement.ligne_inventaire_id, valideur)
     if decision == DECISION_REFUSE and not motif:
         raise donnee_invalide("motif", "Indiquez le motif du refus.")
     valeurs: dict[str, Any] = {

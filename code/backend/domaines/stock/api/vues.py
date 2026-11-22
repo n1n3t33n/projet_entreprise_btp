@@ -1,4 +1,4 @@
-"""Points d'entrée du domaine « stock » (UC-1 ; EF-STK-01 à 03, 05 à 07, 09 à 11).
+"""Points d'entrée du domaine « stock » (UC-1 ; EF-STK-01 à 03, 05 à 11).
 
 Chaque vue déclare son droit (``ADroit``, EF-AUT-07) ; ``services.acces``
 vérifie en plus que le magasin demandé est couvert par ce droit (périmètre).
@@ -20,8 +20,18 @@ from domaines.identite.permissions import ADroit
 from domaines.organisation import selecteurs as selecteurs_organisation
 from domaines.stock import selecteurs
 from domaines.stock.api import serialiseurs as s
-from domaines.stock.services import acces, annulation, mouvements, parametres, seuils, validation
+from domaines.stock.services import (
+    acces,
+    annulation,
+    inventaires,
+    mouvements,
+    parametres,
+    seuils,
+    validation,
+)
 from socle.api_outils import donnee_invalide
+from socle.erreurs import ErreurApi
+from socle.reseau import adresse_client
 
 LIMITE_PAR_DEFAUT = 200
 LIMITE_MAXIMALE = 1000
@@ -252,3 +262,99 @@ class VueAnnulation(APIView):
         return Response(
             s.MouvementSerializer(relu, context=contexte()).data, status=status.HTTP_201_CREATED
         )
+
+
+# --- Inventaires (EF-STK-08, SQ-4, RG-S9) --------------------------------------------
+def _detail(inventaire: Any) -> dict[str, Any]:
+    return dict(s.InventaireDetailSerializer(inventaire).data)
+
+
+class VueInventaires(APIView):
+    """GET /api/inventaires?magasin= et POST /api/inventaires (ouverture)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("inventaires", "CREER" if self.request.method == "POST" else "LIRE")
+
+    @extend_schema(
+        parameters=[OpenApiParameter("magasin", str)],
+        responses=s.InventaireSerializer(many=True),
+    )
+    def get(self, request: Request) -> Response:
+        requete = selecteurs.inventaires(
+            acces.magasins_couverts(request.user, "inventaires", "LIRE")
+        )
+        if request.query_params.get("magasin"):
+            requete = requete.filter(magasin_id=request.query_params["magasin"])
+        return Response(s.InventaireSerializer(requete[:LIMITE_PAR_DEFAUT], many=True).data)
+
+    @extend_schema(
+        request=s.OuvertureInventaireSerializer, responses={201: s.InventaireDetailSerializer}
+    )
+    def post(self, request: Request) -> Response:
+        donnees = _valider(s.OuvertureInventaireSerializer, request.data)
+        inventaire = inventaires.ouvrir(request.user, donnees["magasin_id_magasin"])
+        return Response(_detail(inventaire), status=status.HTTP_201_CREATED)
+
+
+class VueInventaire(APIView):
+    """GET /api/inventaires/{id} — l'inventaire et ses lignes."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("inventaires", "LIRE")
+
+    @extend_schema(responses=s.InventaireDetailSerializer)
+    def get(self, request: Request, id_inventaire: str) -> Response:
+        couverts = acces.magasins_couverts(request.user, "inventaires", "LIRE")
+        inventaire = selecteurs.inventaires(couverts).filter(id_inventaire=id_inventaire).first()
+        if inventaire is None:
+            raise ErreurApi(
+                statut=404, motif="INTROUVABLE", message="Cet inventaire est introuvable."
+            )
+        return Response(_detail(inventaire))
+
+
+class VueComptage(APIView):
+    """PUT /api/inventaires/{id}/lignes/{id} — quantité comptée."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("inventaires", "MODIFIER")
+
+    @extend_schema(request=s.ComptageSerializer, responses=s.LigneInventaireSerializer)
+    def put(self, request: Request, id_inventaire: str, id_ligne: str) -> Response:
+        donnees = _valider(s.ComptageSerializer, request.data)
+        ligne = inventaires.compter(
+            request.user,
+            id_inventaire,
+            id_ligne,
+            donnees["quantite_comptee"],
+            adresse_client(request),
+        )
+        return Response(s.LigneInventaireSerializer(ligne).data)
+
+
+class VueSoumission(APIView):
+    """POST /api/inventaires/{id}/soumission — fin du comptage."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("inventaires", "MODIFIER")
+
+    @extend_schema(request=None, responses=s.InventaireDetailSerializer)
+    def post(self, request: Request, id_inventaire: str) -> Response:
+        return Response(_detail(inventaires.soumettre(request.user, id_inventaire)))
+
+
+class VueValidationLigne(APIView):
+    """POST /api/inventaires/{id}/lignes/{id}/validation — ACCEPTE inscrit
+    l'ajustement (à valider une seconde fois au-delà de la règle
+    ECART_INVENTAIRE, RG-S9) ; REFUSE renvoie la ligne au comptage."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("inventaires", "VALIDER")
+
+    @extend_schema(request=s.DecisionEntreeSerializer, responses=s.InventaireDetailSerializer)
+    def post(self, request: Request, id_inventaire: str, id_ligne: str) -> Response:
+        donnees = _valider(s.DecisionEntreeSerializer, request.data)
+        inventaire = inventaires.valider_ligne(
+            request.user, id_inventaire, id_ligne, donnees["decision"], donnees.get("motif")
+        )
+        return Response(_detail(inventaire))

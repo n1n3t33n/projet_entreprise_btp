@@ -43,3 +43,8 @@ def regle_declenchee(type_evenement: str, valeurs: dict[str, Decimal]) -> RegleV
         if comparer(valeur, regle.valeur_seuil):
             return regle
     return None
+
+
+def premiere_regle(type_evenement: str) -> RegleValidation | None:
+    """Première règle d'un type d'événement, pour la relier à un événement."""
+    return selecteurs_referentiels.regles_de(type_evenement).first()

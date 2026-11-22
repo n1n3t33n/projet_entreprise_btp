@@ -15,3 +15,14 @@ def lister(
     if id_auteur:
         entrees = entrees.filter(utilisateur_id=id_auteur)
     return entrees[:limite]
+
+
+def dernier_auteur(action: str, id_objet: object) -> object | None:
+    """Identifiant de l'auteur de la dernière entrée ``action`` visant
+    ``id_objet`` (ex. qui a compté une ligne d'inventaire, RG-D11)."""
+    entree = (
+        JournalAudit.objects.filter(action=action, id_objet=str(id_objet))
+        .order_by("-horodatage")
+        .first()
+    )
+    return entree.utilisateur_id if entree else None

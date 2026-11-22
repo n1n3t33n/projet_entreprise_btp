@@ -14,10 +14,11 @@ class ConfigurationStock(AppConfig):
     verbose_name = "Stock et journal immuable"
 
     def ready(self) -> None:
-        from domaines.stock import demo
+        from domaines.stock import demo, importation
         from domaines.stock.services import relance
         from socle.base_de_donnees.partitions import declarer_table_partitionnee
         from socle.demo import declarer_chargeur
+        from socle.importation import declarer_cible
         from socle.traitements import declarer_traitement
 
         # Partitions mensuelles préparées par le traitement creer_partitions.
@@ -27,3 +28,5 @@ class ConfigurationStock(AppConfig):
         # Relance horaire des mouvements sans décision (ET-2), tâche planifiée
         # « lancer_traitement relancer_validations ».
         declarer_traitement("relancer_validations", relance.relancer)
+        # Import CSV du stock de départ (EF-ADM-02).
+        declarer_cible(importation.STOCK)

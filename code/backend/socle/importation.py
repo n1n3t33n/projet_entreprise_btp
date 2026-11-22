@@ -23,6 +23,7 @@ import csv
 import io
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import Any
 
 from django.db import transaction
 
@@ -51,14 +52,17 @@ class CibleImport:
     ligne : il peut charger d'avance les codes existants (unités, chantiers…)
     pour ne pas interroger la base à chaque ligne. Le validateur rend un
     message lisible, ou ``None`` si la ligne est bonne.
-    ``enregistrer`` crée ou met à jour les lignes valides (par leur code) et
-    rend le nombre de lignes écrites."""
+    ``enregistrer`` crée ou met à jour les lignes valides et rend le nombre de
+    lignes écrites ; il reçoit l'utilisateur qui importe (auteur des
+    mouvements du stock de départ, par exemple).
+    ``cle`` : colonnes qui identifient une ligne ; deux lignes de même clé
+    dans un fichier sont un doublon."""
 
     code: str
     colonnes: tuple[Colonne, ...]
     preparer: Callable[[], Validateur]
-    enregistrer: Callable[[list[Ligne]], int]
-    cle: str = "code"
+    enregistrer: Callable[[list[Ligne], Any], int]
+    cle: tuple[str, ...] = ("code",)
 
 
 @dataclass(frozen=True)
@@ -147,10 +151,10 @@ def _erreur(
     for colonne in attendue.colonnes:
         if colonne.obligatoire and not ligne[colonne.nom]:
             return f"« {colonne.nom} » est obligatoire"
-    cle = ligne[attendue.cle].upper()
-    if cle in cles_vues:
-        return f"« {ligne[attendue.cle]} » apparaît deux fois dans le fichier"
-    cles_vues.add(cle)
+    cle = " / ".join(ligne[colonne] for colonne in attendue.cle)
+    if cle.upper() in cles_vues:
+        return f"« {cle} » apparaît deux fois dans le fichier"
+    cles_vues.add(cle.upper())
     return valider(ligne)
 
 
@@ -184,10 +188,10 @@ def analyser(code_cible: str, contenu: str) -> Rapport:
 
 
 @transaction.atomic
-def importer(code_cible: str, contenu: str) -> int:
+def importer(code_cible: str, contenu: str, utilisateur: Any) -> int:
     """Second temps : réanalyse puis enregistre les lignes valides, tout ou
     rien (une erreur inattendue annule l'ensemble)."""
     _rapport, valides = _analyser(code_cible, contenu)
     if not valides:
         raise conflit("RIEN_A_IMPORTER", "Aucune ligne valide à importer.")
-    return cible(code_cible).enregistrer(valides)
+    return cible(code_cible).enregistrer(valides, utilisateur)

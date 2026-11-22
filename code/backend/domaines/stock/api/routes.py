@@ -30,4 +30,21 @@ urlpatterns = [
         vues.VueAnnulation.as_view(),
         name="mouvement-annulation",
     ),
+    path("inventaires", vues.VueInventaires.as_view(), name="inventaires"),
+    path("inventaires/<uuid:id_inventaire>", vues.VueInventaire.as_view(), name="inventaire"),
+    path(
+        "inventaires/<uuid:id_inventaire>/soumission",
+        vues.VueSoumission.as_view(),
+        name="inventaire-soumission",
+    ),
+    path(
+        "inventaires/<uuid:id_inventaire>/lignes/<uuid:id_ligne>",
+        vues.VueComptage.as_view(),
+        name="inventaire-comptage",
+    ),
+    path(
+        "inventaires/<uuid:id_inventaire>/lignes/<uuid:id_ligne>/validation",
+        vues.VueValidationLigne.as_view(),
+        name="inventaire-validation",
+    ),
 ]
