@@ -1,5 +1,7 @@
 """Lecture des appareils enrôlés (écran « Appareils » du web, ET-4)."""
 
+from typing import Any
+
 from django.db.models import QuerySet
 
 from domaines.identite.models import Appareil
@@ -8,3 +10,7 @@ from domaines.identite.models import Appareil
 def lister() -> QuerySet[Appareil]:
     """Appareils avec leur propriétaire, joint en une seule requête."""
     return Appareil.objects.select_related("utilisateur").order_by("utilisateur__nom", "plateforme")
+
+
+def par_id(id_appareil: Any) -> Appareil | None:
+    return Appareil.objects.select_related("utilisateur").filter(id_appareil=id_appareil).first()

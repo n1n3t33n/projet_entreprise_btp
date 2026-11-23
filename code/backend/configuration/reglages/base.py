@@ -206,6 +206,8 @@ REST_FRAMEWORK = {
         "utilisateur": env.texte("LIMITE_UTILISATEUR", "600/min"),
         "connexion_ip": env.texte("LIMITE_CONNEXION_IP", "20/min"),
         "connexion_identifiant": env.texte("LIMITE_CONNEXION_IDENTIFIANT", "10/min"),
+        # Lots de synchronisation par appareil (Q-AL).
+        "synchronisation": env.texte("LIMITE_SYNCHRONISATION", "30/min"),
     },
     "NUM_PROXIES": env.entier("NOMBRE_MANDATAIRES", 0),
     # Format d'erreur unique { motif, message, details? } (rapport B0 § 3).

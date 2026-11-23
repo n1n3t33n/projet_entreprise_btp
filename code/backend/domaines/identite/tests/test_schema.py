@@ -11,7 +11,8 @@ from django.db import connection, models
 
 pytestmark = [pytest.mark.django_db, pytest.mark.integration]
 
-# Tables du MPD présentes à ce jalon : MPD-1 (B1), MPD-2 et MPD-3 (B2), MPD-4 (B3), MPD-5 hors notifications (B4).
+# Tables du MPD présentes à ce jalon : MPD-1 (B1), MPD-2 et MPD-3 (B2), MPD-4 (B3), MPD-5 hors notifications (B4),
+# MPD-6 côté serveur (B5).
 TABLES_MPD = {
     # MPD-1
     "utilisateur",
@@ -57,6 +58,11 @@ TABLES_MPD = {
     "fiche_route",
     "ligne_fiche_route",
     "avancement_agrege",
+    # MPD-6 côté serveur (les six tables locales du mobile ne sont pas créées, Q7-3)
+    "lot_synchronisation",
+    "resultat_evenement",
+    "curseur_reference",
+    "anomalie_synchronisation",
 }
 
 # Tables techniques hors MPD, validées (écart Q9/Q-G : trace des traitements
@@ -75,6 +81,10 @@ TABLES_DJANGO = {
 }
 
 CONTRAINTES_MPD = {
+    # MPD-6
+    "ck_resultat_evenement_statut",
+    "ck_anomalie_synchronisation_type_anomalie",
+    "ck_anomalie_synchronisation_statut",
     # MPD-5 (+ écarts validés Q-V, Q-AA)
     "ck_etape_travaux_statut",
     "ck_fiche_route_type_cycle",
@@ -119,6 +129,12 @@ CONTRAINTES_MPD = {
 }
 
 INDEX_MPD = {
+    # MPD-6 (+ écart Q7-5 : index sur uuid_evenement)
+    "ix_lot_synchronisation_appareil_id_appareil",
+    "ix_resultat_evenement_lot_synchronisation_id_lot",
+    "ix_resultat_evenement_uuid_evenement",
+    "ix_anomalie_synchronisation_appareil_id_appareil",
+    "ix_anomalie_synchronisation_resultat_evenement_id_resultat",
     # MPD-5
     "ix_etape_travaux_logement_id_logement",
     "ix_etape_travaux_etape_modele_id_etape_modele",
@@ -212,6 +228,12 @@ NULLITE_CLES_ETRANGERES = {
     ("evenement_execution", "article_id_article"): "YES",
     ("evenement_execution", "avancement_agrege_id_avancement"): "NO",
     ("evenement_execution", "pour_le_compte_de_id_utilisateur"): "YES",
+    # MPD-6
+    ("lot_synchronisation", "appareil_id_appareil"): "NO",
+    ("resultat_evenement", "lot_synchronisation_id_lot"): "NO",
+    ("curseur_reference", "appareil_id_appareil"): "NO",
+    ("anomalie_synchronisation", "appareil_id_appareil"): "NO",
+    ("anomalie_synchronisation", "resultat_evenement_id_resultat"): "YES",
 }
 
 
@@ -273,7 +295,7 @@ def test_les_cles_composites_du_mpd_sont_respectees() -> None:
             "WHERE tc.constraint_type = 'PRIMARY KEY' "
             "AND tc.table_name IN ('droit_accorde', 'affectation_role', 'membre_equipe', "
             "'journal_audit', 'evenement_validation', 'stock_courant', "
-            "'evenement_execution', 'ligne_fiche_route') "
+            "'evenement_execution', 'ligne_fiche_route', 'curseur_reference') "
             "GROUP BY tc.table_name"
         )
         cles = dict(curseur.fetchall())
@@ -286,6 +308,7 @@ def test_les_cles_composites_du_mpd_sont_respectees() -> None:
         "stock_courant": "seuil_stock_id_seuil",
         "evenement_execution": "uuid,horodatage_serveur",
         "ligne_fiche_route": "fiche_route_id_fiche,etape_travaux_id_etape",
+        "curseur_reference": "appareil_id_appareil,type_donnee",
     }
 
 

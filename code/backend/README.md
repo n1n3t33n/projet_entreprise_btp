@@ -12,7 +12,8 @@ code/backend/
 ├── configuration/        réglages par environnement, routes racines, WSGI/ASGI
 ├── socle/                service technique transverse : journaux JSON, santé,
 │                         erreurs, limitation du taux, partitions, import CSV,
-│                         traitements planifiés, métriques, alertes
+│                         traitements planifiés, métriques, alertes,
+│                         registres de la synchronisation
 ├── domaines/             un dossier par domaine du MERISE
 │   ├── identite/         MPD-1 : comptes, rôles, droits, appareils, audit
 │   ├── organisation/     MPD-2 : chantiers, magasins, zones, logements, paramètres
@@ -21,7 +22,8 @@ code/backend/
 │   │                     stock courant, alertes, inventaires
 │   ├── avancement/       MPD-5 : étapes, journal d'exécution, fiches de route,
 │   │                     avancement agrégé (notifications en B6)
-│   └── synchronisation/ acquereur/  (à venir)
+│   ├── synchronisation/  MPD-6 (serveur) : lots, résultats, curseurs, anomalies
+│   └── acquereur/        (à venir)
 ├── contrat/              contrat d'API OpenAPI généré et committé
 ├── sql/                  création des rôles PostgreSQL et de la base
 └── requirements/         dépendances épinglées (base, dev, production)
@@ -80,7 +82,8 @@ ne touche jamais la base de développement.
 
 Variables d'environnement : voir `.env.example` (aucun fichier n'est lu en
 production), y compris le serveur SMTP et les destinataires des alertes
-techniques (`ALERTES_DESTINATAIRES`).
+techniques (`ALERTES_DESTINATAIRES`) et les limites de débit
+(`LIMITE_SYNCHRONISATION` : lots par minute et par appareil).
 
 Étapes de publication :
 

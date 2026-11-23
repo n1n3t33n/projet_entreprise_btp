@@ -2260,6 +2260,158 @@ paths:
                 items:
                   $ref: '#/components/schemas/NoeudStock'
           description: ''
+  /api/synchronisation/anomalies:
+    get:
+      operationId: synchronisation_anomalies_list
+      description: |-
+        GET /api/synchronisation/anomalies — anomalies de synchronisation, les
+        plus récentes d'abord, filtrables par statut et par type (EF-SYN-05).
+      parameters:
+      - in: query
+        name: statut
+        schema:
+          enum:
+          - OUVERTE
+          - TRAITEE
+          type: string
+          minLength: 1
+        description: |-
+          * `OUVERTE` - OUVERTE
+          * `TRAITEE` - TRAITEE
+      - in: query
+        name: type_anomalie
+        schema:
+          enum:
+          - ECART_QUANTITE
+          - CONFLIT_VERSION
+          - REJET_REGLE
+          - DERIVE_HORLOGE
+          type: string
+          minLength: 1
+        description: |-
+          * `ECART_QUANTITE` - ECART_QUANTITE
+          * `CONFLIT_VERSION` - CONFLIT_VERSION
+          * `REJET_REGLE` - REJET_REGLE
+          * `DERIVE_HORLOGE` - DERIVE_HORLOGE
+      tags:
+      - synchronisation
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Anomalie'
+          description: ''
+  /api/synchronisation/anomalies/{id_anomalie}/traitement:
+    post:
+      operationId: synchronisation_anomalies_traitement_create
+      description: |-
+        POST /api/synchronisation/anomalies/{id}/traitement — marque une
+        anomalie traitée (EF-SYN-05). Sans effet si elle l'est déjà.
+      parameters:
+      - in: path
+        name: id_anomalie
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - synchronisation
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Anomalie'
+          description: ''
+  /api/synchronisation/lots:
+    post:
+      operationId: synchronisation_lots_create
+      description: |-
+        POST /api/synchronisation/lots — envoi d'un lot d'événements (SQ-2).
+
+        201 pour un lot nouveau, 200 pour un lot déjà reçu (mêmes résultats).
+        Corps éventuellement compressé (``Content-Encoding: gzip``, ENF-02).
+      tags:
+      - synchronisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+          description: ''
+  /api/synchronisation/references:
+    get:
+      operationId: synchronisation_references_retrieve
+      description: |-
+        GET /api/synchronisation/references — données de référence changées
+        depuis la version que l'appareil détient (EF-SYN-04, Q-AI).
+
+        Le téléphone passe, pour chaque jeu, la version qu'il détient
+        (``?articles=123&stock=456``) ; un jeu absent vaut 0 (jamais reçu).
+      parameters:
+      - in: query
+        name: articles
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: fiches_route
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: motifs_blocage
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: stock
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: types_mouvement
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: unites
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      tags:
+      - synchronisation
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/References'
+          description: ''
   /api/types-mouvement:
     get:
       operationId: types_mouvement_list
@@ -2431,6 +2583,51 @@ components:
           minLength: 1
       required:
       - motif
+    Anomalie:
+      type: object
+      description: |-
+        Anomalie de synchronisation (EF-SYN-05), avec l'appareil, son
+        propriétaire et l'événement qui l'a motivée.
+      properties:
+        id_anomalie:
+          type: string
+          format: uuid
+          readOnly: true
+        type_anomalie:
+          type: string
+          maxLength: 32
+        description:
+          type: string
+        date_detection:
+          type: string
+          format: date-time
+        statut:
+          type: string
+          maxLength: 32
+        appareil_id_appareil:
+          type: string
+          format: uuid
+        plateforme:
+          type: string
+        identifiant_utilisateur:
+          type: string
+        nom_utilisateur:
+          type: string
+        uuid_evenement:
+          type: string
+          format: uuid
+          nullable: true
+        code_rejet:
+          type: string
+          nullable: true
+      required:
+      - appareil_id_appareil
+      - description
+      - id_anomalie
+      - identifiant_utilisateur
+      - nom_utilisateur
+      - plateforme
+      - type_anomalie
     Appareil:
       type: object
       description: '``AppareilDto`` (web, Administration › Appareils).'
@@ -3226,6 +3423,27 @@ components:
       - statut_apres
       - utilisateur_id_utilisateur
       - uuid
+    EvenementEntreeRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        type:
+          type: string
+          minLength: 1
+          maxLength: 64
+        horodatage_appareil:
+          type: string
+          format: date-time
+          nullable: true
+        charge_utile:
+          type: object
+          additionalProperties: {}
+      required:
+      - charge_utile
+      - type
+      - uuid
     Execution:
       type: object
       properties:
@@ -3426,6 +3644,21 @@ components:
       - magasin_id_magasin
       - nombre_comptees
       - nombre_lignes
+    Jeu:
+      type: object
+      description: |-
+        Jeu de référence changé : sa nouvelle version et ses données, sous la
+        forme de la route REST correspondante (EF-SYN-04).
+      properties:
+        type_donnee:
+          type: string
+        version:
+          type: integer
+        donnees: {}
+      required:
+      - donnees
+      - type_donnee
+      - version
     LeveeEntreeRequest:
       type: object
       properties:
@@ -3705,6 +3938,59 @@ components:
       - statut
       - type_logement_code_type
       - zone_id_zone
+    Lot:
+      type: object
+      properties:
+        id_lot:
+          type: string
+          format: uuid
+          readOnly: true
+        date_reception:
+          type: string
+          format: date-time
+        nombre_evenements:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        nombre_acceptes:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        nombre_rejetes:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        duree_ms:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        resultats:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resultat'
+          readOnly: true
+      required:
+      - id_lot
+      - resultats
+    LotEntreeRequest:
+      type: object
+      properties:
+        id_lot:
+          type: string
+          format: uuid
+        horodatage_envoi:
+          type: string
+          format: date-time
+          nullable: true
+        evenements:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvenementEntreeRequest'
+          maxItems: 200
+          minItems: 1
+      required:
+      - evenements
+      - id_lot
     MagasinReferentiel:
       type: object
       description: '``MagasinDto`` de l''écran Référentiels : ``nom``, ``chantier_id_chantier``.'
@@ -4183,6 +4469,20 @@ components:
       - lignes
       - nombre_erreurs
       - nombre_valides
+    References:
+      type: object
+      properties:
+        jeux:
+          type: array
+          items:
+            $ref: '#/components/schemas/Jeu'
+        inchanges:
+          type: array
+          items:
+            type: string
+      required:
+      - inchanges
+      - jeux
     Regle:
       type: object
       description: |-
@@ -4273,6 +4573,25 @@ components:
       - duree_moyenne_ms
       - par_classe
       - total
+    Resultat:
+      type: object
+      properties:
+        uuid_evenement:
+          type: string
+          format: uuid
+        statut:
+          type: string
+          maxLength: 32
+        code_rejet:
+          type: string
+          nullable: true
+          maxLength: 32
+        motif_rejet:
+          type: string
+          nullable: true
+      required:
+      - statut
+      - uuid_evenement
     ResultatImport:
       type: object
       properties:

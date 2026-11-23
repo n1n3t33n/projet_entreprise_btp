@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from domaines.identite.permissions import ADroit
 from domaines.organisation import selecteurs as selecteurs_organisation
 from domaines.stock import selecteurs
+from domaines.stock.api import entrees
 from domaines.stock.api import serialiseurs as s
 from domaines.stock.services import (
     acces,
@@ -170,24 +171,7 @@ class VueMouvements(APIView):
     )
     def post(self, request: Request) -> Response:
         donnees = _valider(s.MouvementEntreeSerializer, request.data)
-        magasin = acces.magasin_autorise(
-            request.user, donnees["magasin_id_magasin"], "mouvements", "CREER"
-        )
-        saisie = mouvements.Saisie(
-            magasin=magasin,
-            article=donnees["article_id_article"],
-            type_mouvement=donnees["type_mouvement_code_type_mouvement"],
-            quantite_saisie=donnees["quantite_saisie"],
-            code_unite=donnees.get("code_unite"),
-            uuid=donnees.get("uuid"),
-            logement=donnees.get("logement_id_logement"),
-            corps_etat=donnees.get("corps_etat"),
-            beneficiaire=donnees.get("beneficiaire") or None,
-            motif=donnees.get("motif") or None,
-            reference_externe=donnees.get("reference_externe") or None,
-            date_operation=donnees.get("date_operation"),
-            horodatage_appareil=donnees.get("horodatage_appareil"),
-        )
+        saisie = entrees.saisie_mouvement(request.user, donnees)
         mouvement, cree = mouvements.enregistrer(request.user, saisie)
         relu = selecteurs.mouvements().get(pk=mouvement.pk)
         return Response(

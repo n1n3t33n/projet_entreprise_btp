@@ -203,6 +203,8 @@ ROLES_LECTEURS_REFERENTIELS = [
 # EF-AUT-08 — journal d'audit consultable aussi par la direction ;
 # gammes, corps d'état, paramètres et règles — responsable technique (EF-REF-05,
 # 07 à 09) ; catalogue et magasins — gestionnaire de stock (EF-REF-03, 04).
+# Synchronisation (B5) : tout rôle de terrain envoie ses lots depuis le mobile.
+# Le gestionnaire de stock traite les anomalies de synchronisation (EF-SYN-05).
 DROITS_API_SUPPLEMENTAIRES = {
     "DIRECTION": ["api.audit.lire", "api.stock.lire", "api.mouvements.lire", "api.avancement.lire"],
     "COMMERCIAL": ["api.avancement.lire"],
@@ -215,6 +217,7 @@ DROITS_API_SUPPLEMENTAIRES = {
         "api.inventaires.lire",
         "api.inventaires.creer",
         "api.inventaires.modifier",
+        "api.synchronisation.creer",
     ],
     # Avancement (B4) : le technicien déclare et lit ses fiches ; chef de
     # chantier et responsable technique affectent, contrôlent (RG-A4) et
@@ -228,12 +231,14 @@ DROITS_API_SUPPLEMENTAIRES = {
         "api.fiches-route.lire",
         "api.fiches-route.creer",
         "api.fiches-route.modifier",
+        "api.synchronisation.creer",
     ],
     "TECHNICIEN": [
         "api.stock.lire",
         "api.avancement.lire",
         "api.etapes.modifier",
         "api.fiches-route.lire",
+        "api.synchronisation.creer",
     ],
     "RESPONSABLE_TECHNIQUE": [
         "api.stock.lire",
@@ -253,6 +258,7 @@ DROITS_API_SUPPLEMENTAIRES = {
         "api.parametres.modifier",
         "api.regles.creer",
         "api.regles.modifier",
+        "api.synchronisation.creer",
     ],
     "GESTIONNAIRE_STOCK": [
         "api.stock.lire",
@@ -269,6 +275,9 @@ DROITS_API_SUPPLEMENTAIRES = {
         "api.magasins.creer",
         "api.magasins.modifier",
         "api.import.creer",
+        "api.synchronisation.creer",
+        "api.anomalies.lire",
+        "api.anomalies.modifier",
     ],
 }
 
