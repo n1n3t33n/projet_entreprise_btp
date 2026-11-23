@@ -12,7 +12,7 @@ from django.db import connection, models
 pytestmark = [pytest.mark.django_db, pytest.mark.integration]
 
 # Tables du MPD présentes à ce jalon : MPD-1 (B1), MPD-2 et MPD-3 (B2), MPD-4 (B3), MPD-5 hors notifications (B4),
-# MPD-6 côté serveur (B5).
+# MPD-6 côté serveur (B5), notifications du MPD-5 (B6).
 TABLES_MPD = {
     # MPD-1
     "utilisateur",
@@ -63,6 +63,10 @@ TABLES_MPD = {
     "resultat_evenement",
     "curseur_reference",
     "anomalie_synchronisation",
+    # MPD-5, partie notifications (B6)
+    "type_notification",
+    "abonnement_notification",
+    "notification",
 }
 
 # Tables techniques hors MPD, validées (écart Q9/Q-G : trace des traitements
@@ -81,6 +85,10 @@ TABLES_DJANGO = {
 }
 
 CONTRAINTES_MPD = {
+    # MPD-5 notifications
+    "ck_type_notification_canal_defaut",
+    "ck_abonnement_notification_canal",
+    "ck_notification_canal",
     # MPD-6
     "ck_resultat_evenement_statut",
     "ck_anomalie_synchronisation_type_anomalie",
@@ -129,6 +137,13 @@ CONTRAINTES_MPD = {
 }
 
 INDEX_MPD = {
+    # MPD-5 notifications
+    "ix_abonnement_notification_type_notification_code_type",
+    "ix_abonnement_notification_role_code_role",
+    "ix_notification_type_notification_code_type",
+    "ix_notification_utilisateur_id_utilisateur",
+    "ix_notification_alerte_id_alerte",
+    "ix_notification_destinataire",
     # MPD-6 (+ écart Q7-5 : index sur uuid_evenement)
     "ix_lot_synchronisation_appareil_id_appareil",
     "ix_resultat_evenement_lot_synchronisation_id_lot",
@@ -234,6 +249,12 @@ NULLITE_CLES_ETRANGERES = {
     ("curseur_reference", "appareil_id_appareil"): "NO",
     ("anomalie_synchronisation", "appareil_id_appareil"): "NO",
     ("anomalie_synchronisation", "resultat_evenement_id_resultat"): "YES",
+    # MPD-5 notifications (alerte facultative : écart Q-AN)
+    ("abonnement_notification", "type_notification_code_type"): "NO",
+    ("abonnement_notification", "role_code_role"): "YES",
+    ("notification", "type_notification_code_type"): "NO",
+    ("notification", "utilisateur_id_utilisateur"): "NO",
+    ("notification", "alerte_id_alerte"): "YES",
 }
 
 
