@@ -113,3 +113,38 @@ def client_authentifie(fabrique_utilisateur: Callable[..., Any]) -> Callable[...
         return client
 
     return construire
+
+
+@pytest.fixture
+def fabrique_appareil(fabrique_utilisateur: Callable[..., Any]) -> Callable[..., Any]:
+    """Enrôle un appareil (jeton mobile) pour un compte donné ou neuf."""
+    from domaines.identite.models import Appareil
+
+    compteur = {"n": 0}
+
+    def fabriquer(utilisateur: Any = None, role: str = "ADMINISTRATEUR") -> Any:
+        compteur["n"] += 1
+        return Appareil.objects.create(
+            empreinte_materiel=f"empreinte-{compteur['n']}",
+            plateforme="android",
+            version_application="1.0.0",
+            utilisateur=utilisateur or fabrique_utilisateur(role=role),
+        )
+
+    return fabriquer
+
+
+@pytest.fixture
+def client_mobile(
+    client_authentifie: Callable[..., APIClient], fabrique_appareil: Callable[..., Any]
+) -> Callable[..., APIClient]:
+    """Client porteur d'un jeton mobile lié à un appareil enrôlé
+    (``client.appareil``)."""
+
+    def construire(utilisateur: Any = None, role: str = "ADMINISTRATEUR") -> APIClient:
+        appareil = fabrique_appareil(utilisateur, role)
+        client = client_authentifie(utilisateur=appareil.utilisateur, appareil=appareil)
+        client.appareil = appareil  # type: ignore[attr-defined]
+        return client
+
+    return construire

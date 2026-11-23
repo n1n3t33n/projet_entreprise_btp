@@ -33,12 +33,13 @@ MOTIFS_CONFLIT: frozenset[str] = frozenset(
         "DEJA_ANNULE",
         "ETAPE_TERMINEE",
         "INTROUVABLE",
+        "FICHE_CLOTUREE",
     }
 )
 
 # --- garde-fous (Q-AL) ------------------------------------------------------------
+# La taille décompressée d'un lot est bornée par socle/parseurs.py.
 EVENEMENTS_PAR_LOT_MAX = 200
-TAILLE_DECOMPRESSEE_MAX = 5_000_000  # octets : protège contre une « bombe gzip »
 # RG-S11 : dérive tolérée entre l'heure d'envoi déclarée par l'appareil et
 # celle du serveur (valeur du cahier des charges).
 DERIVE_HORLOGE_MAX_MIN = 5

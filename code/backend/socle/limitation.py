@@ -3,9 +3,10 @@
 Les compteurs vivent dans le cache Django (mémoire locale en B1, arbitrage
 Q5 ; dette : cache partagé avant tout passage à plusieurs processus).
 
-Le point d'entrée de synchronisation recevra en B5 sa propre portée, par
-APPAREIL et par taille de lot, pour qu'une rafale légitime au retour du
-réseau ne soit jamais rejetée en bloc (rapport B0 § 6.5).
+Le point d'entrée de synchronisation a sa propre portée, par APPAREIL
+(``LimitationAppareil``, B5, Q-AL) ; la taille d'un lot est bornée à part :
+une rafale légitime au retour du réseau tient en quelques lots, jamais
+rejetés en bloc (rapport B0 § 6.5).
 """
 
 from typing import TYPE_CHECKING
@@ -54,3 +55,16 @@ class LimitationConnexionParIdentifiant(SimpleRateThrottle):
         if not isinstance(identifiant, str) or not identifiant.strip():
             return None
         return self.cache_format % {"scope": self.scope, "ident": identifiant.strip().lower()}
+
+
+class LimitationAppareil(SimpleRateThrottle):
+    """Lots de synchronisation par appareil enrôlé (Q-AL, 30 par minute par
+    défaut) : un téléphone qui boucle ne gêne pas les autres."""
+
+    scope = "synchronisation"
+
+    def get_cache_key(self, request: "Request", view: "APIView") -> str | None:
+        id_appareil = getattr(request.auth, "id_appareil", None)
+        if not id_appareil:
+            return None
+        return self.cache_format % {"scope": self.scope, "ident": id_appareil}

@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from django.db import transaction
+from django.utils import timezone
 
 from domaines.identite.constantes import (
     AUDIT_ENROLEMENT_APPAREIL,
@@ -95,3 +96,9 @@ def revoquer_tous(auteur: Any, utilisateur: Any, adresse_ip: str | None) -> int:
         revoquer(auteur, str(appareil.id_appareil), adresse_ip)
         nombre += 1
     return nombre
+
+
+def marquer_synchronisation(appareil: Appareil) -> None:
+    """Heure du dernier lot reçu de l'appareil (supervision, EF-ADM-03)."""
+    appareil.derniere_synchronisation = timezone.now()
+    appareil.save(update_fields=["derniere_synchronisation"])

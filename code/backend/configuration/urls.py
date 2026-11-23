@@ -42,6 +42,7 @@ routes_api: list[URLPattern | URLResolver] = [
     path("", include("domaines.referentiels.api.routes")),
     path("", include("domaines.stock.api.routes")),
     path("", include("domaines.avancement.api.routes")),
+    path("", include("domaines.synchronisation.api.routes")),
     path("schema/", SpectacularAPIView.as_view(**PROTECTION_DOCUMENTATION), name="schema"),
     path(
         "docs/swagger/",

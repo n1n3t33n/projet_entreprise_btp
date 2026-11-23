@@ -38,6 +38,7 @@ REST_FRAMEWORK = {
         "utilisateur": "1000/min",
         "connexion_ip": "1000/min",
         "connexion_identifiant": "5/min",
+        "synchronisation": "1000/min",
     },
 }
 

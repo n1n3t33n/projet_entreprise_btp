@@ -2260,6 +2260,37 @@ paths:
                 items:
                   $ref: '#/components/schemas/NoeudStock'
           description: ''
+  /api/synchronisation/lots:
+    post:
+      operationId: synchronisation_lots_create
+      description: |-
+        POST /api/synchronisation/lots — envoi d'un lot d'événements (SQ-2).
+
+        201 pour un lot nouveau, 200 pour un lot déjà reçu (mêmes résultats).
+        Corps éventuellement compressé (``Content-Encoding: gzip``, ENF-02).
+      tags:
+      - synchronisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotEntreeRequest'
+        required: true
+      security:
+      - jetonPorteur: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lot'
+          description: ''
   /api/types-mouvement:
     get:
       operationId: types_mouvement_list
@@ -3226,6 +3257,27 @@ components:
       - statut_apres
       - utilisateur_id_utilisateur
       - uuid
+    EvenementEntreeRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        type:
+          type: string
+          minLength: 1
+          maxLength: 64
+        horodatage_appareil:
+          type: string
+          format: date-time
+          nullable: true
+        charge_utile:
+          type: object
+          additionalProperties: {}
+      required:
+      - charge_utile
+      - type
+      - uuid
     Execution:
       type: object
       properties:
@@ -3705,6 +3757,59 @@ components:
       - statut
       - type_logement_code_type
       - zone_id_zone
+    Lot:
+      type: object
+      properties:
+        id_lot:
+          type: string
+          format: uuid
+          readOnly: true
+        date_reception:
+          type: string
+          format: date-time
+        nombre_evenements:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        nombre_acceptes:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        nombre_rejetes:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        duree_ms:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        resultats:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resultat'
+          readOnly: true
+      required:
+      - id_lot
+      - resultats
+    LotEntreeRequest:
+      type: object
+      properties:
+        id_lot:
+          type: string
+          format: uuid
+        horodatage_envoi:
+          type: string
+          format: date-time
+          nullable: true
+        evenements:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvenementEntreeRequest'
+          maxItems: 200
+          minItems: 1
+      required:
+      - evenements
+      - id_lot
     MagasinReferentiel:
       type: object
       description: '``MagasinDto`` de l''écran Référentiels : ``nom``, ``chantier_id_chantier``.'
@@ -4273,6 +4378,25 @@ components:
       - duree_moyenne_ms
       - par_classe
       - total
+    Resultat:
+      type: object
+      properties:
+        uuid_evenement:
+          type: string
+          format: uuid
+        statut:
+          type: string
+          maxLength: 32
+        code_rejet:
+          type: string
+          nullable: true
+          maxLength: 32
+        motif_rejet:
+          type: string
+          nullable: true
+      required:
+      - statut
+      - uuid_evenement
     ResultatImport:
       type: object
       properties:
