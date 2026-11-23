@@ -204,6 +204,7 @@ ROLES_LECTEURS_REFERENTIELS = [
 # gammes, corps d'état, paramètres et règles — responsable technique (EF-REF-05,
 # 07 à 09) ; catalogue et magasins — gestionnaire de stock (EF-REF-03, 04).
 # Synchronisation (B5) : tout rôle de terrain envoie ses lots depuis le mobile.
+# Le gestionnaire de stock traite les anomalies de synchronisation (EF-SYN-05).
 DROITS_API_SUPPLEMENTAIRES = {
     "DIRECTION": ["api.audit.lire", "api.stock.lire", "api.mouvements.lire", "api.avancement.lire"],
     "COMMERCIAL": ["api.avancement.lire"],
@@ -275,6 +276,8 @@ DROITS_API_SUPPLEMENTAIRES = {
         "api.magasins.modifier",
         "api.import.creer",
         "api.synchronisation.creer",
+        "api.anomalies.lire",
+        "api.anomalies.modifier",
     ],
 }
 

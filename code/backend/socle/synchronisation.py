@@ -49,3 +49,26 @@ TYPES: dict[str, TypeEvenement] = {}
 def declarer_type(type_evenement: TypeEvenement) -> None:
     """Appelé par un domaine au démarrage. Redéclarer remplace."""
     TYPES[type_evenement.code] = type_evenement
+
+
+# --- Jeux de référence téléchargés par le téléphone (EF-SYN-04, Q-AI) ---------------
+# Chaque domaine déclare les données qu'il met à disposition du mobile hors
+# ligne (catalogue, stock, fiches de route…). Le service des références
+# compare la version de chaque jeu à celle que l'appareil déclare connaître
+# (curseur_reference) et ne renvoie que les jeux qui ont changé.
+
+
+@dataclass(frozen=True)
+class JeuReference:
+    code: str  # type_donnee du curseur (32 caractères au plus)
+    fournir: Callable[[Any], Any]  # utilisateur -> données sérialisables en JSON
+    ressource: str
+    action: str = "LIRE"
+
+
+REFERENCES: dict[str, JeuReference] = {}
+
+
+def declarer_reference(jeu: JeuReference) -> None:
+    """Appelé par un domaine au démarrage. Redéclarer remplace."""
+    REFERENCES[jeu.code] = jeu

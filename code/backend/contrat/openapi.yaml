@@ -2260,6 +2260,76 @@ paths:
                 items:
                   $ref: '#/components/schemas/NoeudStock'
           description: ''
+  /api/synchronisation/anomalies:
+    get:
+      operationId: synchronisation_anomalies_list
+      description: |-
+        GET /api/synchronisation/anomalies — anomalies de synchronisation, les
+        plus récentes d'abord, filtrables par statut et par type (EF-SYN-05).
+      parameters:
+      - in: query
+        name: statut
+        schema:
+          enum:
+          - OUVERTE
+          - TRAITEE
+          type: string
+          minLength: 1
+        description: |-
+          * `OUVERTE` - OUVERTE
+          * `TRAITEE` - TRAITEE
+      - in: query
+        name: type_anomalie
+        schema:
+          enum:
+          - ECART_QUANTITE
+          - CONFLIT_VERSION
+          - REJET_REGLE
+          - DERIVE_HORLOGE
+          type: string
+          minLength: 1
+        description: |-
+          * `ECART_QUANTITE` - ECART_QUANTITE
+          * `CONFLIT_VERSION` - CONFLIT_VERSION
+          * `REJET_REGLE` - REJET_REGLE
+          * `DERIVE_HORLOGE` - DERIVE_HORLOGE
+      tags:
+      - synchronisation
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Anomalie'
+          description: ''
+  /api/synchronisation/anomalies/{id_anomalie}/traitement:
+    post:
+      operationId: synchronisation_anomalies_traitement_create
+      description: |-
+        POST /api/synchronisation/anomalies/{id}/traitement — marque une
+        anomalie traitée (EF-SYN-05). Sans effet si elle l'est déjà.
+      parameters:
+      - in: path
+        name: id_anomalie
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - synchronisation
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Anomalie'
+          description: ''
   /api/synchronisation/lots:
     post:
       operationId: synchronisation_lots_create
@@ -2290,6 +2360,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lot'
+          description: ''
+  /api/synchronisation/references:
+    get:
+      operationId: synchronisation_references_retrieve
+      description: |-
+        GET /api/synchronisation/references — données de référence changées
+        depuis la version que l'appareil détient (EF-SYN-04, Q-AI).
+
+        Le téléphone passe, pour chaque jeu, la version qu'il détient
+        (``?articles=123&stock=456``) ; un jeu absent vaut 0 (jamais reçu).
+      parameters:
+      - in: query
+        name: articles
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: fiches_route
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: motifs_blocage
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: stock
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: types_mouvement
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: unites
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      tags:
+      - synchronisation
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/References'
           description: ''
   /api/types-mouvement:
     get:
@@ -2462,6 +2583,51 @@ components:
           minLength: 1
       required:
       - motif
+    Anomalie:
+      type: object
+      description: |-
+        Anomalie de synchronisation (EF-SYN-05), avec l'appareil, son
+        propriétaire et l'événement qui l'a motivée.
+      properties:
+        id_anomalie:
+          type: string
+          format: uuid
+          readOnly: true
+        type_anomalie:
+          type: string
+          maxLength: 32
+        description:
+          type: string
+        date_detection:
+          type: string
+          format: date-time
+        statut:
+          type: string
+          maxLength: 32
+        appareil_id_appareil:
+          type: string
+          format: uuid
+        plateforme:
+          type: string
+        identifiant_utilisateur:
+          type: string
+        nom_utilisateur:
+          type: string
+        uuid_evenement:
+          type: string
+          format: uuid
+          nullable: true
+        code_rejet:
+          type: string
+          nullable: true
+      required:
+      - appareil_id_appareil
+      - description
+      - id_anomalie
+      - identifiant_utilisateur
+      - nom_utilisateur
+      - plateforme
+      - type_anomalie
     Appareil:
       type: object
       description: '``AppareilDto`` (web, Administration › Appareils).'
@@ -3478,6 +3644,21 @@ components:
       - magasin_id_magasin
       - nombre_comptees
       - nombre_lignes
+    Jeu:
+      type: object
+      description: |-
+        Jeu de référence changé : sa nouvelle version et ses données, sous la
+        forme de la route REST correspondante (EF-SYN-04).
+      properties:
+        type_donnee:
+          type: string
+        version:
+          type: integer
+        donnees: {}
+      required:
+      - donnees
+      - type_donnee
+      - version
     LeveeEntreeRequest:
       type: object
       properties:
@@ -4288,6 +4469,20 @@ components:
       - lignes
       - nombre_erreurs
       - nombre_valides
+    References:
+      type: object
+      properties:
+        jeux:
+          type: array
+          items:
+            $ref: '#/components/schemas/Jeu'
+        inchanges:
+          type: array
+          items:
+            type: string
+      required:
+      - inchanges
+      - jeux
     Regle:
       type: object
       description: |-

@@ -17,13 +17,13 @@ class ConfigurationAvancement(AppConfig):
         from django.db.models.signals import post_save
 
         from domaines.avancement import demo, recepteurs
-        from domaines.avancement.api import synchronisation
+        from domaines.avancement.api import references, synchronisation
         from domaines.avancement.services import agregats, fiches
         from domaines.organisation.models import Logement
         from domaines.referentiels import signaux
         from socle.base_de_donnees.partitions import declarer_table_partitionnee
         from socle.demo import declarer_chargeur
-        from socle.synchronisation import declarer_type
+        from socle.synchronisation import declarer_reference, declarer_type
         from socle.traitements import declarer_traitement
 
         # Partitions mensuelles préparées par le traitement creer_partitions.
@@ -42,3 +42,6 @@ class ConfigurationAvancement(AppConfig):
         # Déclarations, blocages, levées et contrôles faits hors ligne (SQ-2).
         for type_evenement in synchronisation.TYPES:
             declarer_type(type_evenement)
+        # Données téléchargées par le mobile hors ligne (EF-SYN-04).
+        for jeu in references.JEUX:
+            declarer_reference(jeu)

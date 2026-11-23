@@ -7,6 +7,7 @@ les listes de l'écran Stock, ``features/stock/api/dto.ts`` et
 """
 
 from decimal import Decimal
+from typing import Any, cast
 
 from rest_framework import serializers
 
@@ -214,8 +215,16 @@ class ImportEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
     """Corps des deux appels : la cible et le texte brut du fichier. Les
     cibles possibles sont celles que les domaines ont déclarées."""
 
-    cible = serializers.ChoiceField(choices=sorted(importation.CIBLES))
+    cible = serializers.ChoiceField(choices=[])
     contenu = serializers.CharField(trim_whitespace=False)
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # Choix lus à chaque instance, jamais au chargement du module : les
+        # domaines déclarent leurs cibles au démarrage, dans un ordre
+        # quelconque (ce module peut être chargé avant certains d'entre eux).
+        champ = cast(serializers.ChoiceField, self.fields["cible"])
+        champ.choices = sorted(importation.CIBLES)
 
 
 class LigneImportSerializer(serializers.Serializer):  # type: ignore[type-arg]

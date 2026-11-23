@@ -7,11 +7,14 @@ d'horloge (RG-S11) concerne le lot entier et ne cite aucun résultat.
 """
 
 from datetime import datetime, timedelta
+from typing import Any
 
+from django.db import transaction
 from django.utils import timezone
 
 from domaines.identite.models import Appareil
 from domaines.synchronisation.constantes import (
+    ANOMALIE_TRAITEE,
     CONFLIT_VERSION,
     DERIVE_HORLOGE,
     DERIVE_HORLOGE_MAX_MIN,
@@ -19,6 +22,7 @@ from domaines.synchronisation.constantes import (
     REJET_REGLE,
 )
 from domaines.synchronisation.models import AnomalieSynchronisation, ResultatEvenement
+from socle.api_outils import obtenir_ou_404
 
 
 def signaler(
@@ -41,6 +45,22 @@ def signaler_rejet(appareil: Appareil, resultat: ResultatEvenement) -> AnomalieS
     règle."""
     type_anomalie = CONFLIT_VERSION if resultat.code_rejet in MOTIFS_CONFLIT else REJET_REGLE
     return signaler(appareil, type_anomalie, resultat.motif_rejet or "", resultat)
+
+
+def traiter(id_anomalie: Any) -> tuple[AnomalieSynchronisation, bool]:
+    """Marque une anomalie traitée (EF-SYN-05). Rend (anomalie, changée ?) :
+    traiter deux fois ne change rien (rejeu d'un événement mobile)."""
+    with transaction.atomic():
+        anomalie = obtenir_ou_404(
+            AnomalieSynchronisation.objects.select_for_update(),
+            "Cette anomalie est introuvable.",
+            pk=id_anomalie,
+        )
+        if anomalie.statut == ANOMALIE_TRAITEE:
+            return anomalie, False
+        anomalie.statut = ANOMALIE_TRAITEE
+        anomalie.save(update_fields=["statut"])
+    return anomalie, True
 
 
 def verifier_horloge(appareil: Appareil, horodatage_envoi: datetime | None) -> None:
