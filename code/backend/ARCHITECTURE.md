@@ -15,14 +15,15 @@ colonne peut ne jamais sortir de l'API.
 
 `domaines/` contient le métier, un dossier par domaine du MERISE :
 `identite` (MPD-1), `organisation` (MPD-2), `referentiels` (MPD-3), `stock`
-(MPD-4), `avancement` (MPD-5 ; les notifications arriveront en B6). Les
-domaines synchronisation et acquéreur viendront s'ajouter au même endroit,
-sur le même modèle.
+(MPD-4), `avancement` (MPD-5 ; les notifications arriveront en B6),
+`synchronisation` (MPD-6, partie serveur). Le domaine acquéreur viendra
+s'ajouter au même endroit, sur le même modèle.
 
 `socle/` contient ce qui sert à tous les domaines sans appartenir à aucun :
 journaux JSON et identifiant de corrélation, format d'erreur unique,
 limitation du taux, santé, partitions mensuelles, import CSV, traitements
-planifiés, métriques, alertes par courriel. Le socle n'importe jamais un
+planifiés, métriques, alertes par courriel, lecture des corps compressés et
+registres de la synchronisation. Le socle n'importe jamais un
 domaine. Quand il a besoin d'eux, ce sont les domaines qui viennent s'y
 inscrire au démarrage (on y revient plus bas).
 
@@ -310,6 +311,47 @@ Les tests tournent sous le rôle propriétaire et ne verraient pas ce piège :
 `test_la_decision_fonctionne_sous_le_role_applicatif` repasse sous le rôle
 applicatif pour le prouver.
 
+## La synchronisation : un seul chemin pour les règles
+
+Le téléphone saisit hors ligne, puis envoie ses opérations par lots
+(`POST /api/synchronisation/lots`). Le domaine synchronisation ne contient
+aucune règle de stock ni d'avancement : il rejoue chaque opération par le
+service du domaine qui en est propriétaire, celui-là même qu'appelle la
+route REST. Une sortie envoyée par lot passe donc par
+`stock/services/mouvements.enregistrer`, exactement comme une sortie saisie
+sur le web.
+
+Chaque domaine déclare dans son `apps.py` les types d'opérations qu'il sait
+rejouer (`stock/api/synchronisation.py`) :
+
+```python
+TYPES = (
+    TypeEvenement("MOUVEMENT_STOCK", mouvement, "mouvements", "CREER"),
+    TypeEvenement("DECISION_MOUVEMENT", decision, "mouvements", "VALIDER"),
+)
+```
+
+La charge utile d'un type est le corps de la route REST correspondante,
+validé par le même sérialiseur. L'`uuid` de l'opération, créé par le
+téléphone, devient celui de l'écriture : c'est lui qui empêche de compter
+deux fois une sortie renvoyée après une coupure de réseau.
+
+Le service des lots (`synchronisation/services/lots.py`) traite les
+opérations dans l'ordre d'envoi, chacune dans son propre point de reprise
+(`transaction.atomic()` imbriqué). Un refus annule cette opération seule ;
+les suivantes continuent, et chacune reçoit son résultat : `ACCEPTE`,
+`DEJA_RECU` ou `REJETE` avec un code et une phrase. Un rejet, un conflit avec
+l'état du serveur ou un stock devenu négatif laisse une anomalie, que le
+gestionnaire consulte et traite.
+
+Dans l'autre sens, le téléphone télécharge les données dont il a besoin hors
+ligne (`GET /api/synchronisation/references`). Chaque domaine déclare ses
+jeux (`referentiels/api/references.py`, `stock/…`, `avancement/…`), à la
+forme de ses routes REST. La version d'un jeu est une empreinte de son
+contenu : le serveur ne renvoie que les jeux dont l'empreinte diffère de
+celle que l'appareil déclare, et note cette version dans
+`curseur_reference`.
+
 ## Le socle et les inscriptions au démarrage
 
 Pour que le socle reste indépendant des domaines, chaque domaine s'inscrit
@@ -335,13 +377,23 @@ Les registres existants :
 | `socle/importation.py` | `declarer_cible(CibleImport(...))` | `POST /api/import/analyse` et `/confirmation` |
 | `socle/traitements.py` | `declarer_traitement(nom, fonction)` | `manage.py lancer_traitement <nom>` |
 | `socle/base_de_donnees/partitions.py` | `declarer_table_partitionnee(nom)` | traitement `creer_partitions` |
+| `socle/synchronisation.py` | `declarer_type(TypeEvenement(...))` | `POST /api/synchronisation/lots` |
+| `socle/synchronisation.py` | `declarer_reference(JeuReference(...))` | `GET /api/synchronisation/references` |
 
 Le domaine stock s'y inscrit quatre fois : chargeur de démonstration (rang
 30, après l'identité qui fournit les auteurs), cible d'import « stock »,
 traitement `relancer_validations` et table partitionnée
 `evenement_validation` (`stock/apps.py`). L'avancement s'inscrit de même :
 chargeur de rang 40, traitements `cycler_fiches_route` et
-`consolider_avancement`, table `evenement_execution`.
+`consolider_avancement`, table `evenement_execution`, quatre types
+d'opérations et le jeu `fiches_route`.
+
+Un registre se remplit pendant le démarrage, domaine après domaine. Ne lis
+donc jamais son contenu au chargement d'un module : ce module peut être
+chargé avant que tous les domaines se soient inscrits. Lis-le au moment de
+s'en servir. Le sérialiseur d'import, par exemple, lit les cibles possibles
+à chaque instance (`ImportEntreeSerializer.__init__`), pas dans la
+déclaration de son champ.
 
 ## Les rôles PostgreSQL
 
@@ -426,6 +478,16 @@ Le `motif` est destiné au programme, le `message` à l'utilisateur. Le message
 ne contient jamais de code interne. Si la règle protège une donnée quoi qu'il
 arrive, ajoute aussi une contrainte en base.
 
+**Une opération faite hors ligne.** Écris la route REST d'abord, avec son
+service idempotent sur `uuid`. Ajoute ensuite, dans le `api/synchronisation.py`
+du domaine, une fonction qui valide la charge utile avec le sérialiseur de
+la route et appelle le même service, puis déclare-la dans `TYPES`. Elle rend
+`Traitement(cree=…)` ; elle lève `ErreurApi` pour refuser, comme la route.
+
+**Une donnée à emporter hors ligne.** Une fonction qui reçoit l'utilisateur
+et rend les données sous la forme de la route REST, déclarée dans le
+`api/references.py` du domaine avec le droit de lecture qui la protège.
+
 **Un traitement planifié.** Une fonction sans argument, idempotente, qui rend
 un bilan en une phrase, inscrite avec `declarer_traitement` dans le `ready()`
 du domaine. La plateforme la lance avec `manage.py lancer_traitement <nom>` ;
@@ -440,7 +502,8 @@ alerte. Il en existe quatre : `creer_partitions` (quotidien),
 `pytest` crée sa propre base `test_chantiersync` et la détruit à la fin. Il
 ne touche jamais la base de développement. Chaque test tourne dans une
 transaction annulée. Les fixtures communes (`client_authentifie(role)`,
-`chantier`, `magasin`…) sont dans `conftest.py`. Les tests d'un domaine sont
+`client_mobile(role)` pour un jeton lié à un appareil, `chantier`,
+`magasin`…) sont dans `conftest.py`. Les tests d'un domaine sont
 dans son dossier `tests/` : `test_modeles.py` pour les contraintes en base,
 `test_api.py` pour les routes, droits compris.
 

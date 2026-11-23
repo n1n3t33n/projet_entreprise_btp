@@ -150,6 +150,57 @@ colonnes possibles dans `details.contenu`.
 - Routes sans écran web à ce jour (F-13) : `/api/fiches-route*`,
   `/api/etapes/{id}/declaration`, `/api/etapes/{id}/levee-blocage`.
 
+## Synchronisation (B5)
+
+- `POST /api/synchronisation/lots` : jeton mobile obligatoire (lié à un
+  appareil) et droit `api.synchronisation.creer`. Corps :
+
+  ```json
+  { "id_lot": "uuid", "horodatage_envoi": "ISO 8601",
+    "evenements": [ { "uuid": "uuid", "type": "MOUVEMENT_STOCK",
+                      "horodatage_appareil": "ISO 8601",
+                      "charge_utile": { … } } ] }
+  ```
+
+  200 événements au plus. Corps compressé accepté
+  (`Content-Encoding: gzip`). `201` pour un lot nouveau, `200` pour un lot
+  déjà reçu (mêmes résultats, rien n'est retraité), `409 LOT_DEJA_UTILISE`
+  si l'identifiant appartient à un autre appareil. Limite :
+  `LIMITE_SYNCHRONISATION` lots par minute et par appareil.
+- Types et charges utiles (le corps de la route REST correspondante) :
+
+  | Type | Charge utile | Droit |
+  | --- | --- | --- |
+  | `MOUVEMENT_STOCK` | corps de `POST /api/mouvements` | `mouvements.creer` |
+  | `DECISION_MOUVEMENT` | `uuid_mouvement` + corps de `/validation` | `mouvements.valider` |
+  | `DECLARATION_ETAPE` | `id_etape` + corps de `/declaration` | `etapes.modifier` |
+  | `BLOCAGE_ETAPE` | `id_etape` + corps de `/blocage` | `etapes.modifier` |
+  | `LEVEE_BLOCAGE` | `id_etape` + corps de `/levee-blocage` | `etapes.modifier` |
+  | `DECISION_ETAPE` | `id_etape` + corps de `/validation` | `etapes.valider` |
+  | `RESOLUTION_ANOMALIE` | `id_anomalie` | `anomalies.modifier` |
+
+  L'`uuid` de l'événement devient celui de l'écriture (mouvement,
+  événement de validation ou d'exécution).
+- Réponse : le lot et un résultat par événement (`uuid_evenement`,
+  `statut` ∈ {`ACCEPTE`, `DEJA_RECU`, `REJETE`}, `code_rejet`,
+  `motif_rejet`). Le téléphone rapproche chaque résultat par
+  `uuid_evenement` : l'ordre de la liste n'est pas garanti. Un rejet
+  n'empêche pas les autres événements ; un événement rejeté peut être
+  renvoyé.
+- `GET /api/synchronisation/references?articles=…&stock=…` : le téléphone
+  passe la version qu'il détient pour chaque jeu (absente = jamais reçu).
+  Réponse `{ "jeux": [ { "type_donnee", "version", "donnees" } ],
+  "inchanges": [ … ] }` ; `donnees` a la forme de la route REST du jeu.
+  Jeux : `unites`, `articles`, `types_mouvement`, `motifs_blocage`,
+  `stock` (forme de `/api/stock/arborescence`), `fiches_route` (forme de
+  `/api/fiches-route`), selon les droits de lecture de l'utilisateur.
+- `GET /api/synchronisation/anomalies?statut=&type_anomalie=` et
+  `POST /api/synchronisation/anomalies/{id}/traitement` : droits
+  `api.anomalies.lire` et `api.anomalies.modifier`. Types :
+  `ECART_QUANTITE` (stock devenu négatif), `CONFLIT_VERSION` (l'état a
+  changé sur le serveur), `REJET_REGLE`, `DERIVE_HORLOGE` ; statuts
+  `OUVERTE`, `TRAITEE`.
+
 ## Écarts avec le contrat simulé des fronts (à reprendre en phase F-06)
 
 - Codes de rôle en `UPPER_SNAKE` (le web les simule en minuscules).
@@ -204,3 +255,16 @@ colonnes possibles dans `details.contenu`.
 - Le mobile manipule des notions absentes du MPD (pointage, pause, gravité
   et retard estimé d'un blocage, métré, points de contrôle) : non servies
   (Q-AC).
+
+Écarts introduits en B5 (synchronisation) :
+
+- Le mobile empile `EVENEMENT_ETAPE`, `INVENTAIRE_SOUMIS` et
+  `RESOLUTION_CONFLIT` avec ses propres charges utiles : le serveur attend
+  les types explicites ci-dessus et le corps des routes REST (Q-AE, F-14).
+- Le comptage d'inventaire ne se synchronise pas encore : il passe par
+  les routes `/api/inventaires` (le mobile n'envoie ni les quantités
+  comptées ni l'identifiant serveur de l'inventaire).
+- Le refus d'une sortie ne remet pas la quantité en stock côté serveur
+  sans contre-mouvement (RG-S8) ; le mobile le fait localement.
+- `resultat_evenement.code_rejet` : colonne hors MPD (motif programmatique
+  du rejet), écart validé, dette v0.2.
