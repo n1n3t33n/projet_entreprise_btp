@@ -1649,6 +1649,93 @@ paths:
                 items:
                   $ref: '#/components/schemas/Mouvement'
           description: ''
+  /api/notifications:
+    get:
+      operationId: notifications_list
+      description: |-
+        GET /api/notifications — mes notifications, les plus récentes d'abord
+        (``non_lues``, ``limite``).
+      parameters:
+      - in: query
+        name: limite
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+      - in: query
+        name: non_lues
+        schema:
+          type: boolean
+          default: false
+      tags:
+      - notifications
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/{id_notification}/lecture:
+    post:
+      operationId: notifications_lecture_create_2
+      description: POST /api/notifications/{id}/lecture — marquer une notification
+        lue.
+      parameters:
+      - in: path
+        name: id_notification
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - notifications
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/compteur:
+    get:
+      operationId: notifications_compteur_retrieve
+      description: |-
+        GET /api/notifications/compteur — nombre de notifications non lues
+        (pastille de la cloche, interrogée périodiquement, Q-AS).
+      tags:
+      - notifications
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Compteur'
+          description: ''
+  /api/notifications/lecture:
+    post:
+      operationId: notifications_lecture_create
+      description: POST /api/notifications/lecture — tout marquer lu.
+      tags:
+      - notifications
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LectureGroupee'
+          description: ''
   /api/parametrage/parametres:
     get:
       operationId: parametrage_parametres_list
@@ -2387,6 +2474,11 @@ paths:
           type: integer
         description: Version détenue par l'appareil.
       - in: query
+        name: notifications
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
         name: stock
         schema:
           type: integer
@@ -3016,6 +3108,13 @@ components:
       - prenom
       - role_code_role
       - statut
+    Compteur:
+      type: object
+      properties:
+        non_lues:
+          type: integer
+      required:
+      - non_lues
     ConnexionEntreeRequest:
       type: object
       properties:
@@ -3659,6 +3758,13 @@ components:
       - donnees
       - type_donnee
       - version
+    LectureGroupee:
+      type: object
+      properties:
+        nombre:
+          type: integer
+      required:
+      - nombre
     LeveeEntreeRequest:
       type: object
       properties:
@@ -4291,6 +4397,42 @@ components:
       - id
       - libelle
       - type
+    Notification:
+      type: object
+      properties:
+        id_notification:
+          type: string
+          format: uuid
+          readOnly: true
+        code_type:
+          type: string
+        libelle_type:
+          type: string
+        message:
+          type: string
+        canal:
+          type: string
+          maxLength: 32
+        date_creation:
+          type: string
+          format: date-time
+        date_lecture:
+          type: string
+          format: date-time
+          nullable: true
+        est_lue:
+          type: boolean
+          readOnly: true
+        id_objet:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - code_type
+      - est_lue
+      - id_notification
+      - libelle_type
+      - message
     OperateurEnum:
       enum:
       - INFERIEUR_EGAL

@@ -64,7 +64,8 @@ def test_seuls_les_jeux_autorises_sont_proposes(client_mobile: Client) -> None:
             role_id="TECHNICIEN", permission_id=permission, portee="GLOBALE"
         )
     reponse = client_mobile(role="TECHNICIEN").get(URL_REFERENCES)
-    assert list(_versions(reponse)) == ["articles"]
+    # « notifications » : droit accordé à tous les rôles (notifications 0004).
+    assert list(_versions(reponse)) == ["articles", "notifications"]
 
 
 def test_une_version_illisible_vaut_jamais_recu(client_mobile: Client) -> None:
