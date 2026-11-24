@@ -13,7 +13,8 @@ code/backend/
 ├── socle/                service technique transverse : journaux JSON, santé,
 │                         erreurs, limitation du taux, partitions, import CSV,
 │                         traitements planifiés, métriques, alertes,
-│                         registres de la synchronisation
+│                         registres de la synchronisation, événements
+│                         métier, indicateurs de pilotage
 ├── domaines/             un dossier par domaine du MERISE
 │   ├── identite/         MPD-1 : comptes, rôles, droits, appareils, audit
 │   ├── organisation/     MPD-2 : chantiers, magasins, zones, logements, paramètres
@@ -21,8 +22,10 @@ code/backend/
 │   ├── stock/            MPD-4 : mouvements immuables, validations, seuils,
 │   │                     stock courant, alertes, inventaires
 │   ├── avancement/       MPD-5 : étapes, journal d'exécution, fiches de route,
-│   │                     avancement agrégé (notifications en B6)
+│   │                     avancement agrégé
+│   ├── notifications/    MPD-5 : types, abonnements par rôle, notifications
 │   ├── synchronisation/  MPD-6 (serveur) : lots, résultats, curseurs, anomalies
+│   ├── pilotage/         rapport hebdomadaire, indicateurs d'usage (sans table)
 │   └── acquereur/        (à venir)
 ├── contrat/              contrat d'API OpenAPI généré et committé
 ├── sql/                  création des rôles PostgreSQL et de la base
@@ -94,7 +97,8 @@ python manage.py creer_partitions
 ```
 
 Tâches planifiées, toutes par `python manage.py lancer_traitement <nom>` :
-`creer_partitions` et `cycler_fiches_route` chaque jour,
-`consolider_avancement` chaque nuit, `relancer_validations` chaque heure. Chaque passage est tracé dans la table
+`creer_partitions`, `cycler_fiches_route` et `signaler_retards` chaque jour,
+`consolider_avancement` chaque nuit, `relancer_validations` chaque heure,
+`preparer_rapport_hebdomadaire` chaque lundi. Chaque passage est tracé dans la table
 `execution_traitement` et visible dans `GET /api/metriques` ; un échec envoie
 une alerte par courriel. Serveur : `gunicorn configuration.wsgi`.
