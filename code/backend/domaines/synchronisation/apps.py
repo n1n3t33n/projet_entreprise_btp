@@ -19,3 +19,9 @@ class ConfigurationSynchronisation(AppConfig):
         # Résolution d'une anomalie envoyée par lot depuis le mobile (Q-AJ).
         for type_evenement in evenements.TYPES:
             declarer_type(type_evenement)
+        # Rubriques du rapport hebdomadaire et de l'usage (EF-DSH-06, 07).
+        from domaines.synchronisation import indicateurs
+        from socle.indicateurs import declarer_rubrique
+
+        for rubrique in indicateurs.RUBRIQUES:
+            declarer_rubrique(rubrique)

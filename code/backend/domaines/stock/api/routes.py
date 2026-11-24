@@ -47,4 +47,12 @@ urlpatterns = [
         vues.VueValidationLigne.as_view(),
         name="inventaire-validation",
     ),
+    path(
+        "pilotage/stock/synthese", vues.VueSyntheseStock.as_view(), name="pilotage-stock-synthese"
+    ),
+    path(
+        "pilotage/stock/mouvements-recents",
+        vues.VueMouvementsRecents.as_view(),
+        name="pilotage-stock-mouvements-recents",
+    ),
 ]

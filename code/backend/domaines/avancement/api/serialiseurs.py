@@ -15,7 +15,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from domaines.avancement import selecteurs
-from domaines.avancement.constantes import LONGUEUR_COMMENTAIRE
+from domaines.avancement.constantes import LONGUEUR_COMMENTAIRE, STATUTS_ETAPE
 from domaines.avancement.models import EtapeTravaux, EvenementExecution, FicheRoute
 from domaines.avancement.services.declarations import DECISIONS
 from domaines.identite.selecteurs import comptes
@@ -276,3 +276,76 @@ class AlerteEtapeSerializer(serializers.Serializer):  # type: ignore[type-arg]
         if not selecteurs.en_retard(obj, timezone.localdate()):
             return 0
         return (timezone.localdate() - obj.date_prevue).days  # type: ignore[operator]
+
+
+# --- Journal d'exécution (EF-DSH-03) : formes de features/pilotage/api/dto.ts --------
+class EvenementJournalSerializer(serializers.ModelSerializer):  # type: ignore[type-arg]
+    """``EvenementJournalDto`` : l'événement et son contexte (étape, logement,
+    zone, corps d'état), lisible sans autre appel. RG-A5 : deux horodatages."""
+
+    id_etape = serializers.UUIDField(source="etape_travaux_id")
+    libelle_etape = serializers.CharField(source="etape_travaux.etape_modele.libelle")
+    id_logement = serializers.UUIDField(source="etape_travaux.logement_id")
+    numero_logement = serializers.CharField(source="etape_travaux.logement.numero")
+    libelle_zone = serializers.CharField(source="etape_travaux.logement.zone.nom")
+    code_corps_etat = serializers.CharField(source="etape_travaux.etape_modele.corps_etat_id")
+    libelle_corps_etat = serializers.CharField(
+        source="etape_travaux.etape_modele.corps_etat.libelle"
+    )
+    id_auteur = serializers.UUIDField(source="utilisateur_id")
+    nom_auteur = serializers.CharField(source="utilisateur.nom_complet")
+    est_delegation = serializers.SerializerMethodField()
+    code_motif_blocage = serializers.CharField(source="motif_blocage_id", allow_null=True)
+    libelle_motif_blocage = serializers.SerializerMethodField()
+
+    class Meta:
+        model = EvenementExecution
+        fields = [
+            "uuid",
+            "id_etape",
+            "libelle_etape",
+            "id_logement",
+            "numero_logement",
+            "libelle_zone",
+            "code_corps_etat",
+            "libelle_corps_etat",
+            "statut_avant",
+            "statut_apres",
+            "horodatage_appareil",
+            "horodatage_serveur",
+            "id_auteur",
+            "nom_auteur",
+            "est_delegation",
+            "code_motif_blocage",
+            "libelle_motif_blocage",
+            "commentaire",
+        ]
+
+    def get_est_delegation(self, obj: EvenementExecution) -> bool:
+        return (
+            obj.pour_le_compte_de_id is not None and obj.pour_le_compte_de_id != obj.utilisateur_id
+        )
+
+    def get_libelle_motif_blocage(self, obj: EvenementExecution) -> str | None:
+        return obj.motif_blocage.libelle if obj.motif_blocage else None
+
+
+class FiltreJournalSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    auteur = serializers.UUIDField(required=False)
+    zone = serializers.UUIDField(required=False)
+    statut = serializers.ChoiceField(choices=list(STATUTS_ETAPE), required=False)
+    depuis = serializers.DateField(required=False)
+    jusqua = serializers.DateField(required=False)
+    limite = serializers.IntegerField(required=False, default=500, min_value=1, max_value=1000)
+
+    def to_internal_value(self, data: Any) -> Any:
+        # Le statut s'accepte quelle que soit la casse (le web le transmet tel quel).
+        donnees = dict(data.items()) if hasattr(data, "items") else data
+        if isinstance(donnees.get("statut"), str):
+            donnees["statut"] = donnees["statut"].upper()
+        return super().to_internal_value(donnees)
+
+
+class IntervenantSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    id_utilisateur = serializers.UUIDField()
+    nom = serializers.CharField()

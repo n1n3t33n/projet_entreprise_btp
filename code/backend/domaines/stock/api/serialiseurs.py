@@ -292,3 +292,27 @@ class OuvertureInventaireSerializer(serializers.Serializer):  # type: ignore[typ
 
 class ComptageSerializer(serializers.Serializer):  # type: ignore[type-arg]
     quantite_comptee = _quantite(min_value=Decimal("0"))
+
+
+# --- Pilotage du stock (EF-DSH-04) : formes de features/pilotage/api/dto.ts ----------
+class SyntheseStockSerializer(serializers.Serializer):  # type: ignore[type-arg]
+    nombre_articles = serializers.IntegerField()
+    nombre_critique = serializers.IntegerField()
+    nombre_vigilance = serializers.IntegerField()
+    nombre_negatif = serializers.IntegerField()
+
+
+class MouvementRecentSerializer(MouvementSerializer):
+    """``MouvementRecentDto`` : le mouvement, l'article et son niveau d'alerte."""
+
+    code_article = serializers.CharField(source="article.code")
+    libelle_article = serializers.CharField(source="article.designation")
+    niveau_alerte_article = serializers.CharField(source="stock_courant.niveau_alerte")
+
+    class Meta(MouvementSerializer.Meta):
+        fields = [
+            *MouvementSerializer.Meta.fields,
+            "code_article",
+            "libelle_article",
+            "niveau_alerte_article",
+        ]

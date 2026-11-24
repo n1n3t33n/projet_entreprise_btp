@@ -528,3 +528,38 @@ class VueAlertesEtapes(APIView):
     def get(self, request: Request) -> Response:
         lignes = selecteurs.alertes(_couverts(request), timezone.localdate())
         return Response(s.AlerteEtapeSerializer(lignes, many=True).data)
+
+
+# --- Journal d'exécution (EF-DSH-03) ------------------------------------------------
+class VueJournal(APIView):
+    """GET /api/pilotage/journal — journal d'exécution filtré (auteur, zone,
+    statut, depuis, jusqua), les plus récents d'abord."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(
+        parameters=[s.FiltreJournalSerializer],
+        responses=s.EvenementJournalSerializer(many=True),
+    )
+    def get(self, request: Request) -> Response:
+        filtres = s.FiltreJournalSerializer(data=request.query_params)
+        filtres.is_valid(raise_exception=True)
+        donnees = dict(filtres.validated_data)
+        limite = donnees.pop("limite")
+        lignes = selecteurs.journal(_couverts(request), **donnees)[:limite]
+        return Response(s.EvenementJournalSerializer(lignes, many=True).data)
+
+
+class VueIntervenants(APIView):
+    """GET /api/pilotage/journal/intervenants — auteurs d'au moins un
+    événement, pour le filtre du journal (RG-A5 « qui »)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("avancement", "LIRE")
+
+    @extend_schema(responses=s.IntervenantSerializer(many=True))
+    def get(self, request: Request) -> Response:
+        return Response(
+            s.IntervenantSerializer(selecteurs.intervenants(_couverts(request)), many=True).data
+        )

@@ -19,6 +19,9 @@ from domaines.stock.constantes import (
     ALERTE_OUVERTE,
     DECISION_ACCEPTE,
     DECISION_REFUSE,
+    NIVEAU_CRITIQUE,
+    NIVEAU_MINIMAL,
+    NIVEAU_VIDE,
     STATUT_A_VALIDER,
     STATUT_ANNULE,
     STATUT_EN_ALERTE,
@@ -31,6 +34,7 @@ from domaines.stock.models import (
     Inventaire,
     MouvementStock,
     SeuilStock,
+    StockCourant,
 )
 
 
@@ -156,3 +160,28 @@ def arborescence(magasins: Iterable[Any]) -> list[dict[str, Any]]:
             }
         )
     return list(noeuds.values())
+
+
+# --- Pilotage du stock (EF-DSH-04) --------------------------------------------------
+def synthese(magasins: set[UUID] | None = None) -> dict[str, int]:
+    """Compteurs par niveau, à la règle de l'écran (SyntheseStockDto) :
+    « critique » réunit CRITIQUE et VIDE, « vigilance » est MINIMAL, « négatif »
+    une quantité calculée sous zéro (MPD-4, STOCK_NEGATIF)."""
+    stocks = StockCourant.objects.all()
+    if magasins is not None:
+        stocks = stocks.filter(seuil_stock__magasin_id__in=magasins)
+    return {
+        "nombre_articles": stocks.count(),
+        "nombre_critique": stocks.filter(niveau_alerte__in=(NIVEAU_CRITIQUE, NIVEAU_VIDE)).count(),
+        "nombre_vigilance": stocks.filter(niveau_alerte=NIVEAU_MINIMAL).count(),
+        "nombre_negatif": stocks.filter(quantite__lt=0).count(),
+    }
+
+
+def mouvements_recents(magasins: set[UUID] | None, limite: int) -> QuerySet[MouvementStock]:
+    """Derniers mouvements tous articles confondus, avec l'article et son niveau."""
+    return (
+        mouvements(magasins)
+        .select_related("article", "stock_courant")
+        .order_by("-horodatage_serveur")[:limite]
+    )
