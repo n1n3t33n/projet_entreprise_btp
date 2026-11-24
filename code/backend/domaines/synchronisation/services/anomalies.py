@@ -23,6 +23,9 @@ from domaines.synchronisation.constantes import (
 )
 from domaines.synchronisation.models import AnomalieSynchronisation, ResultatEvenement
 from socle.api_outils import obtenir_ou_404
+from socle.evenements import EvenementMetier, publier
+
+ANOMALIE_SYNCHRONISATION = "ANOMALIE_SYNCHRONISATION"
 
 
 def signaler(
@@ -31,12 +34,21 @@ def signaler(
     description: str,
     resultat: ResultatEvenement | None = None,
 ) -> AnomalieSynchronisation:
-    return AnomalieSynchronisation.objects.create(
+    anomalie = AnomalieSynchronisation.objects.create(
         appareil=appareil,
         type_anomalie=type_anomalie,
         description=description,
         resultat_evenement=resultat,
     )
+    # Sans lieu : un appareil n'appartient à aucun chantier au MPD.
+    publier(
+        EvenementMetier(
+            code=ANOMALIE_SYNCHRONISATION,
+            id_objet=anomalie.pk,
+            contexte={"description": description},
+        )
+    )
+    return anomalie
 
 
 def signaler_rejet(appareil: Appareil, resultat: ResultatEvenement) -> AnomalieSynchronisation:

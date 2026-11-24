@@ -31,6 +31,7 @@ from domaines.stock.constantes import (
     NIVEAU_VIDE,
 )
 from domaines.stock.models import Alerte, SeuilStock, StockCourant
+from domaines.stock.services import publications
 
 # Gravité croissante, pour savoir si un niveau se dégrade.
 GRAVITE = {NIVEAU_NORMAL: 0, NIVEAU_MINIMAL: 1, NIVEAU_CRITIQUE: 2, NIVEAU_VIDE: 3}
@@ -68,13 +69,14 @@ def ouvrir_alerte(stock: StockCourant, type_alerte: str, message: str) -> None:
         stock_courant=stock, type_alerte=type_alerte, statut=ALERTE_OUVERTE
     ).exists():
         return
-    Alerte.objects.create(
+    alerte = Alerte.objects.create(
         type_alerte=type_alerte,
         niveau=stock.niveau_alerte,
         message=message,
         statut=ALERTE_OUVERTE,
         stock_courant=stock,
     )
+    publications.alerte_ouverte(alerte, stock)
 
 
 def fermer_alertes(stock: StockCourant, types: list[str]) -> None:

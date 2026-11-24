@@ -45,7 +45,7 @@ from domaines.stock.constantes import (
     TYPE_STOCK_INITIAL,
 )
 from domaines.stock.models import MouvementStock
-from domaines.stock.services import parametres, projection, regles
+from domaines.stock.services import parametres, projection, publications, regles
 from socle.api_outils import conflit, donnee_invalide
 
 # Types réservés au serveur : on ne les saisit pas, on les obtient par une
@@ -173,6 +173,7 @@ def enregistrer(auteur: Any, saisie: Saisie) -> tuple[MouvementStock, bool]:
     _controler_destination(saisie)
     maintenant = timezone.now()
     date_operation = _controler_dates(saisie, maintenant)
+    statut = _statut_initial(saisie.type_mouvement, quantite_base)
     mouvement = inscrire(
         auteur,
         saisie.magasin,
@@ -182,7 +183,7 @@ def enregistrer(auteur: Any, saisie: Saisie) -> tuple[MouvementStock, bool]:
         quantite_saisie=saisie.quantite_saisie,
         code_unite=code_unite,
         uuid=saisie.uuid,
-        statut=_statut_initial(saisie.type_mouvement, quantite_base),
+        statut=statut,
         logement=saisie.logement,
         corps_etat=saisie.corps_etat,
         beneficiaire=saisie.beneficiaire,
@@ -191,6 +192,8 @@ def enregistrer(auteur: Any, saisie: Saisie) -> tuple[MouvementStock, bool]:
         date_operation=date_operation,
         horodatage_appareil=saisie.horodatage_appareil or maintenant,
     )
+    if statut == STATUT_A_VALIDER:
+        publications.sortie_a_valider(mouvement)
     return mouvement, True
 
 
