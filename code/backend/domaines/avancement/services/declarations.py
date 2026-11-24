@@ -37,7 +37,7 @@ from domaines.avancement.constantes import (
     VALIDEE,
 )
 from domaines.avancement.models import EtapeTravaux, EvenementExecution
-from domaines.avancement.services import acces, fiches, journal
+from domaines.avancement.services import acces, fiches, journal, publications
 from domaines.identite.selecteurs import equipes
 from domaines.referentiels import selecteurs as selecteurs_referentiels
 from socle.api_outils import conflit, donnee_invalide
@@ -129,6 +129,8 @@ def declarer_terminee(
         )
         etape.date_validation = timezone.now()
         etape.save(update_fields=["date_validation"])
+    else:
+        publications.a_controler(etape, auteur)
     return evenements, True
 
 
@@ -174,6 +176,7 @@ def bloquer(
         article=article,
         commentaire=commentaire,
     )
+    publications.bloquee(etape, auteur, motif.libelle, article)
     return evenement, True
 
 
@@ -232,7 +235,10 @@ def decider(
     if decision == DECISION_REFUSE:
         if not motif:
             raise donnee_invalide("motif", "Indiquez le motif du rejet.")
-        return journal.ecrire(etape, valideur, EN_COURS, uuid=uuid, commentaire=motif), True
+        rejet = journal.ecrire(etape, valideur, EN_COURS, uuid=uuid, commentaire=motif)
+        declarant = declaration.utilisateur if declaration else None
+        publications.rejetee(etape, valideur, declarant, motif)
+        return rejet, True
     evenement = journal.ecrire(etape, valideur, VALIDEE, uuid=uuid, commentaire=motif)
     etape.date_validation = timezone.now()
     etape.save(update_fields=["date_validation"])

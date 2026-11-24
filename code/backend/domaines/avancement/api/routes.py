@@ -55,4 +55,10 @@ urlpatterns = [
     path("fiches-route/affectations", vues.VueAffectations.as_view(), name="fiches-affectations"),
     path("fiches-route/<uuid:id_fiche>", vues.VueFiche.as_view(), name="fiche-route"),
     path("fiches-route/<uuid:id_fiche>/cloture", vues.VueCloture.as_view(), name="fiche-cloture"),
+    path("pilotage/journal", vues.VueJournal.as_view(), name="pilotage-journal"),
+    path(
+        "pilotage/journal/intervenants",
+        vues.VueIntervenants.as_view(),
+        name="pilotage-journal-intervenants",
+    ),
 ]

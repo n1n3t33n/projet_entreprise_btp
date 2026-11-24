@@ -59,6 +59,8 @@ APPLICATIONS_CHANTIERSYNC = [
     "domaines.stock",
     "domaines.avancement",
     "domaines.synchronisation",
+    "domaines.notifications",
+    "domaines.pilotage",
     "domaines.acquereur",
 ]
 INSTALLED_APPS = APPLICATIONS_DJANGO + APPLICATIONS_TIERCES + APPLICATIONS_CHANTIERSYNC

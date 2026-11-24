@@ -1649,6 +1649,93 @@ paths:
                 items:
                   $ref: '#/components/schemas/Mouvement'
           description: ''
+  /api/notifications:
+    get:
+      operationId: notifications_list
+      description: |-
+        GET /api/notifications — mes notifications, les plus récentes d'abord
+        (``non_lues``, ``limite``).
+      parameters:
+      - in: query
+        name: limite
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+      - in: query
+        name: non_lues
+        schema:
+          type: boolean
+          default: false
+      tags:
+      - notifications
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/{id_notification}/lecture:
+    post:
+      operationId: notifications_lecture_create_2
+      description: POST /api/notifications/{id}/lecture — marquer une notification
+        lue.
+      parameters:
+      - in: path
+        name: id_notification
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - notifications
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/compteur:
+    get:
+      operationId: notifications_compteur_retrieve
+      description: |-
+        GET /api/notifications/compteur — nombre de notifications non lues
+        (pastille de la cloche, interrogée périodiquement, Q-AS).
+      tags:
+      - notifications
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Compteur'
+          description: ''
+  /api/notifications/lecture:
+    post:
+      operationId: notifications_lecture_create
+      description: POST /api/notifications/lecture — tout marquer lu.
+      tags:
+      - notifications
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LectureGroupee'
+          description: ''
   /api/parametrage/parametres:
     get:
       operationId: parametrage_parametres_list
@@ -1877,6 +1964,186 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AvancementAgrege'
+          description: ''
+  /api/pilotage/journal:
+    get:
+      operationId: pilotage_journal_list
+      description: |-
+        GET /api/pilotage/journal — journal d'exécution filtré (auteur, zone,
+        statut, depuis, jusqua), les plus récents d'abord.
+      parameters:
+      - in: query
+        name: auteur
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: depuis
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: jusqua
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: limite
+        schema:
+          type: integer
+          maximum: 1000
+          minimum: 1
+          default: 500
+      - in: query
+        name: statut
+        schema:
+          enum:
+          - A_FAIRE
+          - EN_COURS
+          - TERMINEE_DECLAREE
+          - BLOQUEE
+          - VALIDEE
+          type: string
+          minLength: 1
+        description: |-
+          * `A_FAIRE` - A_FAIRE
+          * `EN_COURS` - EN_COURS
+          * `TERMINEE_DECLAREE` - TERMINEE_DECLAREE
+          * `BLOQUEE` - BLOQUEE
+          * `VALIDEE` - VALIDEE
+      - in: query
+        name: zone
+        schema:
+          type: string
+          format: uuid
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EvenementJournal'
+          description: ''
+  /api/pilotage/journal/intervenants:
+    get:
+      operationId: pilotage_journal_intervenants_list
+      description: |-
+        GET /api/pilotage/journal/intervenants — auteurs d'au moins un
+        événement, pour le filtre du journal (RG-A5 « qui »).
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Intervenant'
+          description: ''
+  /api/pilotage/rapport-hebdomadaire:
+    get:
+      operationId: pilotage_rapport_hebdomadaire_retrieve
+      description: |-
+        GET /api/pilotage/rapport-hebdomadaire?semaine=2026-W47&export=csv —
+        rapport de la semaine (la dernière complète par défaut), en JSON ou en
+        fichier CSV pour la réunion des associés (EF-DSH-06).
+      parameters:
+      - in: query
+        name: export
+        schema:
+          type: string
+          enum:
+          - csv
+        description: 'csv : fichier à télécharger.'
+      - in: query
+        name: semaine
+        schema:
+          type: string
+        description: Semaine ISO, par exemple 2026-W47.
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rapport'
+          description: ''
+  /api/pilotage/stock/mouvements-recents:
+    get:
+      operationId: pilotage_stock_mouvements_recents_list
+      description: |-
+        GET /api/pilotage/stock/mouvements-recents?limite=8 — derniers
+        mouvements, tous articles confondus (EF-DSH-04).
+      parameters:
+      - in: query
+        name: limite
+        schema:
+          type: integer
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MouvementRecent'
+          description: ''
+  /api/pilotage/stock/synthese:
+    get:
+      operationId: pilotage_stock_synthese_retrieve
+      description: |-
+        GET /api/pilotage/stock/synthese — compteurs par niveau d'alerte des
+        magasins couverts (EF-DSH-04, RG-S5).
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyntheseStock'
+          description: ''
+  /api/pilotage/usage:
+    get:
+      operationId: pilotage_usage_retrieve
+      description: |-
+        GET /api/pilotage/usage?jours=7 — indicateurs d'usage du pilote sur
+        les derniers jours (EF-DSH-07).
+      parameters:
+      - in: query
+        name: jours
+        schema:
+          type: integer
+          maximum: 90
+          minimum: 1
+          default: 7
+      tags:
+      - pilotage
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usage'
           description: ''
   /api/referentiels/articles:
     get:
@@ -2383,6 +2650,11 @@ paths:
         description: Version détenue par l'appareil.
       - in: query
         name: motifs_blocage
+        schema:
+          type: integer
+        description: Version détenue par l'appareil.
+      - in: query
+        name: notifications
         schema:
           type: integer
         description: Version détenue par l'appareil.
@@ -3016,6 +3288,13 @@ components:
       - prenom
       - role_code_role
       - statut
+    Compteur:
+      type: object
+      properties:
+        non_lues:
+          type: integer
+      required:
+      - non_lues
     ConnexionEntreeRequest:
       type: object
       properties:
@@ -3444,6 +3723,79 @@ components:
       - charge_utile
       - type
       - uuid
+    EvenementJournal:
+      type: object
+      description: |-
+        ``EvenementJournalDto`` : l'événement et son contexte (étape, logement,
+        zone, corps d'état), lisible sans autre appel. RG-A5 : deux horodatages.
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        id_etape:
+          type: string
+          format: uuid
+        libelle_etape:
+          type: string
+        id_logement:
+          type: string
+          format: uuid
+        numero_logement:
+          type: string
+        libelle_zone:
+          type: string
+        code_corps_etat:
+          type: string
+        libelle_corps_etat:
+          type: string
+        statut_avant:
+          type: string
+          nullable: true
+          maxLength: 32
+        statut_apres:
+          type: string
+          maxLength: 32
+        horodatage_appareil:
+          type: string
+          format: date-time
+        horodatage_serveur:
+          type: string
+          format: date-time
+        id_auteur:
+          type: string
+          format: uuid
+        nom_auteur:
+          type: string
+        est_delegation:
+          type: boolean
+          readOnly: true
+        code_motif_blocage:
+          type: string
+          nullable: true
+        libelle_motif_blocage:
+          type: string
+          nullable: true
+          readOnly: true
+        commentaire:
+          type: string
+          nullable: true
+          maxLength: 120
+      required:
+      - code_corps_etat
+      - code_motif_blocage
+      - est_delegation
+      - id_auteur
+      - id_etape
+      - id_logement
+      - libelle_corps_etat
+      - libelle_etape
+      - libelle_motif_blocage
+      - libelle_zone
+      - nom_auteur
+      - numero_logement
+      - statut_apres
+      - uuid
     Execution:
       type: object
       properties:
@@ -3569,6 +3921,17 @@ components:
       required:
       - cible
       - contenu
+    Intervenant:
+      type: object
+      properties:
+        id_utilisateur:
+          type: string
+          format: uuid
+        nom:
+          type: string
+      required:
+      - id_utilisateur
+      - nom
     Inventaire:
       type: object
       properties:
@@ -3659,6 +4022,13 @@ components:
       - donnees
       - type_donnee
       - version
+    LectureGroupee:
+      type: object
+      properties:
+        nombre:
+          type: integer
+      required:
+      - nombre
     LeveeEntreeRequest:
       type: object
       properties:
@@ -3756,6 +4126,18 @@ components:
       - erreur
       - numero
       - valeurs
+    LigneIndicateur:
+      type: object
+      properties:
+        rubrique:
+          type: string
+        indicateur:
+          type: string
+        valeur: {}
+      required:
+      - indicateur
+      - rubrique
+      - valeur
     LigneInventaire:
       type: object
       properties:
@@ -4269,6 +4651,105 @@ components:
       - magasin_id_magasin
       - quantite_saisie
       - type_mouvement_code_type_mouvement
+    MouvementRecent:
+      type: object
+      description: '``MouvementRecentDto`` : le mouvement, l''article et son niveau
+        d''alerte.'
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        article_id_article:
+          type: string
+          format: uuid
+        magasin_id_magasin:
+          type: string
+          format: uuid
+        logement_id_logement:
+          type: string
+          format: uuid
+          nullable: true
+        type_mouvement_code_type_mouvement:
+          type: string
+        sens:
+          type: integer
+        quantite_saisie:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        quantite_base:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        code_unite:
+          type: string
+        date_operation:
+          type: string
+          format: date-time
+        horodatage_appareil:
+          type: string
+          format: date-time
+        horodatage_serveur:
+          type: string
+          format: date-time
+        statut_validation:
+          type: string
+          readOnly: true
+        reference_externe:
+          type: string
+          nullable: true
+          maxLength: 120
+        utilisateur_id_utilisateur:
+          type: string
+          format: uuid
+        nom_auteur:
+          type: string
+        motif:
+          type: string
+          nullable: true
+        corps_etat:
+          type: string
+          nullable: true
+        beneficiaire:
+          type: string
+          nullable: true
+          maxLength: 120
+        mouvement_annule_uuid:
+          type: string
+          format: uuid
+          nullable: true
+        derive_horloge:
+          type: boolean
+          description: |-
+            RG-S11 : dérive entre l'heure de l'appareil et celle du serveur
+            au-delà de ``derive_horloge_max_min`` (signalée, jamais bloquante).
+          readOnly: true
+        code_article:
+          type: string
+        libelle_article:
+          type: string
+        niveau_alerte_article:
+          type: string
+      required:
+      - article_id_article
+      - code_article
+      - code_unite
+      - corps_etat
+      - derive_horloge
+      - libelle_article
+      - logement_id_logement
+      - magasin_id_magasin
+      - mouvement_annule_uuid
+      - niveau_alerte_article
+      - nom_auteur
+      - quantite_base
+      - quantite_saisie
+      - sens
+      - statut_validation
+      - type_mouvement_code_type_mouvement
+      - utilisateur_id_utilisateur
+      - uuid
     NoeudStock:
       type: object
       description: '``NoeudStock`` : chantier › magasin › familles.'
@@ -4291,6 +4772,42 @@ components:
       - id
       - libelle
       - type
+    Notification:
+      type: object
+      properties:
+        id_notification:
+          type: string
+          format: uuid
+          readOnly: true
+        code_type:
+          type: string
+        libelle_type:
+          type: string
+        message:
+          type: string
+        canal:
+          type: string
+          maxLength: 32
+        date_creation:
+          type: string
+          format: date-time
+        date_lecture:
+          type: string
+          format: date-time
+          nullable: true
+        est_lue:
+          type: boolean
+          readOnly: true
+        id_objet:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - code_type
+      - est_lue
+      - id_notification
+      - libelle_type
+      - message
     OperateurEnum:
       enum:
       - INFERIEUR_EGAL
@@ -4443,6 +4960,26 @@ components:
       - droits
       - horodatage_serveur
       - utilisateur
+    Rapport:
+      type: object
+      properties:
+        semaine:
+          type: string
+        du:
+          type: string
+          format: date
+        au:
+          type: string
+          format: date
+        lignes:
+          type: array
+          items:
+            $ref: '#/components/schemas/LigneIndicateur'
+      required:
+      - au
+      - du
+      - lignes
+      - semaine
     RapportImport:
       type: object
       description: |-
@@ -4726,6 +5263,22 @@ components:
       - nombre_logements
       - pourcentage_declare
       - pourcentage_valide
+    SyntheseStock:
+      type: object
+      properties:
+        nombre_articles:
+          type: integer
+        nombre_critique:
+          type: integer
+        nombre_vigilance:
+          type: integer
+        nombre_negatif:
+          type: integer
+      required:
+      - nombre_articles
+      - nombre_critique
+      - nombre_negatif
+      - nombre_vigilance
     TypeEvenementEnum:
       enum:
       - DECLARATION_ETAPE
@@ -4829,6 +5382,23 @@ components:
       - code_unite
       - libelle
       - type_unite
+    Usage:
+      type: object
+      properties:
+        du:
+          type: string
+          format: date
+        au:
+          type: string
+          format: date
+        lignes:
+          type: array
+          items:
+            $ref: '#/components/schemas/LigneIndicateur'
+      required:
+      - au
+      - du
+      - lignes
     Utilisateur:
       type: object
       description: |-

@@ -32,7 +32,14 @@ from domaines.stock.constantes import (
     STATUT_EN_ALERTE,
 )
 from domaines.stock.models import EvenementValidation, MouvementStock
-from domaines.stock.services import acces, inventaires, parametres, regles, relance
+from domaines.stock.services import (
+    acces,
+    inventaires,
+    parametres,
+    publications,
+    regles,
+    relance,
+)
 from socle.api_outils import conflit, donnee_invalide
 from socle.erreurs import ErreurApi
 
@@ -106,4 +113,6 @@ def decider(
         valeurs["uuid"] = uuid_evenement
     EvenementValidation.objects.create(**valeurs)
     relance.actualiser_alerte(mouvement.stock_courant)
+    if decision == DECISION_REFUSE:
+        publications.sortie_refusee(mouvement, valideur, motif)
     return mouvement_autorise(valideur, uuid_mouvement, "VALIDER")

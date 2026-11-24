@@ -201,6 +201,42 @@ colonnes possibles dans `details.contenu`.
   changé sur le serveur), `REJET_REGLE`, `DERIVE_HORLOGE` ; statuts
   `OUVERTE`, `TRAITEE`.
 
+## Notifications (B6)
+
+- `GET /api/notifications?non_lues=true&limite=50` (limite ≤ 200),
+  `GET /api/notifications/compteur` → `{"non_lues": n}`,
+  `POST /api/notifications/{id}/lecture`, `POST /api/notifications/lecture`
+  → `{"nombre": n}`. Chacun ne voit et ne marque que les siennes (404 pour
+  celle d'un autre). Droits `api.notifications.lire` et `modifier`, accordés
+  à tous les rôles.
+- Une notification : `id_notification`, `code_type`, `libelle_type`,
+  `message`, `canal` (`APPLICATION`), `date_creation`, `date_lecture`,
+  `est_lue`, `id_objet` (l'objet en cause : mouvement, étape, anomalie,
+  alerte).
+- Types : `SORTIE_A_VALIDER`, `VALIDATION_EN_RETARD`, `SORTIE_REFUSEE`,
+  `SEUIL_MINIMAL`, `SEUIL_CRITIQUE`, `STOCK_NEGATIF`, `ETAPE_A_CONTROLER`,
+  `ETAPE_REJETEE`, `ETAPE_BLOQUEE`, `MANQUE_MATERIEL`, `ETAPE_EN_RETARD`,
+  `ANOMALIE_SYNCHRONISATION`, `RAPPORT_HEBDOMADAIRE`.
+- Pas de canal temps réel : le web interroge `/compteur` toutes les 30 à 60
+  secondes ; le mobile reçoit ses notifications non lues dans le jeu
+  `notifications` de `GET /api/synchronisation/references`.
+
+## Pilotage (B6)
+
+- `GET /api/pilotage/stock/synthese` et
+  `GET /api/pilotage/stock/mouvements-recents?limite=8` (≤ 50), aux formes
+  `SyntheseStockDto` et `MouvementRecentDto` du web.
+- `GET /api/pilotage/journal?auteur=&zone=&statut=&depuis=&jusqua=&limite=`
+  (dates `AAAA-MM-JJ` sur l'horodatage serveur, statut quelle que soit la
+  casse, limite ≤ 1000) et `GET /api/pilotage/journal/intervenants`.
+- `GET /api/pilotage/rapport-hebdomadaire?semaine=2026-W47` →
+  `{semaine, du, au, lignes: [{rubrique, indicateur, valeur}]}` ; avec
+  `export=csv`, un fichier `rapport-2026-W47.csv` (point-virgule, UTF-8 avec
+  marque d'ordre des octets). Sans semaine : la dernière complète. Droit
+  `api.rapport-hebdomadaire.lire`.
+- `GET /api/pilotage/usage?jours=7` (1 à 90) : même forme de lignes. Droit
+  `api.usage.lire`.
+
 ## Écarts avec le contrat simulé des fronts (à reprendre en phase F-06)
 
 - Codes de rôle en `UPPER_SNAKE` (le web les simule en minuscules).
@@ -268,3 +304,12 @@ colonnes possibles dans `details.contenu`.
   sans contre-mouvement (RG-S8) ; le mobile le fait localement.
 - `resultat_evenement.code_rejet` : colonne hors MPD (motif programmatique
   du rejet), écart validé, dette v0.2.
+
+Écarts introduits en B6 (notifications et pilotage) :
+
+- `notification.alerte` facultative et `notification.id_objet` ajouté
+  (Q-AN) : le MCD imposait qu'une notification vienne d'une alerte de stock.
+- Le web n'a ni écran de notifications ni export du rapport : la cloche
+  reste à brancher (F-15).
+- Le paramètre d'export est `export=csv` : `format` est réservé par le
+  cadre de l'API au choix du rendu.

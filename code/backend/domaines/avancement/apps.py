@@ -18,7 +18,7 @@ class ConfigurationAvancement(AppConfig):
 
         from domaines.avancement import demo, recepteurs
         from domaines.avancement.api import references, synchronisation
-        from domaines.avancement.services import agregats, fiches
+        from domaines.avancement.services import agregats, fiches, retards
         from domaines.organisation.models import Logement
         from domaines.referentiels import signaux
         from socle.base_de_donnees.partitions import declarer_table_partitionnee
@@ -37,8 +37,16 @@ class ConfigurationAvancement(AppConfig):
         declarer_traitement("cycler_fiches_route", fiches.cycler)
         # Consolidation nocturne de l'avancement (RG-A6, Q-AB).
         declarer_traitement("consolider_avancement", agregats.consolider)
+        # Avis quotidien des étapes en retard, une fois par étape (Q-AU).
+        declarer_traitement("signaler_retards", retards.signaler)
         # Rang 40 : après l'identité (techniciens) et le stock (articles).
         declarer_chargeur(40, "avancement", demo.charger)
+        # Rubriques du rapport hebdomadaire et de l'usage (EF-DSH-06, 07).
+        from domaines.avancement import indicateurs
+        from socle.indicateurs import declarer_rubrique
+
+        for rubrique in indicateurs.RUBRIQUES:
+            declarer_rubrique(rubrique)
         # Déclarations, blocages, levées et contrôles faits hors ligne (SQ-2).
         for type_evenement in synchronisation.TYPES:
             declarer_type(type_evenement)

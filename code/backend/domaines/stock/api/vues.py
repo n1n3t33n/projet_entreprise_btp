@@ -342,3 +342,40 @@ class VueValidationLigne(APIView):
             request.user, id_inventaire, id_ligne, donnees["decision"], donnees.get("motif")
         )
         return Response(_detail(inventaire))
+
+
+# --- Pilotage du stock (EF-DSH-04) --------------------------------------------------
+LIMITE_RECENTS_DEFAUT = 8
+LIMITE_RECENTS_MAX = 50
+
+
+class VueSyntheseStock(APIView):
+    """GET /api/pilotage/stock/synthese — compteurs par niveau d'alerte des
+    magasins couverts (EF-DSH-04, RG-S5)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("stock", "LIRE")
+
+    @extend_schema(responses=s.SyntheseStockSerializer)
+    def get(self, request: Request) -> Response:
+        couverts = acces.magasins_couverts(request.user, "stock", "LIRE")
+        return Response(s.SyntheseStockSerializer(selecteurs.synthese(couverts)).data)
+
+
+class VueMouvementsRecents(APIView):
+    """GET /api/pilotage/stock/mouvements-recents?limite=8 — derniers
+    mouvements, tous articles confondus (EF-DSH-04)."""
+
+    def get_permissions(self) -> list[Any]:
+        return droit("mouvements", "LIRE")
+
+    @extend_schema(
+        parameters=[OpenApiParameter("limite", int)],
+        responses=s.MouvementRecentSerializer(many=True),
+    )
+    def get(self, request: Request) -> Response:
+        demandee = request.query_params.get("limite")
+        limite = min(_limite(demandee), LIMITE_RECENTS_MAX) if demandee else LIMITE_RECENTS_DEFAUT
+        couverts = acces.magasins_couverts(request.user, "mouvements", "LIRE")
+        lignes = selecteurs.mouvements_recents(couverts, limite)
+        return Response(s.MouvementRecentSerializer(lignes, many=True, context=contexte()).data)

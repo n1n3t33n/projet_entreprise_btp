@@ -32,6 +32,12 @@ class ConfigurationStock(AppConfig):
         declarer_traitement("relancer_validations", relance.relancer)
         # Import CSV du stock de départ (EF-ADM-02).
         declarer_cible(importation.STOCK)
+        # Rubriques du rapport hebdomadaire et de l'usage (EF-DSH-06, 07).
+        from domaines.stock import indicateurs
+        from socle.indicateurs import declarer_rubrique
+
+        for rubrique in indicateurs.RUBRIQUES:
+            declarer_rubrique(rubrique)
         # Mouvements et décisions saisis hors ligne, rejoués par lot (SQ-2).
         for type_evenement in synchronisation.TYPES:
             declarer_type(type_evenement)

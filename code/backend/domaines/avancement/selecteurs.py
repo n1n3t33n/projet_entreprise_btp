@@ -24,6 +24,7 @@ from domaines.avancement.models import (
     EvenementExecution,
     FicheRoute,
 )
+from socle.indicateurs import bornes
 
 
 def _derniere_declaration() -> QuerySet[EvenementExecution]:
@@ -132,4 +133,53 @@ def alertes(chantiers: set[UUID] | None, aujourd_hui: date) -> QuerySet[EtapeTra
             commentaire_blocage=Subquery(_dernier_blocage().values("commentaire")[:1]),
         )
         .order_by("date_prevue", "logement__numero")
+    )
+
+
+# --- Journal d'exécution (EF-DSH-03, RG-A5 : qui, quoi, quand) -----------------------
+def journal(chantiers: set[UUID] | None, **filtres: Any) -> QuerySet[EvenementExecution]:
+    """Événements des chantiers couverts, les plus récents d'abord. Filtres :
+    ``auteur``, ``zone``, ``statut`` (statut après), ``depuis`` et ``jusqua``
+    (jours, sur l'horodatage serveur, qui fait foi)."""
+    requete = EvenementExecution.objects.select_related(
+        "utilisateur",
+        "motif_blocage",
+        "etape_travaux__logement__zone",
+        "etape_travaux__etape_modele__corps_etat",
+    )
+    if chantiers is not None:
+        requete = requete.filter(etape_travaux__logement__zone__chantier_id__in=chantiers)
+    if filtres.get("auteur"):
+        requete = requete.filter(utilisateur_id=filtres["auteur"])
+    if filtres.get("zone"):
+        requete = requete.filter(etape_travaux__logement__zone_id=filtres["zone"])
+    if filtres.get("statut"):
+        requete = requete.filter(statut_apres=filtres["statut"])
+    if filtres.get("depuis"):
+        requete = requete.filter(
+            horodatage_serveur__gte=bornes(filtres["depuis"], filtres["depuis"])[0]
+        )
+    if filtres.get("jusqua"):
+        requete = requete.filter(
+            horodatage_serveur__lt=bornes(filtres["jusqua"], filtres["jusqua"])[1]
+        )
+    return requete.order_by("-horodatage_serveur")
+
+
+def intervenants(chantiers: set[UUID] | None) -> list[dict[str, Any]]:
+    """Auteurs d'au moins un événement, triés par nom (filtre du journal)."""
+    auteurs = (
+        journal(chantiers)
+        .order_by()
+        .values("utilisateur_id")
+        .annotate(
+            nom=Concat(
+                "utilisateur__prenom", Value(" "), "utilisateur__nom", output_field=CharField()
+            )
+        )
+        .distinct()
+    )
+    return sorted(
+        ({"id_utilisateur": a["utilisateur_id"], "nom": a["nom"]} for a in auteurs),
+        key=lambda a: str(a["nom"]).lower(),
     )

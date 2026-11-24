@@ -204,10 +204,17 @@ ROLES_LECTEURS_REFERENTIELS = [
 # gammes, corps d'état, paramètres et règles — responsable technique (EF-REF-05,
 # 07 à 09) ; catalogue et magasins — gestionnaire de stock (EF-REF-03, 04).
 # Synchronisation (B5) : tout rôle de terrain envoie ses lots depuis le mobile.
+# Rapport hebdomadaire (EF-DSH-06) : direction et responsable technique.
 # Gestionnaire de stock et chef de chantier traitent les anomalies de
 # synchronisation (EF-SYN-05, acteurs GST et CCH).
 DROITS_API_SUPPLEMENTAIRES = {
-    "DIRECTION": ["api.audit.lire", "api.stock.lire", "api.mouvements.lire", "api.avancement.lire"],
+    "DIRECTION": [
+        "api.audit.lire",
+        "api.stock.lire",
+        "api.mouvements.lire",
+        "api.avancement.lire",
+        "api.rapport-hebdomadaire.lire",
+    ],
     "COMMERCIAL": ["api.avancement.lire"],
     # Stock (B3) : saisie et comptage au magasinier, décisions au gestionnaire
     # (RG-D8 : celui qui saisit ne valide pas), lecture aux rôles de pilotage.
@@ -262,6 +269,7 @@ DROITS_API_SUPPLEMENTAIRES = {
         "api.regles.creer",
         "api.regles.modifier",
         "api.synchronisation.creer",
+        "api.rapport-hebdomadaire.lire",
     ],
     "GESTIONNAIRE_STOCK": [
         "api.stock.lire",

@@ -15,15 +15,17 @@ colonne peut ne jamais sortir de l'API.
 
 `domaines/` contient le métier, un dossier par domaine du MERISE :
 `identite` (MPD-1), `organisation` (MPD-2), `referentiels` (MPD-3), `stock`
-(MPD-4), `avancement` (MPD-5 ; les notifications arriveront en B6),
-`synchronisation` (MPD-6, partie serveur). Le domaine acquéreur viendra
-s'ajouter au même endroit, sur le même modèle.
+(MPD-4), `avancement` (MPD-5), `notifications` (tables de notification du
+MPD-5), `synchronisation` (MPD-6, partie serveur) et `pilotage` (rapport
+hebdomadaire et indicateurs d'usage, sans table). Le domaine acquéreur
+viendra s'ajouter au même endroit, sur le même modèle.
 
 `socle/` contient ce qui sert à tous les domaines sans appartenir à aucun :
 journaux JSON et identifiant de corrélation, format d'erreur unique,
 limitation du taux, santé, partitions mensuelles, import CSV, traitements
-planifiés, métriques, alertes par courriel, lecture des corps compressés et
-registres de la synchronisation. Le socle n'importe jamais un
+planifiés, métriques, alertes par courriel, lecture des corps compressés,
+registres de la synchronisation, publication des événements métier et
+registre des indicateurs de pilotage. Le socle n'importe jamais un
 domaine. Quand il a besoin d'eux, ce sont les domaines qui viennent s'y
 inscrire au démarrage (on y revient plus bas).
 
@@ -352,6 +354,41 @@ contenu : le serveur ne renvoie que les jeux dont l'empreinte diffère de
 celle que l'appareil déclare, et note cette version dans
 `curseur_reference`.
 
+## Prévenir sans dépendre : les événements métier
+
+Quand une sortie attend une décision ou qu'une étape est rejetée, quelqu'un
+doit être prévenu. Le stock et l'avancement ne connaissent pourtant pas les
+notifications : ils annoncent ce qui vient de se passer sur un canal neutre
+du socle (`socle/evenements.py`), et le domaine notifications s'y abonne.
+
+```python
+publier(
+    EvenementMetier(
+        code="SORTIE_REFUSEE",
+        id_objet=mouvement.pk,
+        id_chantier=mouvement.magasin.chantier_id,
+        id_magasin=mouvement.magasin_id,
+        personne=mouvement.utilisateur,  # la personne concernée
+        auteur=valideur,                 # celui qui a agi, qu'on ne prévient pas
+        contexte={"motif": motif},       # champs du message
+    )
+)
+```
+
+Chaque domaine range ces appels dans `services/publications.py`, pour que
+ses services n'aient qu'une ligne à ajouter. Le code de l'événement est
+celui d'un type de notification ; le domaine notifications
+(`services/production.py`) lit les abonnements de ce type : un rôle désigne
+ses titulaires dont le périmètre couvre le chantier ou le magasin
+(`identite/selecteurs/titulaires.py`), un abonnement sans rôle désigne la
+personne concernée. Le message vient du modèle du type, rempli avec le
+contexte.
+
+L'événement est publié dans la transaction de l'opération : si elle est
+annulée (le point de reprise d'un lot de synchronisation, par exemple), les
+notifications le sont aussi. À l'inverse, un échec de la production est
+journalisé et n'interrompt jamais l'opération métier.
+
 ## Le socle et les inscriptions au démarrage
 
 Pour que le socle reste indépendant des domaines, chaque domaine s'inscrit
@@ -379,6 +416,8 @@ Les registres existants :
 | `socle/base_de_donnees/partitions.py` | `declarer_table_partitionnee(nom)` | traitement `creer_partitions` |
 | `socle/synchronisation.py` | `declarer_type(TypeEvenement(...))` | `POST /api/synchronisation/lots` |
 | `socle/synchronisation.py` | `declarer_reference(JeuReference(...))` | `GET /api/synchronisation/references` |
+| `socle/evenements.py` | `evenement_publie.connect(recepteur)` | `publier(...)` des domaines |
+| `socle/indicateurs.py` | `declarer_rubrique(Rubrique(...))` | rapport hebdomadaire, indicateurs d'usage |
 
 Le domaine stock s'y inscrit quatre fois : chargeur de démonstration (rang
 30, après l'identité qui fournit les auteurs), cible d'import « stock »,
@@ -488,14 +527,27 @@ la route et appelle le même service, puis déclare-la dans `TYPES`. Elle rend
 et rend les données sous la forme de la route REST, déclarée dans le
 `api/references.py` du domaine avec le droit de lecture qui la protège.
 
+**Une notification.** Ajoute le type et ses abonnements par une migration
+de données du domaine notifications (voir `notifications 0002`), puis, dans
+le domaine où l'événement se produit, une fonction de
+`services/publications.py` qui publie un `EvenementMetier` du même code.
+Le domaine émetteur n'importe rien du domaine notifications.
+
+**Un indicateur du rapport.** Dans le `indicateurs.py` du domaine qui
+possède la donnée, une fonction (début, fin) → lignes (indicateur, valeur),
+déclarée comme `Rubrique` de la famille `RAPPORT` ou `USAGE`. Elle apparaît
+d'elle-même dans le rapport et son export CSV.
+
 **Un traitement planifié.** Une fonction sans argument, idempotente, qui rend
 un bilan en une phrase, inscrite avec `declarer_traitement` dans le `ready()`
 du domaine. La plateforme la lance avec `manage.py lancer_traitement <nom>` ;
 chaque passage est tracé dans `execution_traitement` et un échec envoie une
-alerte. Il en existe quatre : `creer_partitions` (quotidien),
+alerte. Il en existe six : `creer_partitions` (quotidien),
 `relancer_validations` (horaire, `stock/services/relance.py`),
-`cycler_fiches_route` (quotidien, `avancement/services/fiches.py`) et
-`consolider_avancement` (nocturne, `avancement/services/agregats.py`).
+`cycler_fiches_route` (quotidien, `avancement/services/fiches.py`),
+`consolider_avancement` (nocturne, `avancement/services/agregats.py`),
+`signaler_retards` (quotidien, `avancement/services/retards.py`) et
+`preparer_rapport_hebdomadaire` (le lundi, `pilotage/services/rapports.py`).
 
 ## Les tests
 
