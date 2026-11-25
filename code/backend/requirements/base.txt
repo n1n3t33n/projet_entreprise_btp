@@ -15,6 +15,10 @@ whitenoise==6.12.0
 # Lecture du fichier .env en développement (règle ecc/python/security.md).
 python-dotenv==1.2.4
 
+# Chiffrement des sauvegardes de la base (EF-ADM-01 : « sauvegarde
+# automatique chiffrée ») ; bibliothèque de référence, B7.
+cryptography==50.0.2
+
 # --- Pilote PostgreSQL 16 ---
 psycopg==3.3.9
 psycopg-binary==3.3.9
@@ -31,3 +35,5 @@ referencing==0.37.0
 rpds-py==2026.9.1
 attrs==26.1.0
 inflection==0.5.1
+cffi==2.1.1
+pycparser==3.12

@@ -18,3 +18,7 @@ class ConfigurationSocle(AppConfig):
 
         # Premier traitement planifié (6.5), lancé chaque jour par la plateforme.
         declarer_traitement("creer_partitions", preparer_partitions)
+        # Sauvegarde chiffrée de la base (EF-ADM-01, Q-BG).
+        from socle import sauvegarde
+
+        declarer_traitement("sauvegarder_base", sauvegarde.traitement)

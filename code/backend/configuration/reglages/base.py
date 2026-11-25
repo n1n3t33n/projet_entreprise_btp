@@ -335,6 +335,20 @@ CONSERVATION_NOTIFICATIONS_NON_LUES_JOURS = env.entier(
     "CONSERVATION_NOTIFICATIONS_NON_LUES_JOURS", 365
 )
 
+# ---------------------------------------------------------------------------
+# Sauvegardes chiffrées (EF-ADM-01, Q-BG, socle/sauvegarde.py). La clé est un
+# secret : jamais dans le code ni dans le dépôt. Le dossier est hors du dépôt
+# par défaut ; sa copie hors site relève de la plateforme.
+# ---------------------------------------------------------------------------
+SAUVEGARDE_CLE = env.texte_facultatif("SAUVEGARDE_CLE") or ""
+# Une valeur vide retombe sur le dossier par défaut, hors du dépôt.
+SAUVEGARDE_DOSSIER = env.texte_facultatif("SAUVEGARDE_DOSSIER") or str(
+    Path.home() / "chantiersync-sauvegardes"
+)
+SAUVEGARDE_CONSERVATION = env.entier("SAUVEGARDE_CONSERVATION", 14)
+# Dossier des outils pg_dump et pg_restore s'ils ne sont pas dans le PATH.
+SAUVEGARDE_OUTILS_PG = env.texte_facultatif("SAUVEGARDE_OUTILS_PG") or ""
+
 # Partitions mensuelles créées d'avance par « creer_partitions ».
 PARTITIONS_MOIS_AVANCE = env.entier("PARTITIONS_MOIS_AVANCE", 3)
 
