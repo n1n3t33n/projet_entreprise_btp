@@ -13,15 +13,20 @@ from uuid import UUID
 from django.db.models import Q, QuerySet
 from django.utils import timezone
 
-from domaines.identite.constantes import STATUT_UTILISATEUR_ACTIF
+from domaines.identite.constantes import ROLE_ACQUEREUR, STATUT_UTILISATEUR_ACTIF
 from domaines.identite.models import Utilisateur
 
 
 def titulaires(
-    code_role: str, id_chantier: UUID | None = None, id_magasin: UUID | None = None
+    code_role: str,
+    id_chantier: UUID | None = None,
+    id_magasin: UUID | None = None,
+    id_logement: UUID | None = None,
 ) -> QuerySet[Utilisateur]:
     """Sans lieu (anomalie d'un appareil, rapport du programme) : tous les
-    titulaires du rôle, quel que soit leur périmètre."""
+    titulaires du rôle, quel que soit leur périmètre. Le rôle acquéreur est
+    restreint à SON logement (RG-D10, écart Q-AY) : sans logement visé,
+    aucun acquéreur n'est concerné."""
     jour = timezone.localdate()
     affectation = (
         Q(affectations__role_id=code_role)
@@ -29,7 +34,11 @@ def titulaires(
         & Q(affectations__date_debut__lte=jour)
         & (Q(affectations__date_fin__isnull=True) | Q(affectations__date_fin__gt=jour))
     )
-    if id_chantier is not None or id_magasin is not None:
+    if code_role == ROLE_ACQUEREUR:
+        if id_logement is None:
+            return Utilisateur.objects.none()
+        affectation &= Q(acquereur__logement_id=id_logement)
+    elif id_chantier is not None or id_magasin is not None:
         affectation &= _couvre(id_chantier, id_magasin)
     return Utilisateur.objects.filter(affectation, statut=STATUT_UTILISATEUR_ACTIF).distinct()
 

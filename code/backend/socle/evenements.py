@@ -35,6 +35,8 @@ class EvenementMetier:
     id_objet: UUID | None = None
     id_chantier: UUID | None = None
     id_magasin: UUID | None = None
+    # Logement visé : seul son acquéreur est prévenu (RG-D10).
+    id_logement: UUID | None = None
     id_alerte: UUID | None = None
     personne: Any = None
     auteur: Any = None

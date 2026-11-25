@@ -12,6 +12,7 @@ ETAPE_REJETEE = "ETAPE_REJETEE"
 ETAPE_BLOQUEE = "ETAPE_BLOQUEE"
 MANQUE_MATERIEL = "MANQUE_MATERIEL"
 ETAPE_EN_RETARD = "ETAPE_EN_RETARD"
+ETAPE_FRANCHIE = "ETAPE_FRANCHIE"
 
 
 def _publier(code: str, etape: EtapeTravaux, **champs: Any) -> None:
@@ -26,6 +27,7 @@ def _publier(code: str, etape: EtapeTravaux, **champs: Any) -> None:
             code=code,
             id_objet=etape.pk,
             id_chantier=etape.logement.zone.chantier_id,
+            id_logement=etape.logement_id,
             contexte=contexte,
             **champs,
         )
@@ -49,3 +51,9 @@ def bloquee(etape: EtapeTravaux, auteur: Any, motif: str, article: Any = None) -
 def en_retard(etape: EtapeTravaux) -> None:
     """Un seul avis par étape (Q-AU), quel que soit le nombre de passages."""
     _publier(ETAPE_EN_RETARD, etape, unique=True)
+
+
+def franchie(etape: EtapeTravaux) -> None:
+    """EF-ACQ-02 : chaque étape validée est annoncée (à l'acquéreur du
+    logement, selon les abonnements)."""
+    _publier(ETAPE_FRANCHIE, etape)

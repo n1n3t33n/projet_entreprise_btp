@@ -13,9 +13,9 @@ from uuid import UUID
 
 from django.utils import timezone
 
-from domaines.avancement.constantes import LONGUEUR_COMMENTAIRE
+from domaines.avancement.constantes import LONGUEUR_COMMENTAIRE, VALIDEE
 from domaines.avancement.models import EtapeTravaux, EvenementExecution
-from domaines.avancement.services import agregats
+from domaines.avancement.services import agregats, publications
 
 
 def ecrire(
@@ -50,4 +50,6 @@ def ecrire(
         etape.save(update_fields=["statut"])
         # RG-A6 : l'avancement déclaré ou validé bouge avec le statut.
         agregats.recalculer(etape.logement, {etape.etape_modele.corps_etat_id})
+        if statut_apres == VALIDEE:
+            publications.franchie(etape)
     return evenement

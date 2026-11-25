@@ -27,6 +27,7 @@ MANQUE_MATERIEL = "MANQUE_MATERIEL"
 ETAPE_EN_RETARD = "ETAPE_EN_RETARD"
 ANOMALIE_SYNCHRONISATION = "ANOMALIE_SYNCHRONISATION"
 RAPPORT_HEBDOMADAIRE = "RAPPORT_HEBDOMADAIRE"
+ETAPE_FRANCHIE = "ETAPE_FRANCHIE"  # B7, EF-ACQ-02
 
 # Le catalogue (libellés, modèles de message) et les abonnements par défaut
 # sont des DONNÉES, posées par la migration notifications 0002 et réglables
