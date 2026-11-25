@@ -82,6 +82,7 @@ TABLES_DJANGO = {
     "auth_group",
     "auth_group_permissions",
     "django_admin_log",
+    "django_cache",  # cache partagé (Q-BE, socle 0003)
 }
 
 CONTRAINTES_MPD = {

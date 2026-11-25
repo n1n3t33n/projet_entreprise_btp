@@ -49,6 +49,11 @@ STORAGES = {
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
 
+# Cache en mémoire en test : la suite tourne dans un seul processus, et de
+# nombreux tests n'ouvrent pas la base (le cache en base l'exigerait). La
+# table du cache partagé est vérifiée par le test de schéma (django_cache).
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 ALLOWED_HOSTS = ["testserver", "localhost"]
 

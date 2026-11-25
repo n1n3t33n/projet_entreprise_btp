@@ -31,4 +31,8 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = env.entier("DJANGO_HSTS_SECONDES", 31536000)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# Préchargement HSTS : engage durablement le nom de domaine auprès des
+# navigateurs ; à activer une fois le domaine définitif choisi (B7). Tant
+# qu'il est faux, « check --deploy » le signale (security.W021), c'est voulu.
+SECURE_HSTS_PRELOAD = env.booleen("DJANGO_HSTS_PRECHARGEMENT", False)
 CSRF_TRUSTED_ORIGINS = env.liste("DJANGO_ORIGINES_CSRF")

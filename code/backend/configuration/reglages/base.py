@@ -241,14 +241,18 @@ SPECTACULAR_SETTINGS = {
 }
 
 # ---------------------------------------------------------------------------
-# Limitation du taux : compteurs en mémoire locale (arbitrage Q5).
-# DETTE : correct pour un seul processus ; un cache partagé sera requis avant
-# toute montée en charge multi-processus.
+# Cache : compteurs de limitation du taux, anti-répétition des alertes,
+# droits effectifs (arbitrage Q5, rendu partagé en B7).
 # ---------------------------------------------------------------------------
 CACHES = {
+    # Cache PARTAGÉ entre processus (Q-BE, B7) : limitation du taux, anti-
+    # répétition des alertes, droits effectifs. Une table technique en base
+    # (django_cache, créée par la migration socle 0003) plutôt qu'un service
+    # Redis : aucun coût ni service de plus, et tous les processus d'un même
+    # serveur ou de plusieurs serveurs voient les mêmes compteurs.
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "chantiersync",
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "django_cache",
     }
 }
 
