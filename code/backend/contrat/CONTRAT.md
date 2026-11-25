@@ -237,6 +237,24 @@ colonnes possibles dans `details.contenu`.
 - `GET /api/pilotage/usage?jours=7` (1 à 90) : même forme de lignes. Droit
   `api.usage.lire`.
 
+## Espace acquéreur (B7)
+
+- `GET /api/acquereur/logement` et `GET /api/acquereur/notifications`,
+  droit `api.acquereur.lire` (rôle ACQUEREUR). Aucun identifiant transmis :
+  le logement vient du compte connecté (RG-D10) ; 404 si aucun logement
+  n'est rattaché.
+- Le logement : `numero_logement`, `libelle_zone`, `libelle_type_logement`,
+  `pourcentage_valide`, `pourcentage_declare`, `date_livraison_prevue`,
+  `etapes` (`id_etape`, `libelle_etape`, `libelle_corps_etat`,
+  `couleur_corps_etat`, `statut`, `date_franchissement`). Une étape bloquée
+  apparaît `EN_COURS` ; ni intervenants, ni commentaires, ni motifs.
+- Les notifications : les étapes franchies (`id_notification`,
+  `libelle_etape`, `date_franchissement`, `lue`) ; elles se marquent lues
+  par `POST /api/notifications/{id}/lecture`.
+- Comptes : `acquereur_id_acquereur` en entrée et en sortie de
+  `/api/auth/comptes`. Seul un compte ACQUEREUR peut être rattaché ; absent
+  d'un PUT, le rattachement est conservé ; `null` le retire.
+
 ## Écarts avec le contrat simulé des fronts (à reprendre en phase F-06)
 
 - Codes de rôle en `UPPER_SNAKE` (le web les simule en minuscules).
@@ -313,3 +331,13 @@ colonnes possibles dans `details.contenu`.
   reste à brancher (F-15).
 - Le paramètre d'export est `export=csv` : `format` est réservé par le
   cadre de l'API au choix du rendu.
+
+Écarts introduits en B7 (acquéreur et durcissement) :
+
+- `utilisateur.acquereur_id_acquereur` (Q-AY) et unicité de l'acquéreur
+  par logement (Q-AZ) : absents du MPD.
+- `appareil_id_appareil` et `version_application` dans `mouvement_stock`,
+  `evenement_validation` et `evenement_execution` (Q-BD) : non exposés par
+  l'API à ce jour.
+- La simulation web de l'espace acquéreur passe par un périmètre de
+  logement (`PER-LOG-A01`) ; le serveur passe par le compte.

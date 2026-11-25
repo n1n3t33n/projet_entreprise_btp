@@ -26,7 +26,7 @@ code/backend/
 │   ├── notifications/    MPD-5 : types, abonnements par rôle, notifications
 │   ├── synchronisation/  MPD-6 (serveur) : lots, résultats, curseurs, anomalies
 │   ├── pilotage/         rapport hebdomadaire, indicateurs d'usage (sans table)
-│   └── acquereur/        (à venir)
+│   └── acquereur/        espace acquéreur en lecture seule (sans table)
 ├── contrat/              contrat d'API OpenAPI généré et committé
 ├── sql/                  création des rôles PostgreSQL et de la base
 └── requirements/         dépendances épinglées (base, dev, production)
@@ -98,7 +98,54 @@ python manage.py creer_partitions
 
 Tâches planifiées, toutes par `python manage.py lancer_traitement <nom>` :
 `creer_partitions`, `cycler_fiches_route` et `signaler_retards` chaque jour,
-`consolider_avancement` chaque nuit, `relancer_validations` chaque heure,
-`preparer_rapport_hebdomadaire` chaque lundi. Chaque passage est tracé dans la table
+`consolider_avancement`, `purger_synchronisation` et `purger_notifications`
+chaque nuit, `relancer_validations` chaque heure,
+`preparer_rapport_hebdomadaire` chaque lundi, `sauvegarder_base` au moins
+chaque jour (chaque heure sans sauvegarde continue de l'hébergeur). Chaque
+passage est tracé dans la table
 `execution_traitement` et visible dans `GET /api/metriques` ; un échec envoie
 une alerte par courriel. Serveur : `gunicorn configuration.wsgi`.
+
+## Sauvegarde et restauration (EF-ADM-01)
+
+La clé de chiffrement est un secret, générée une fois et gardée hors du
+dépôt (sans elle, aucune sauvegarde ne se relit) :
+
+```powershell
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+Variables : `SAUVEGARDE_CLE`, `SAUVEGARDE_DOSSIER` (hors du dépôt),
+`SAUVEGARDE_CONSERVATION`, et `SAUVEGARDE_OUTILS_PG` si `pg_dump` n'est pas
+dans le PATH. La copie hors site du dossier se règle sur la plateforme
+(stockage objet).
+
+```powershell
+python manage.py sauvegarder
+```
+
+Exercice de restauration, à faire régulièrement : créer une base vide, y
+restaurer la dernière sauvegarde ; la commande compare ensuite chaque table
+à la base principale et s'arrête en erreur au moindre écart.
+
+```powershell
+python manage.py restaurer --fichier <sauvegarde>.dump.chiffre --base chantiersync_restauration
+```
+
+Reprise après sinistre seulement : `--ecraser-la-base-principale`.
+
+## Choisir l'hébergeur
+
+Le code ne dépend d'aucun hébergeur. Vérifier pour chaque candidat, dans sa
+documentation officielle :
+
+| Critère | Pourquoi |
+| --- | --- |
+| **PostgreSQL 16 géré avec le droit de créer des rôles** (éliminatoire) | Les trois rôles portent l'immuabilité des journaux (RG-S8) ; sans eux, seuls les déclencheurs protègent |
+| Sauvegarde continue (restauration à un instant donné) | Perte maximale d'une heure du cahier des charges ; `sauvegarder` n'en est que le complément |
+| Localisation des données | Contrainte de localisation à préciser avec Italia |
+| Tâches planifiées (cron) | Neuf traitements à lancer par `lancer_traitement` |
+| Étape de publication avant démarrage | `collectstatic`, `migrate --database migration`, `creer_partitions` |
+| HTTPS géré, en-tête `X-Forwarded-Proto` | `SECURE_PROXY_SSL_HEADER`, redirection HTTPS |
+| Stockage hors site pour les sauvegardes | Copie hors site exigée (EF-ADM-01) |
+| Disponibilité et prix mensuel | Cible 99 % par mois ; budget du pilote |

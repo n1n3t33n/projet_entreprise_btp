@@ -10,6 +10,11 @@ Tâches planifiées (chaque passage est tracé dans execution_traitement, 6.5) :
   * chaque jour : python manage.py lancer_traitement cycler_fiches_route
   * chaque nuit : python manage.py lancer_traitement consolider_avancement
   * chaque heure : python manage.py lancer_traitement relancer_validations
+  * chaque jour : python manage.py lancer_traitement signaler_retards
+  * chaque nuit : python manage.py lancer_traitement purger_synchronisation
+  * chaque nuit : python manage.py lancer_traitement purger_notifications
+  * chaque lundi : python manage.py lancer_traitement preparer_rapport_hebdomadaire
+  * au moins chaque jour : python manage.py sauvegarder (EF-ADM-01)
 """
 
 from socle import environnement as env
