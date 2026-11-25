@@ -58,6 +58,7 @@ class MiddlewareCorrelation:
     def __call__(self, request: HttpRequest) -> HttpResponse:
         identifiant = _identifiant_valide(request.headers.get(EN_TETE_CORRELATION))
         jeton_contexte = contexte.id_correlation.set(identifiant)
+        jeton_appareil = contexte.appareil.set(None)
         request.id_correlation = identifiant  # type: ignore[attr-defined]
         debut = time.perf_counter()
         try:
@@ -87,3 +88,4 @@ class MiddlewareCorrelation:
             return reponse
         finally:
             contexte.id_correlation.reset(jeton_contexte)
+            contexte.appareil.reset(jeton_appareil)

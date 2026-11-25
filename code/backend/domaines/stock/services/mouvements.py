@@ -47,6 +47,7 @@ from domaines.stock.constantes import (
 from domaines.stock.models import MouvementStock
 from domaines.stock.services import parametres, projection, publications, regles
 from socle.api_outils import conflit, donnee_invalide
+from socle.journalisation import contexte
 
 # Types réservés au serveur : on ne les saisit pas, on les obtient par une
 # opération (inventaire, annulation, import).
@@ -235,6 +236,6 @@ def inscrire(
     }
     if uuid is not None:
         valeurs["uuid"] = uuid
-    mouvement = MouvementStock.objects.create(**valeurs)
+    mouvement = MouvementStock.objects.create(**valeurs, **contexte.champs_appareil())
     projection.recalculer(stock, nouvelle)
     return mouvement

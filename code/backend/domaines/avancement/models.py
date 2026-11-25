@@ -271,6 +271,20 @@ class EvenementExecution(models.Model):
         related_name="evenements",
     )
 
+    # Écart Q-BD (I-51, dette v0.2) : appareil et version de l'application
+    # de la saisie mobile (traçabilité, cahier des charges § 9) ; vides pour
+    # une saisie web. La version est recopiée : celle de l'appareil change.
+    appareil = models.ForeignKey(
+        "identite.Appareil",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        db_column="appareil_id_appareil",
+        db_index=False,
+        related_name="+",
+    )
+    version_application = models.CharField(max_length=120, null=True, blank=True)  # noqa: DJ001
+
     class Meta:
         db_table = "evenement_execution"
         verbose_name = "événement d'exécution"

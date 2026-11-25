@@ -16,6 +16,7 @@ from django.utils import timezone
 from domaines.avancement.constantes import LONGUEUR_COMMENTAIRE, VALIDEE
 from domaines.avancement.models import EtapeTravaux, EvenementExecution
 from domaines.avancement.services import agregats, publications
+from socle.journalisation import contexte
 
 
 def ecrire(
@@ -44,7 +45,7 @@ def ecrire(
     }
     if uuid is not None:
         valeurs["uuid"] = uuid
-    evenement = EvenementExecution.objects.create(**valeurs)
+    evenement = EvenementExecution.objects.create(**valeurs, **contexte.champs_appareil())
     if etape.statut != statut_apres:
         etape.statut = statut_apres
         etape.save(update_fields=["statut"])
