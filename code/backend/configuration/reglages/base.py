@@ -323,6 +323,18 @@ ALERTES_FENETRE_MINUTES = env.entier("ALERTES_FENETRE_MINUTES", 5)
 # Au plus une alerte par type pendant cet intervalle.
 ALERTES_INTERVALLE_MINUTES = env.entier("ALERTES_INTERVALLE_MINUTES", 15)
 
+# ---------------------------------------------------------------------------
+# Conservation des données de transport (Q-BF, B7), en jours. Les journaux
+# immuables (mouvements, validations, exécution) et l'audit ne sont JAMAIS
+# purgés : durée « X ans » à confirmer avec Italia (H18).
+# ---------------------------------------------------------------------------
+CONSERVATION_LOTS_JOURS = env.entier("CONSERVATION_LOTS_JOURS", 90)
+CONSERVATION_ANOMALIES_TRAITEES_JOURS = env.entier("CONSERVATION_ANOMALIES_TRAITEES_JOURS", 180)
+CONSERVATION_NOTIFICATIONS_LUES_JOURS = env.entier("CONSERVATION_NOTIFICATIONS_LUES_JOURS", 90)
+CONSERVATION_NOTIFICATIONS_NON_LUES_JOURS = env.entier(
+    "CONSERVATION_NOTIFICATIONS_NON_LUES_JOURS", 365
+)
+
 # Partitions mensuelles créées d'avance par « creer_partitions ».
 PARTITIONS_MOIS_AVANCE = env.entier("PARTITIONS_MOIS_AVANCE", 3)
 
