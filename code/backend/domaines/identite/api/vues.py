@@ -171,6 +171,12 @@ def _saisie(donnees: dict[str, Any]) -> service_comptes.SaisieCompte:
         code_role=donnees["role_code_role"],
         id_perimetre=str(donnees["perimetre_id_perimetre"]),
         mot_de_passe=donnees.get("mot_de_passe"),
+        id_acquereur=(
+            str(donnees["acquereur_id_acquereur"])
+            if donnees.get("acquereur_id_acquereur")
+            else None
+        ),
+        acquereur_fourni="acquereur_id_acquereur" in donnees,
     )
 
 

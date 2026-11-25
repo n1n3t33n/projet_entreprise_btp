@@ -85,6 +85,9 @@ TABLES_DJANGO = {
 }
 
 CONTRAINTES_MPD = {
+    # B7 : un acquéreur par logement (Q-AZ), un compte par acquéreur (Q-AY)
+    "uq_acquereur_logement_id_logement",
+    "uq_utilisateur_acquereur_id_acquereur",
     # MPD-5 notifications
     "ck_type_notification_canal_defaut",
     "ck_abonnement_notification_canal",
@@ -201,6 +204,8 @@ INDEX_MPD = {
 # Nullité des clés étrangères tirée des cardinalités du MCD (règle I-32,
 # validée le 2026-11-18) : (1,1) → NOT NULL, (0,1) → NULL.
 NULLITE_CLES_ETRANGERES = {
+    # Écart Q-AY : un compte n'est pas forcément un acquéreur.
+    ("utilisateur", "acquereur_id_acquereur"): "YES",
     ("appareil", "utilisateur_id_utilisateur"): "NO",
     ("journal_audit", "utilisateur_id_utilisateur"): "NO",
     ("perimetre", "chantier_id_chantier"): "YES",

@@ -30,6 +30,7 @@ from domaines.identite.constantes import (
     STATUT_UTILISATEUR_ACTIF,
     STATUTS_UTILISATEUR,
 )
+from domaines.organisation.models import Acquereur
 
 
 def normaliser_identifiant(identifiant: str) -> str:
@@ -66,6 +67,20 @@ class Utilisateur(AbstractBaseUser):
     fonction = models.CharField(max_length=120, blank=True, default="")
     statut = models.CharField(max_length=32, default=STATUT_UTILISATEUR_ACTIF)
     date_creation = models.DateTimeField(default=timezone.now)
+    # Écart Q-AY (I-20, dette v0.2) : le MPD ne relie aucun compte à un
+    # acquéreur. Le lien porte la portée de l'espace acquéreur (RG-D10 :
+    # « l'acquéreur n'accède qu'à son logement »). Il est posé côté compte
+    # pour que l'identité continue de dépendre de l'organisation, jamais
+    # l'inverse.
+    acquereur = models.ForeignKey(
+        Acquereur,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        db_column="acquereur_id_acquereur",
+        db_index=False,
+        related_name="comptes",
+    )
 
     # Écart Q7-1 : colonne « mot_de_passe » (nom français, comme le MPD), qui
     # remplace la colonne « password » d'AbstractBaseUser.
@@ -87,6 +102,10 @@ class Utilisateur(AbstractBaseUser):
         constraints = [
             # Écart Q7-2.
             models.UniqueConstraint(fields=["identifiant"], name="uq_utilisateur_identifiant"),
+            # Écart Q-AY : un acquéreur a au plus un compte.
+            models.UniqueConstraint(
+                fields=["acquereur"], name="uq_utilisateur_acquereur_id_acquereur"
+            ),
             models.CheckConstraint(
                 condition=Q(statut__in=STATUTS_UTILISATEUR), name="ck_utilisateur_statut"
             ),

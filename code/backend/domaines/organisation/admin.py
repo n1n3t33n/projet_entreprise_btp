@@ -7,7 +7,13 @@ l'API des référentiels, qui valide les données. Les référentiels à clé si
 
 from django.contrib import admin
 
-from domaines.organisation.models import Chantier, Magasin, ParametreChantier, TypeLogement
+from domaines.organisation.models import (
+    Acquereur,
+    Chantier,
+    Magasin,
+    ParametreChantier,
+    TypeLogement,
+)
 from socle.admin_outils import AdminLectureSeule
 
 
@@ -34,3 +40,12 @@ class AdminChantier(AdminLectureSeule):
 class AdminMagasin(AdminLectureSeule):
     list_display = ("code", "nom", "chantier", "actif")
     search_fields = ("code", "nom")
+
+
+@admin.register(Acquereur)
+class AdminAcquereur(admin.ModelAdmin):  # type: ignore[type-arg]
+    """Acquéreurs des logements (MPD-2) ; le compte se rattache par l'API des
+    comptes (acquereur_id_acquereur)."""
+
+    list_display = ("nom", "prenom", "logement", "date_acquisition")
+    search_fields = ("nom", "prenom", "logement__numero")

@@ -44,6 +44,8 @@ class UtilisateurSerializer(serializers.Serializer):  # type: ignore[type-arg]
     libelle_perimetre = serializers.SerializerMethodField()
     # Ajout compatible (fidelite-wireframes : chantier affiché à l'écran 1).
     libelle_chantier = serializers.SerializerMethodField()
+    # Ajout compatible (Q-AY) : acquéreur rattaché au compte, s'il y en a un.
+    acquereur_id_acquereur = serializers.UUIDField(source="acquereur_id", allow_null=True)
 
     def _principale(self, obj: Any) -> Any:
         cache = self.context.setdefault("_principales", {})
@@ -169,6 +171,8 @@ class CompteEntreeSerializer(serializers.Serializer):  # type: ignore[type-arg]
     statut = serializers.ChoiceField(choices=list(STATUTS_UTILISATEUR))
     role_code_role = serializers.CharField(max_length=32)
     perimetre_id_perimetre = serializers.UUIDField()
+    # Ajout compatible (Q-AY) : absent = inchangé, null = détaché.
+    acquereur_id_acquereur = serializers.UUIDField(required=False, allow_null=True)
     mot_de_passe = serializers.CharField(
         max_length=256, required=False, allow_null=True, write_only=True, trim_whitespace=False
     )

@@ -68,7 +68,9 @@ def produire(evenement: EvenementMetier) -> list[Notification]:
 def _destinataires(abonnement: AbonnementNotification, evenement: EvenementMetier) -> list[Any]:
     if abonnement.role_id is None:
         return [evenement.personne] if evenement.personne is not None else []
-    requete = titulaires(abonnement.role_id, evenement.id_chantier, evenement.id_magasin)
+    requete = titulaires(
+        abonnement.role_id, evenement.id_chantier, evenement.id_magasin, evenement.id_logement
+    )
     if evenement.auteur is not None:
         requete = requete.exclude(pk=evenement.auteur.pk)
     return list(requete)

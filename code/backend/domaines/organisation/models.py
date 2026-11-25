@@ -233,8 +233,12 @@ class ParametreChantier(models.Model):
 class Acquereur(models.Model):
     """Acquéreur d'un logement (CL-2 ``Acquereur``, MPD-2 table ``acquereur``).
 
-    Table seule en B2 : l'espace acquéreur (UC-5, EF-ACQ-*) arrive en B7.
-    Aucun lien avec un compte utilisateur au MPD (I-20).
+    L'espace acquéreur (UC-5, EF-ACQ-01, 02) est servi par le domaine
+    acquéreur ; le compte de l'acquéreur pointe vers cette ligne
+    (``utilisateur.acquereur``, écart Q-AY, I-20).
+
+    Écart Q-AZ (dette v0.2) : « un logement peut avoir au plus un acquéreur »
+    (cahier des charges) ; le MPD n'en fait qu'un index, l'unicité est posée.
     """
 
     id_acquereur = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -253,6 +257,9 @@ class Acquereur(models.Model):
     class Meta:
         db_table = "acquereur"
         verbose_name = "acquéreur"
+        constraints = [
+            models.UniqueConstraint(fields=["logement"], name="uq_acquereur_logement_id_logement"),
+        ]
         indexes = [
             models.Index(fields=["logement"], name="ix_acquereur_logement_id_logement"),
         ]

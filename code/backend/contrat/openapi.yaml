@@ -6,6 +6,38 @@ info:
     foi pour le CONTRAT d'API ; le schéma de données, lui, est défini par le modèle
     physique (MPD) de la modélisation.
 paths:
+  /api/acquereur/logement:
+    get:
+      operationId: acquereur_logement_retrieve
+      description: GET /api/acquereur/logement — avancement du logement de l'acquéreur.
+      tags:
+      - acquereur
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvancementLogement'
+          description: ''
+  /api/acquereur/notifications:
+    get:
+      operationId: acquereur_notifications_list
+      description: GET /api/acquereur/notifications — étapes franchies annoncées.
+      tags:
+      - acquereur
+      security:
+      - jetonPorteur: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationAcquereur'
+          description: ''
   /api/appareils:
     get:
       operationId: appareils_list
@@ -3114,6 +3146,39 @@ components:
       - portee
       - pourcentage_declare
       - pourcentage_valide
+    AvancementLogement:
+      type: object
+      properties:
+        numero_logement:
+          type: string
+        libelle_zone:
+          type: string
+        libelle_type_logement:
+          type: string
+        pourcentage_valide:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        pourcentage_declare:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,11}(?:\.\d{0,3})?$
+        date_livraison_prevue:
+          type: string
+          format: date
+          nullable: true
+        etapes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EtapeAcquereur'
+      required:
+      - date_livraison_prevue
+      - etapes
+      - libelle_type_logement
+      - libelle_zone
+      - numero_logement
+      - pourcentage_declare
+      - pourcentage_valide
     BlocageEntreeRequest:
       type: object
       description: |-
@@ -3275,6 +3340,10 @@ components:
         perimetre_id_perimetre:
           type: string
           format: uuid
+        acquereur_id_acquereur:
+          type: string
+          format: uuid
+          nullable: true
         mot_de_passe:
           type: string
           writeOnly: true
@@ -3535,6 +3604,31 @@ components:
       required:
       - message
       - motif
+    EtapeAcquereur:
+      type: object
+      properties:
+        id_etape:
+          type: string
+          format: uuid
+        libelle_etape:
+          type: string
+        libelle_corps_etat:
+          type: string
+        couleur_corps_etat:
+          type: string
+        statut:
+          type: string
+        date_franchissement:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - couleur_corps_etat
+      - date_franchissement
+      - id_etape
+      - libelle_corps_etat
+      - libelle_etape
+      - statut
     EtapeModele:
       type: object
       description: '``EtapeModeleDto`` (lecture).'
@@ -4808,6 +4902,24 @@ components:
       - id_notification
       - libelle_type
       - message
+    NotificationAcquereur:
+      type: object
+      properties:
+        id_notification:
+          type: string
+          format: uuid
+        libelle_etape:
+          type: string
+        date_franchissement:
+          type: string
+          format: date-time
+        lue:
+          type: boolean
+      required:
+      - date_franchissement
+      - id_notification
+      - libelle_etape
+      - lue
     OperateurEnum:
       enum:
       - INFERIEUR_EGAL
@@ -5437,7 +5549,12 @@ components:
           type: string
           nullable: true
           readOnly: true
+        acquereur_id_acquereur:
+          type: string
+          format: uuid
+          nullable: true
       required:
+      - acquereur_id_acquereur
       - date_creation
       - fonction
       - id_utilisateur

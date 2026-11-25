@@ -183,3 +183,8 @@ def intervenants(chantiers: set[UUID] | None) -> list[dict[str, Any]]:
         ({"id_utilisateur": a["utilisateur_id"], "nom": a["nom"]} for a in auteurs),
         key=lambda a: str(a["nom"]).lower(),
     )
+
+
+def agregat_logement(id_logement: Any) -> AvancementAgrege | None:
+    """Avancement agrégé d'un logement (RG-A6), lu sans être créé."""
+    return AvancementAgrege.objects.filter(portee="LOGEMENT", id_cible=str(id_logement)).first()
