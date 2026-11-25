@@ -10,6 +10,11 @@ Tâches planifiées (chaque passage est tracé dans execution_traitement, 6.5) :
   * chaque jour : python manage.py lancer_traitement cycler_fiches_route
   * chaque nuit : python manage.py lancer_traitement consolider_avancement
   * chaque heure : python manage.py lancer_traitement relancer_validations
+  * chaque jour : python manage.py lancer_traitement signaler_retards
+  * chaque nuit : python manage.py lancer_traitement purger_synchronisation
+  * chaque nuit : python manage.py lancer_traitement purger_notifications
+  * chaque lundi : python manage.py lancer_traitement preparer_rapport_hebdomadaire
+  * au moins chaque jour : python manage.py sauvegarder (EF-ADM-01)
 """
 
 from socle import environnement as env
@@ -31,4 +36,8 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = env.entier("DJANGO_HSTS_SECONDES", 31536000)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# Préchargement HSTS : engage durablement le nom de domaine auprès des
+# navigateurs ; à activer une fois le domaine définitif choisi (B7). Tant
+# qu'il est faux, « check --deploy » le signale (security.W021), c'est voulu.
+SECURE_HSTS_PRELOAD = env.booleen("DJANGO_HSTS_PRECHARGEMENT", False)
 CSRF_TRUSTED_ORIGINS = env.liste("DJANGO_ORIGINES_CSRF")

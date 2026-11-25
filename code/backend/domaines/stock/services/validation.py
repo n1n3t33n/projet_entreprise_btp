@@ -42,6 +42,7 @@ from domaines.stock.services import (
 )
 from socle.api_outils import conflit, donnee_invalide
 from socle.erreurs import ErreurApi
+from socle.journalisation import contexte
 
 
 def verrouiller_mouvement(uuid_mouvement: Any) -> None:
@@ -111,7 +112,7 @@ def decider(
     }
     if uuid_evenement is not None:
         valeurs["uuid"] = uuid_evenement
-    EvenementValidation.objects.create(**valeurs)
+    EvenementValidation.objects.create(**valeurs, **contexte.champs_appareil())
     relance.actualiser_alerte(mouvement.stock_courant)
     if decision == DECISION_REFUSE:
         publications.sortie_refusee(mouvement, valideur, motif)

@@ -1715,7 +1715,7 @@ paths:
           description: ''
   /api/notifications/{id_notification}/lecture:
     post:
-      operationId: notifications_lecture_create_2
+      operationId: notification_lecture
       description: POST /api/notifications/{id}/lecture — marquer une notification
         lue.
       parameters:
@@ -1755,7 +1755,7 @@ paths:
           description: ''
   /api/notifications/lecture:
     post:
-      operationId: notifications_lecture_create
+      operationId: notifications_lecture_groupee
       description: POST /api/notifications/lecture — tout marquer lu.
       tags:
       - notifications

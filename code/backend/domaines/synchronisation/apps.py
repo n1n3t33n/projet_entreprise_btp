@@ -25,3 +25,8 @@ class ConfigurationSynchronisation(AppConfig):
 
         for rubrique in indicateurs.RUBRIQUES:
             declarer_rubrique(rubrique)
+        # Purge nocturne des lots et anomalies anciens (Q-BF).
+        from domaines.synchronisation.services import conservation
+        from socle.traitements import declarer_traitement
+
+        declarer_traitement("purger_synchronisation", conservation.purger)

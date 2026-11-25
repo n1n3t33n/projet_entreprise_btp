@@ -241,14 +241,18 @@ SPECTACULAR_SETTINGS = {
 }
 
 # ---------------------------------------------------------------------------
-# Limitation du taux : compteurs en mémoire locale (arbitrage Q5).
-# DETTE : correct pour un seul processus ; un cache partagé sera requis avant
-# toute montée en charge multi-processus.
+# Cache : compteurs de limitation du taux, anti-répétition des alertes,
+# droits effectifs (arbitrage Q5, rendu partagé en B7).
 # ---------------------------------------------------------------------------
 CACHES = {
+    # Cache PARTAGÉ entre processus (Q-BE, B7) : limitation du taux, anti-
+    # répétition des alertes, droits effectifs. Une table technique en base
+    # (django_cache, créée par la migration socle 0003) plutôt qu'un service
+    # Redis : aucun coût ni service de plus, et tous les processus d'un même
+    # serveur ou de plusieurs serveurs voient les mêmes compteurs.
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "chantiersync",
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "django_cache",
     }
 }
 
@@ -318,6 +322,32 @@ ALERTES_SEUIL_ERREURS = env.entier("ALERTES_SEUIL_ERREURS", 5)
 ALERTES_FENETRE_MINUTES = env.entier("ALERTES_FENETRE_MINUTES", 5)
 # Au plus une alerte par type pendant cet intervalle.
 ALERTES_INTERVALLE_MINUTES = env.entier("ALERTES_INTERVALLE_MINUTES", 15)
+
+# ---------------------------------------------------------------------------
+# Conservation des données de transport (Q-BF, B7), en jours. Les journaux
+# immuables (mouvements, validations, exécution) et l'audit ne sont JAMAIS
+# purgés : durée « X ans » à confirmer avec Italia (H18).
+# ---------------------------------------------------------------------------
+CONSERVATION_LOTS_JOURS = env.entier("CONSERVATION_LOTS_JOURS", 90)
+CONSERVATION_ANOMALIES_TRAITEES_JOURS = env.entier("CONSERVATION_ANOMALIES_TRAITEES_JOURS", 180)
+CONSERVATION_NOTIFICATIONS_LUES_JOURS = env.entier("CONSERVATION_NOTIFICATIONS_LUES_JOURS", 90)
+CONSERVATION_NOTIFICATIONS_NON_LUES_JOURS = env.entier(
+    "CONSERVATION_NOTIFICATIONS_NON_LUES_JOURS", 365
+)
+
+# ---------------------------------------------------------------------------
+# Sauvegardes chiffrées (EF-ADM-01, Q-BG, socle/sauvegarde.py). La clé est un
+# secret : jamais dans le code ni dans le dépôt. Le dossier est hors du dépôt
+# par défaut ; sa copie hors site relève de la plateforme.
+# ---------------------------------------------------------------------------
+SAUVEGARDE_CLE = env.texte_facultatif("SAUVEGARDE_CLE") or ""
+# Une valeur vide retombe sur le dossier par défaut, hors du dépôt.
+SAUVEGARDE_DOSSIER = env.texte_facultatif("SAUVEGARDE_DOSSIER") or str(
+    Path.home() / "chantiersync-sauvegardes"
+)
+SAUVEGARDE_CONSERVATION = env.entier("SAUVEGARDE_CONSERVATION", 14)
+# Dossier des outils pg_dump et pg_restore s'ils ne sont pas dans le PATH.
+SAUVEGARDE_OUTILS_PG = env.texte_facultatif("SAUVEGARDE_OUTILS_PG") or ""
 
 # Partitions mensuelles créées d'avance par « creer_partitions ».
 PARTITIONS_MOIS_AVANCE = env.entier("PARTITIONS_MOIS_AVANCE", 3)

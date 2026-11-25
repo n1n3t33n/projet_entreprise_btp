@@ -24,3 +24,8 @@ class ConfigurationNotifications(AppConfig):
         # Notifications non lues transmises au mobile à chaque synchronisation (Q-AW).
         for jeu in references.JEUX:
             declarer_reference(jeu)
+        # Purge nocturne des notifications anciennes (Q-BF).
+        from domaines.notifications.services import conservation
+        from socle.traitements import declarer_traitement
+
+        declarer_traitement("purger_notifications", conservation.purger)

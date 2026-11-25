@@ -82,6 +82,7 @@ TABLES_DJANGO = {
     "auth_group",
     "auth_group_permissions",
     "django_admin_log",
+    "django_cache",  # cache partagé (Q-BE, socle 0003)
 }
 
 CONTRAINTES_MPD = {
@@ -205,6 +206,10 @@ INDEX_MPD = {
 # validée le 2026-11-18) : (1,1) → NOT NULL, (0,1) → NULL.
 NULLITE_CLES_ETRANGERES = {
     # Écart Q-AY : un compte n'est pas forcément un acquéreur.
+    # Écart Q-BD : appareil de la saisie mobile, vide pour le web.
+    ("mouvement_stock", "appareil_id_appareil"): "YES",
+    ("evenement_validation", "appareil_id_appareil"): "YES",
+    ("evenement_execution", "appareil_id_appareil"): "YES",
     ("utilisateur", "acquereur_id_acquereur"): "YES",
     ("appareil", "utilisateur_id_utilisateur"): "NO",
     ("journal_audit", "utilisateur_id_utilisateur"): "NO",

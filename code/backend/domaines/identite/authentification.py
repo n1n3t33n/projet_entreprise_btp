@@ -32,6 +32,7 @@ from rest_framework.authentication import BaseAuthentication
 from rest_framework.request import Request
 
 from domaines.identite.constantes import STATUT_APPAREIL_REVOQUE
+from socle.journalisation import contexte
 
 SEL = "chantiersync.identite.jeton"
 TYPE_MOBILE = "MOBILE"
@@ -124,6 +125,8 @@ class AuthentificationParJeton(BaseAuthentication):
                 raise _refus("APPAREIL_REVOQUE", "Cet appareil n'a plus accès à ChantierSync.")
             if not appareil.est_actif:
                 raise _refus("APPAREIL_INACTIF", "Cet appareil est désactivé.")
+            # Traçabilité (Q-BD) : l'appareil et sa version suivent la requête.
+            contexte.appareil.set((str(appareil.pk), appareil.version_application))
             if info.age > timedelta(hours=settings.JETON_RENOUVELLEMENT_HEURES):
                 brut.jeton_renouvele = emettre_jeton(utilisateur, appareil)  # type: ignore[attr-defined]
         brut.id_appareil_journal = info.id_appareil  # type: ignore[attr-defined]

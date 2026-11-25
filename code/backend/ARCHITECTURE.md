@@ -17,8 +17,8 @@ colonne peut ne jamais sortir de l'API.
 `identite` (MPD-1), `organisation` (MPD-2), `referentiels` (MPD-3), `stock`
 (MPD-4), `avancement` (MPD-5), `notifications` (tables de notification du
 MPD-5), `synchronisation` (MPD-6, partie serveur) et `pilotage` (rapport
-hebdomadaire et indicateurs d'usage, sans table). Le domaine acquéreur
-viendra s'ajouter au même endroit, sur le même modèle.
+hebdomadaire et indicateurs d'usage, sans table) et `acquereur` (espace
+acquéreur en lecture seule, sans table).
 
 `socle/` contient ce qui sert à tous les domaines sans appartenir à aucun :
 journaux JSON et identifiant de corrélation, format d'erreur unique,
@@ -434,6 +434,39 @@ s'en servir. Le sérialiseur d'import, par exemple, lit les cibles possibles
 à chaque instance (`ImportEntreeSerializer.__init__`), pas dans la
 déclaration de son champ.
 
+## L'exploitation : portée de l'acquéreur, cache, traçabilité, conservation, sauvegarde
+
+**L'acquéreur** ne voit que son logement (RG-D10). Sa portée ne vient pas
+d'un périmètre mais du compte : `utilisateur.acquereur` désigne l'acquéreur,
+qui désigne le logement. Le lien est porté par le compte pour que l'identité
+continue de dépendre de l'organisation, jamais l'inverse. Le domaine
+`acquereur` lit ce logement, ses étapes et ses notifications, sans jamais
+montrer les intervenants, les commentaires ni les motifs. Dans le choix des
+destinataires d'une notification (`identite/selecteurs/titulaires.py`), le
+rôle acquéreur est restreint à son logement, comme un périmètre restreint
+les autres rôles.
+
+**Le cache** (limitation du taux, anti-répétition des alertes, droits) vit
+dans une table technique, `django_cache`, créée par la migration
+`socle 0003` : tous les processus partagent les mêmes compteurs, sans
+service supplémentaire. La suite de tests garde un cache en mémoire.
+
+**La traçabilité** : une saisie mobile garde dans son journal immuable
+l'appareil et la version de l'application. L'authentification d'un jeton
+mobile les pose dans le contexte de la requête
+(`socle/journalisation/contexte.py`, remis à zéro à chaque requête) et les
+trois points d'écriture des journaux les recopient avec
+`contexte.champs_appareil()`.
+
+**La conservation** : chaque domaine purge ses propres données de transport
+(`purger_synchronisation`, `purger_notifications`), aux durées
+`CONSERVATION_*`. Les journaux immuables et l'audit ne sont jamais purgés.
+
+**La sauvegarde** (`socle/sauvegarde.py`) : `pg_dump` sous le rôle
+propriétaire, chiffré avec `SAUVEGARDE_CLE`, et `restaurer` qui recharge
+dans une base désignée puis compare chaque table à la base principale. La
+procédure est dans le [README](README.md).
+
 ## Les rôles PostgreSQL
 
 Django tourne sous `chantiersync_application`, un rôle qui n'est
@@ -542,12 +575,15 @@ d'elle-même dans le rapport et son export CSV.
 un bilan en une phrase, inscrite avec `declarer_traitement` dans le `ready()`
 du domaine. La plateforme la lance avec `manage.py lancer_traitement <nom>` ;
 chaque passage est tracé dans `execution_traitement` et un échec envoie une
-alerte. Il en existe six : `creer_partitions` (quotidien),
+alerte. Il en existe neuf : `creer_partitions` (quotidien),
 `relancer_validations` (horaire, `stock/services/relance.py`),
 `cycler_fiches_route` (quotidien, `avancement/services/fiches.py`),
 `consolider_avancement` (nocturne, `avancement/services/agregats.py`),
-`signaler_retards` (quotidien, `avancement/services/retards.py`) et
-`preparer_rapport_hebdomadaire` (le lundi, `pilotage/services/rapports.py`).
+`signaler_retards` (quotidien, `avancement/services/retards.py`),
+`preparer_rapport_hebdomadaire` (le lundi, `pilotage/services/rapports.py`),
+`purger_synchronisation` et `purger_notifications` (nocturnes,
+`services/conservation.py` de chaque domaine) et `sauvegarder_base`
+(`socle/sauvegarde.py`).
 
 ## Les tests
 

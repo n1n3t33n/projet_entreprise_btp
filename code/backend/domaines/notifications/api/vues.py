@@ -62,7 +62,9 @@ class VueLecture(APIView):
     def get_permissions(self) -> list[Any]:
         return droit("MODIFIER")
 
-    @extend_schema(request=None, responses=s.NotificationSerializer)
+    @extend_schema(
+        operation_id="notification_lecture", request=None, responses=s.NotificationSerializer
+    )
     def post(self, request: Request, id_notification: str) -> Response:
         notification = lecture.marquer_lue(request.user, id_notification)
         return Response(s.NotificationSerializer(notification).data)
@@ -74,6 +76,10 @@ class VueLectureGroupee(APIView):
     def get_permissions(self) -> list[Any]:
         return droit("MODIFIER")
 
-    @extend_schema(request=None, responses=s.LectureGroupeeSerializer)
+    @extend_schema(
+        operation_id="notifications_lecture_groupee",
+        request=None,
+        responses=s.LectureGroupeeSerializer,
+    )
     def post(self, request: Request) -> Response:
         return Response({"nombre": lecture.tout_lire(request.user)})
