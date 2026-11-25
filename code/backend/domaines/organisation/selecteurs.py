@@ -1,9 +1,12 @@
 """Lectures du domaine « organisation du chantier », pour les vues et pour les
 autres domaines (qui ne requêtent jamais ces tables directement)."""
 
+from typing import Any
+
 from django.db.models import Prefetch, QuerySet
 
 from domaines.organisation.models import (
+    Acquereur,
     Chantier,
     Logement,
     Magasin,
@@ -75,3 +78,7 @@ def valeur_parametre(id_chantier: str, cle: str) -> ParametreChantier | None:
     """Paramètre d'un chantier par sa clé (ex. delai_relance_validation_h,
     lu par la relance d'ET-2 en B3)."""
     return ParametreChantier.objects.filter(chantier_id=id_chantier, cle=cle).first()
+
+
+def acquereur(id_acquereur: Any) -> Acquereur | None:
+    return Acquereur.objects.select_related("logement").filter(id_acquereur=id_acquereur).first()

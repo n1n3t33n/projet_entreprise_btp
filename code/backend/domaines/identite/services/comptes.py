@@ -23,6 +23,7 @@ from domaines.identite.constantes import (
     AUDIT_DESACTIVATION_COMPTE,
     AUDIT_MODIFICATION_COMPTE,
     OBJET_UTILISATEUR,
+    ROLE_ACQUEREUR,
     STATUT_UTILISATEUR_INACTIF,
 )
 from domaines.identite.models import AffectationRole, Perimetre, Role, Utilisateur
@@ -30,6 +31,7 @@ from domaines.identite.models.utilisateur import normaliser_identifiant
 from domaines.identite.selecteurs.comptes import affectation_principale
 from domaines.identite.services import audit
 from domaines.identite.services.appareils import revoquer_tous
+from domaines.organisation import selecteurs as selecteurs_organisation
 from socle.erreurs import ErreurApi
 
 
@@ -43,6 +45,11 @@ class SaisieCompte:
     code_role: str
     id_perimetre: str
     mot_de_passe: str | None
+    # Rattachement à un acquéreur (Q-AY). ``acquereur_fourni`` faux : le champ
+    # était absent, le rattachement existant est conservé (un PUT du web, qui
+    # ignore encore ce champ, ne détache pas l'acquéreur).
+    id_acquereur: str | None = None
+    acquereur_fourni: bool = False
 
 
 def _invalide(champ: str, message: str) -> ErreurApi:
@@ -62,6 +69,47 @@ def _verifier_role_et_perimetre(saisie: SaisieCompte) -> tuple[Role, Perimetre]:
     if perimetre is None:
         raise _invalide("perimetre_id_perimetre", "Ce périmètre n'existe pas.")
     return role, perimetre
+
+
+def _verifier_acquereur(saisie: SaisieCompte, utilisateur: Utilisateur | None) -> Any:
+    """Rend l'acquéreur à rattacher (ou None). Seul un compte acquéreur peut
+    l'être, et un acquéreur n'a qu'un compte (RG-D10, Q-AY)."""
+    if not saisie.id_acquereur:
+        return None
+    if saisie.code_role != ROLE_ACQUEREUR:
+        raise _invalide(
+            "acquereur_id_acquereur", "Seul un compte acquéreur peut être rattaché à un logement."
+        )
+    acquereur = selecteurs_organisation.acquereur(saisie.id_acquereur)
+    if acquereur is None:
+        raise _invalide("acquereur_id_acquereur", "Cet acquéreur n'existe pas.")
+    autres = Utilisateur.objects.filter(acquereur=acquereur)
+    if utilisateur is not None:
+        autres = autres.exclude(pk=utilisateur.pk)
+    if autres.exists():
+        raise _invalide("acquereur_id_acquereur", "Cet acquéreur a déjà un compte.")
+    return acquereur
+
+
+def rattacher_acquereur(utilisateur: Utilisateur, acquereur: Any) -> Utilisateur:
+    """Rattache un compte acquéreur à son acquéreur, hors API (chargement de
+    la démonstration). Mêmes contrôles que l'API ; rejouable."""
+    affectation = affectation_principale(utilisateur)
+    saisie = SaisieCompte(
+        identifiant=utilisateur.identifiant,
+        nom=utilisateur.nom,
+        prenom=utilisateur.prenom,
+        fonction=utilisateur.fonction,
+        statut=utilisateur.statut,
+        code_role=affectation.role_id if affectation else "",
+        id_perimetre=str(affectation.perimetre_id) if affectation else "",
+        mot_de_passe=None,
+        id_acquereur=str(acquereur.pk),
+        acquereur_fourni=True,
+    )
+    utilisateur.acquereur = _verifier_acquereur(saisie, utilisateur)
+    utilisateur.save(update_fields=["acquereur"])
+    return utilisateur
 
 
 def _appliquer_mot_de_passe(utilisateur: Utilisateur, mot_de_passe: str) -> None:
@@ -85,6 +133,7 @@ def creer(auteur: Any, saisie: SaisieCompte, adresse_ip: str | None) -> Utilisat
     if Utilisateur.objects.filter(identifiant=identifiant).exists():
         raise _invalide("identifiant", "Cet identifiant est déjà utilisé.")
     role, perimetre = _verifier_role_et_perimetre(saisie)
+    acquereur = _verifier_acquereur(saisie, None)
     with transaction.atomic():
         utilisateur = Utilisateur(
             identifiant=identifiant,
@@ -92,6 +141,7 @@ def creer(auteur: Any, saisie: SaisieCompte, adresse_ip: str | None) -> Utilisat
             prenom=saisie.prenom,
             fonction=saisie.fonction,
             statut=saisie.statut,
+            acquereur=acquereur,
         )
         _appliquer_mot_de_passe(utilisateur, saisie.mot_de_passe)
         utilisateur.save()
@@ -142,6 +192,10 @@ def modifier(
     if Utilisateur.objects.filter(identifiant=identifiant).exclude(pk=utilisateur.pk).exists():
         raise _invalide("identifiant", "Cet identifiant est déjà utilisé.")
     role, perimetre = _verifier_role_et_perimetre(saisie)
+    if saisie.acquereur_fourni:
+        utilisateur.acquereur = _verifier_acquereur(saisie, utilisateur)
+    elif utilisateur.acquereur_id and saisie.code_role != ROLE_ACQUEREUR:
+        raise _invalide("acquereur_id_acquereur", "Détachez d'abord ce compte de son logement.")
     desactivation = utilisateur.is_active and saisie.statut == STATUT_UTILISATEUR_INACTIF
     with transaction.atomic():
         utilisateur.identifiant = identifiant

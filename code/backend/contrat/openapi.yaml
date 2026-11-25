@@ -3275,6 +3275,10 @@ components:
         perimetre_id_perimetre:
           type: string
           format: uuid
+        acquereur_id_acquereur:
+          type: string
+          format: uuid
+          nullable: true
         mot_de_passe:
           type: string
           writeOnly: true
@@ -5437,7 +5441,12 @@ components:
           type: string
           nullable: true
           readOnly: true
+        acquereur_id_acquereur:
+          type: string
+          format: uuid
+          nullable: true
       required:
+      - acquereur_id_acquereur
       - date_creation
       - fonction
       - id_utilisateur
