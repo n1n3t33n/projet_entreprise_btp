@@ -11,7 +11,7 @@ from rest_framework.test import APIClient
 from domaines.identite.models import DroitAccorde
 from domaines.referentiels.models import Article, UniteMesure
 from domaines.synchronisation.models import AnomalieSynchronisation, CurseurReference
-from domaines.synchronisation.services import anomalies
+from domaines.synchronisation.services import anomalies, references
 
 pytestmark = pytest.mark.django_db
 
@@ -71,6 +71,20 @@ def test_seuls_les_jeux_autorises_sont_proposes(client_mobile: Client) -> None:
 def test_une_version_illisible_vaut_jamais_recu(client_mobile: Client) -> None:
     reponse = client_mobile().get(URL_REFERENCES, {"articles": "abc"})
     assert "articles" in _versions(reponse)
+
+
+def test_une_version_de_dix_neuf_chiffres_est_reconnue(
+    client_mobile: Client, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # La plus grande empreinte possible (16^15 - 1) s'écrit en 19 chiffres :
+    # le téléphone qui la renvoie ne doit pas recevoir le jeu une seconde fois.
+    monkeypatch.setattr(references, "empreinte", lambda _donnees: references.VERSION_MAX)
+    client = client_mobile()
+    versions = _versions(client.get(URL_REFERENCES))
+    assert len(str(versions["articles"])) == 19
+    deuxieme = client.get(URL_REFERENCES, versions)
+    assert _versions(deuxieme) == {}
+    assert set(deuxieme.data["inchanges"]) == set(versions)
 
 
 # --- Anomalies (EF-SYN-05) ----------------------------------------------------------------

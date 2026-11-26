@@ -25,6 +25,10 @@ from socle.synchronisation import REFERENCES
 
 # 15 chiffres hexadécimaux : la version tient dans le bigint du MPD.
 CHIFFRES_VERSION = 15
+# Plus grande version possible, et sa longueur en chiffres décimaux (19) :
+# la route refuse une version plus longue sans la convertir.
+VERSION_MAX = 16**CHIFFRES_VERSION - 1
+CHIFFRES_DECIMAUX_VERSION = len(str(VERSION_MAX))
 
 
 @dataclass(frozen=True)

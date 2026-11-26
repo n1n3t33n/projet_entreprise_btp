@@ -31,7 +31,6 @@ from socle.parseurs import JSONCompressible
 from socle.synchronisation import REFERENCES
 
 LIMITE_ANOMALIES = 200
-CHIFFRES_VERSION_MAX = 18
 
 
 class JetonMobile(BasePermission):
@@ -130,8 +129,8 @@ class VueReferences(APIView):
         versions = {}
         for code in REFERENCES:
             valeur = str(request.query_params.get(code, ""))
-            # Une version valide tient en 18 chiffres (bigint du MPD).
-            if valeur.isdigit() and len(valeur) <= CHIFFRES_VERSION_MAX:
+            # Une version valide tient en 19 chiffres au plus (bigint du MPD).
+            if valeur.isdigit() and len(valeur) <= references.CHIFFRES_DECIMAUX_VERSION:
                 versions[code] = int(valeur)
         jeux, inchanges = references.telecharger(request.user, _appareil(request), versions)
         return Response(
